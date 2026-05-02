@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
@@ -126,7 +126,6 @@ type Row = {
   yoyKey?: keyof YoY
   isMargin?: boolean
   isEps?: boolean
-  isSeparator?: boolean
 }
 
 const ROWS: Row[] = [
@@ -149,7 +148,6 @@ const ROWS: Row[] = [
   { label: "Diluted EPS",        key: "dilutedEps",     yoyKey: "dilutedEps", isEps: true },
 ]
 
-// Group rows visually
 const ROW_GROUPS: { title: string; rows: Row[] }[] = [
   {
     title: "Revenue",
@@ -303,11 +301,12 @@ export function IncomeStatement({ apiUrl, apiToken, allTickers }: Props) {
                   <p className="text-muted-foreground text-sm mb-3">{data.name}</p>
                   <p className="text-sm text-muted-foreground">{grading.overall_summary}</p>
                   {grading.flags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 space-y-1">
                       {grading.flags.map((flag, i) => (
-                        <span key={i} className="text-xs px-2 py-1 rounded-md bg-orange-500/10 border border-orange-500/30 text-orange-400">
-                          ⚠ {flag}
-                        </span>
+                        <div key={i} className="flex gap-2 text-xs text-orange-400">
+                          <span className="shrink-0">⚠</span>
+                          <span>{flag}</span>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -357,8 +356,8 @@ export function IncomeStatement({ apiUrl, apiToken, allTickers }: Props) {
                   </thead>
                   <tbody>
                     {ROW_GROUPS.map((group) => (
-                      <>
-                        <tr key={`group-${group.title}`}>
+                      <React.Fragment key={group.title}>
+                        <tr>
                           <td
                             colSpan={quarters.length + 1}
                             className="pt-4 pb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground"
@@ -370,7 +369,7 @@ export function IncomeStatement({ apiUrl, apiToken, allTickers }: Props) {
                           <tr key={row.label} className="border-b border-border hover:bg-secondary transition-colors">
                             <td className="py-2.5 text-muted-foreground pl-2 text-xs">{row.label}</td>
                             {quarters.map((q) => (
-                              <td key={q.label} className="py-2.5 text-right px-3">
+                              <td key={`${q.label}-${row.label}`} className="py-2.5 text-right px-3">
                                 <div className="font-medium">{getCellValue(q, row)}</div>
                                 {row.yoyKey && (
                                   <div className="mt-0.5">
@@ -381,7 +380,7 @@ export function IncomeStatement({ apiUrl, apiToken, allTickers }: Props) {
                             ))}
                           </tr>
                         ))}
-                      </>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
@@ -264,8 +264,8 @@ export function Compare({ apiUrl, apiToken, allTickers }: Props) {
                   </thead>
                   <tbody>
                     {METRIC_GROUPS.map((group) => (
-                      <>
-                        <tr key={`group-${group.group}`}>
+                      <React.Fragment key={group.group}>
+                        <tr>
                           <td
                             colSpan={activeStocks.length + 1}
                             className="pt-4 pb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground"
@@ -291,7 +291,7 @@ export function Compare({ apiUrl, apiToken, allTickers }: Props) {
                             })}
                           </tr>
                         ))}
-                      </>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
