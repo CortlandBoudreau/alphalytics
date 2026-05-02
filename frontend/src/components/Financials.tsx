@@ -54,7 +54,6 @@ type IncomeData = {
   name: string
   sector: string
   quarters: IncomeQuarter[]
-  grading: IncomeGrading
 }
 
 type YoYBalance = {
@@ -104,7 +103,6 @@ type BalanceData = {
   name: string
   sector: string
   quarters: BalanceQuarter[]
-  analysis: BalanceAnalysis
 }
 
 type YoYCashflow = {
@@ -149,7 +147,6 @@ type CashflowData = {
   name: string
   sector: string
   quarters: CashflowQuarter[]
-  analysis: CashflowAnalysis
 }
 
 type Props = {
@@ -171,7 +168,7 @@ const GRADE_COLOR: Record<string, string> = {
 
 const GRADE_BG = "bg-secondary border-border"
 
-const SENTIMENT_COLOR = {
+const SENTIMENT_COLOR: Record<string, string> = {
   bullish: "text-green-500",
   bearish: "text-red-500",
   neutral: "text-yellow-500",
@@ -220,7 +217,100 @@ function YoYBadge({ value }: { value: number | null }) {
   )
 }
 
-// ── Shared sub-components ──────────────────────────────────────────────────────
+// ── Skeletons ──────────────────────────────────────────────────────────────────
+
+function AnalysisSkeleton() {
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex items-start justify-between gap-6 animate-pulse">
+          <div className="flex-1 space-y-3">
+            <div className="h-3 bg-secondary rounded w-3/4" />
+            <div className="h-3 bg-secondary rounded w-full" />
+            <div className="h-3 bg-secondary rounded w-2/3" />
+          </div>
+          <div className="w-24 h-24 rounded-xl bg-secondary shrink-0" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="rounded-lg border border-border p-3 animate-pulse">
+              <div className="h-3 bg-secondary rounded w-1/2 mb-2" />
+              <div className="h-5 bg-secondary rounded w-1/3" />
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function TableSkeleton({ cols = 4, rows = 12 }: { cols?: number; rows?: number }) {
+  const widths = ["w-32", "w-28", "w-24", "w-20", "w-36", "w-16", "w-28", "w-24", "w-20", "w-32", "w-28", "w-24"]
+  return (
+    <Card>
+      <CardHeader>
+        <div className="h-5 bg-secondary rounded w-64 animate-pulse" />
+        <div className="h-3 bg-secondary rounded w-48 animate-pulse mt-1" />
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 w-48">
+                  <div className="h-3 bg-secondary rounded w-16 animate-pulse" />
+                </th>
+                {Array.from({ length: cols }).map((_, i) => (
+                  <th key={i} className="text-right py-2 px-3">
+                    <div className="h-3 bg-secondary rounded w-16 ml-auto animate-pulse" />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: rows }).map((_, i) => (
+                <tr key={i} className="border-b border-border">
+                  <td className="py-3 pl-2">
+                    <div className={`h-3 bg-secondary rounded animate-pulse ${widths[i % widths.length]}`} />
+                  </td>
+                  {Array.from({ length: cols }).map((_, j) => (
+                    <td key={j} className="py-3 px-3">
+                      <div className="h-3 bg-secondary rounded w-16 ml-auto animate-pulse" />
+                      <div className="h-2 bg-secondary rounded w-10 ml-auto mt-1 animate-pulse opacity-50" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function FullPageSkeleton() {
+  return (
+    <>
+      {/* Fake header */}
+      <div className="flex items-center gap-3 animate-pulse">
+        <div className="h-8 bg-secondary rounded w-20" />
+        <div className="h-6 bg-secondary rounded w-24" />
+        <div className="h-4 bg-secondary rounded w-40" />
+      </div>
+      {/* Fake tabs */}
+      <div className="flex gap-1 animate-pulse">
+        <div className="h-8 bg-primary rounded w-20 opacity-70" />
+        <div className="h-8 bg-secondary rounded w-28" />
+        <div className="h-8 bg-secondary rounded w-20" />
+      </div>
+      <AnalysisSkeleton />
+      <TableSkeleton />
+    </>
+  )
+}
+
+// ── Flags ──────────────────────────────────────────────────────────────────────
 
 function Flags({ flags }: { flags: string[] }) {
   if (!flags.length) return null
@@ -236,13 +326,20 @@ function Flags({ flags }: { flags: string[] }) {
   )
 }
 
-function StatementTable({
-  quarters,
-  groups,
-}: {
-  quarters: { label: string }[]
-  groups: { title: string; rows: { label: string; value: (q: never) => string; yoyValue?: (q: never) => number | null }[] }[]
-}) {
+// ── Shared table ───────────────────────────────────────────────────────────────
+
+type RowDef = {
+  label: string
+  value: (q: never) => string
+  yoyValue?: (q: never) => number | null
+}
+
+type GroupDef = {
+  title: string
+  rows: RowDef[]
+}
+
+function StatementTable({ quarters, groups }: { quarters: { label: string }[]; groups: GroupDef[] }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -287,10 +384,8 @@ function StatementTable({
 
 // ── Income Tab ─────────────────────────────────────────────────────────────────
 
-function IncomeTab({ data }: { data: IncomeData }) {
-  const { grading, quarters } = data
-
-  const groups = [
+function IncomeTab({ data, grading }: { data: IncomeData; grading: IncomeGrading | null }) {
+  const groups: GroupDef[] = [
     {
       title: "Revenue",
       rows: [
@@ -332,33 +427,37 @@ function IncomeTab({ data }: { data: IncomeData }) {
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-start justify-between gap-6">
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">{grading.overall_summary}</p>
-              <Flags flags={grading.flags} />
-            </div>
-            <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-xl border-2 shrink-0 ${GRADE_BG}`}>
-              <span className="text-xs text-muted-foreground mb-1">Overall</span>
-              <span className={`text-4xl font-bold ${GRADE_COLOR[grading.overall_grade] ?? "text-foreground"}`}>
-                {grading.overall_grade}
-              </span>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
-            {grading.quarter_grades.map((qg) => (
-              <div key={qg.label} className={`rounded-lg border p-3 ${GRADE_BG}`}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-muted-foreground">{qg.label}</span>
-                  <span className={`text-xl font-bold ${GRADE_COLOR[qg.grade] ?? "text-foreground"}`}>{qg.grade}</span>
-                </div>
-                <p className="text-xs text-muted-foreground leading-snug">{qg.note}</p>
+      {grading ? (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between gap-6">
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">{grading.overall_summary}</p>
+                <Flags flags={grading.flags} />
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-xl border-2 shrink-0 ${GRADE_BG}`}>
+                <span className="text-xs text-muted-foreground mb-1">Overall</span>
+                <span className={`text-4xl font-bold ${GRADE_COLOR[grading.overall_grade] ?? "text-foreground"}`}>
+                  {grading.overall_grade}
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+              {grading.quarter_grades.map((qg) => (
+                <div key={qg.label} className={`rounded-lg border p-3 ${GRADE_BG}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-muted-foreground">{qg.label}</span>
+                    <span className={`text-xl font-bold ${GRADE_COLOR[qg.grade] ?? "text-foreground"}`}>{qg.grade}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-snug">{qg.note}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <AnalysisSkeleton />
+      )}
 
       <Card>
         <CardHeader>
@@ -366,8 +465,8 @@ function IncomeTab({ data }: { data: IncomeData }) {
           <p className="text-xs text-muted-foreground">Values in millions (M) or billions (B). YoY = year-over-year change.</p>
         </CardHeader>
         <CardContent>
-          <StatementTable quarters={quarters} groups={groups as never} />
-          <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">{grading.disclaimer}</p>
+          <StatementTable quarters={data.quarters} groups={groups as never} />
+          {grading && <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">{grading.disclaimer}</p>}
         </CardContent>
       </Card>
     </>
@@ -376,72 +475,74 @@ function IncomeTab({ data }: { data: IncomeData }) {
 
 // ── Balance Sheet Tab ──────────────────────────────────────────────────────────
 
-function BalanceTab({ data }: { data: BalanceData }) {
-  const { analysis, quarters } = data
-
-  const groups = [
+function BalanceTab({ data, analysis }: { data: BalanceData; analysis: BalanceAnalysis | null }) {
+  const groups: GroupDef[] = [
     {
       title: "Assets",
       rows: [
-        { label: "Total Assets",          value: (q: BalanceQuarter) => fmtM(q.totalAssets),       yoyValue: (q: BalanceQuarter) => q.yoy.totalAssets },
-        { label: "Current Assets",        value: (q: BalanceQuarter) => fmtM(q.currentAssets) },
-        { label: "Cash & Equivalents",    value: (q: BalanceQuarter) => fmtM(q.cash),              yoyValue: (q: BalanceQuarter) => q.yoy.cash },
-        { label: "Short Term Investments",value: (q: BalanceQuarter) => fmtM(q.shortTermInvestments) },
-        { label: "Accounts Receivable",   value: (q: BalanceQuarter) => fmtM(q.accountsReceivable) },
-        { label: "Inventory",             value: (q: BalanceQuarter) => fmtM(q.inventory) },
-        { label: "Net PP&E",              value: (q: BalanceQuarter) => fmtM(q.netPPE) },
-        { label: "Non-Current Assets",    value: (q: BalanceQuarter) => fmtM(q.nonCurrentAssets) },
+        { label: "Total Assets",           value: (q: BalanceQuarter) => fmtM(q.totalAssets),          yoyValue: (q: BalanceQuarter) => q.yoy.totalAssets },
+        { label: "Current Assets",         value: (q: BalanceQuarter) => fmtM(q.currentAssets) },
+        { label: "Cash & Equivalents",     value: (q: BalanceQuarter) => fmtM(q.cash),                 yoyValue: (q: BalanceQuarter) => q.yoy.cash },
+        { label: "Short Term Investments", value: (q: BalanceQuarter) => fmtM(q.shortTermInvestments) },
+        { label: "Accounts Receivable",    value: (q: BalanceQuarter) => fmtM(q.accountsReceivable) },
+        { label: "Inventory",              value: (q: BalanceQuarter) => fmtM(q.inventory) },
+        { label: "Net PP&E",               value: (q: BalanceQuarter) => fmtM(q.netPPE) },
+        { label: "Non-Current Assets",     value: (q: BalanceQuarter) => fmtM(q.nonCurrentAssets) },
       ],
     },
     {
       title: "Liabilities",
       rows: [
-        { label: "Total Liabilities",     value: (q: BalanceQuarter) => fmtM(q.totalLiabilities) },
-        { label: "Current Liabilities",   value: (q: BalanceQuarter) => fmtM(q.currentLiabilities) },
-        { label: "Accounts Payable",      value: (q: BalanceQuarter) => fmtM(q.accountsPayable) },
-        { label: "Current Debt",          value: (q: BalanceQuarter) => fmtM(q.currentDebt) },
-        { label: "Long Term Debt",        value: (q: BalanceQuarter) => fmtM(q.longTermDebt),      yoyValue: (q: BalanceQuarter) => q.yoy.totalDebt },
-        { label: "Non-Current Liabilities",value: (q: BalanceQuarter) => fmtM(q.nonCurrentLiabilities) },
+        { label: "Total Liabilities",       value: (q: BalanceQuarter) => fmtM(q.totalLiabilities) },
+        { label: "Current Liabilities",     value: (q: BalanceQuarter) => fmtM(q.currentLiabilities) },
+        { label: "Accounts Payable",        value: (q: BalanceQuarter) => fmtM(q.accountsPayable) },
+        { label: "Current Debt",            value: (q: BalanceQuarter) => fmtM(q.currentDebt) },
+        { label: "Long Term Debt",          value: (q: BalanceQuarter) => fmtM(q.longTermDebt),          yoyValue: (q: BalanceQuarter) => q.yoy.totalDebt },
+        { label: "Non-Current Liabilities", value: (q: BalanceQuarter) => fmtM(q.nonCurrentLiabilities) },
       ],
     },
     {
       title: "Equity",
       rows: [
-        { label: "Stockholders Equity",   value: (q: BalanceQuarter) => fmtM(q.stockholdersEquity), yoyValue: (q: BalanceQuarter) => q.yoy.equity },
-        { label: "Retained Earnings",     value: (q: BalanceQuarter) => fmtM(q.retainedEarnings),   yoyValue: (q: BalanceQuarter) => q.yoy.retainedEarnings },
+        { label: "Stockholders Equity", value: (q: BalanceQuarter) => fmtM(q.stockholdersEquity), yoyValue: (q: BalanceQuarter) => q.yoy.equity },
+        { label: "Retained Earnings",   value: (q: BalanceQuarter) => fmtM(q.retainedEarnings),   yoyValue: (q: BalanceQuarter) => q.yoy.retainedEarnings },
       ],
     },
     {
       title: "Key Metrics",
       rows: [
-        { label: "Working Capital",       value: (q: BalanceQuarter) => fmtM(q.workingCapital) },
-        { label: "Net Debt",              value: (q: BalanceQuarter) => fmtM(q.netDebt) },
-        { label: "Total Debt",            value: (q: BalanceQuarter) => fmtM(q.totalDebt) },
-        { label: "Current Ratio",         value: (q: BalanceQuarter) => fmtRatio(q.currentRatio) },
-        { label: "Debt / Equity",         value: (q: BalanceQuarter) => fmtRatio(q.debtToEquity) },
-        { label: "Debt / Assets",         value: (q: BalanceQuarter) => fmtRatio(q.debtToAssets) },
+        { label: "Working Capital", value: (q: BalanceQuarter) => fmtM(q.workingCapital) },
+        { label: "Net Debt",        value: (q: BalanceQuarter) => fmtM(q.netDebt) },
+        { label: "Total Debt",      value: (q: BalanceQuarter) => fmtM(q.totalDebt) },
+        { label: "Current Ratio",   value: (q: BalanceQuarter) => fmtRatio(q.currentRatio) },
+        { label: "Debt / Equity",   value: (q: BalanceQuarter) => fmtRatio(q.debtToEquity) },
+        { label: "Debt / Assets",   value: (q: BalanceQuarter) => fmtRatio(q.debtToAssets) },
       ],
     },
   ]
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-start justify-between gap-6">
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">{analysis.summary}</p>
-              <Flags flags={analysis.flags} />
+      {analysis ? (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between gap-6">
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">{analysis.summary}</p>
+                <Flags flags={analysis.flags} />
+              </div>
+              <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-xl border-2 shrink-0 ${GRADE_BG}`}>
+                <span className="text-xs text-muted-foreground mb-1">Health</span>
+                <span className={`text-lg font-bold capitalize ${HEALTH_COLOR[analysis.health] ?? "text-foreground"}`}>
+                  {analysis.health}
+                </span>
+              </div>
             </div>
-            <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-xl border-2 shrink-0 ${GRADE_BG}`}>
-              <span className="text-xs text-muted-foreground mb-1">Health</span>
-              <span className={`text-lg font-bold capitalize ${HEALTH_COLOR[analysis.health] ?? "text-foreground"}`}>
-                {analysis.health}
-              </span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : (
+        <AnalysisSkeleton />
+      )}
 
       <Card>
         <CardHeader>
@@ -449,8 +550,8 @@ function BalanceTab({ data }: { data: BalanceData }) {
           <p className="text-xs text-muted-foreground">Values in millions (M) or billions (B). YoY = year-over-year change.</p>
         </CardHeader>
         <CardContent>
-          <StatementTable quarters={quarters} groups={groups as never} />
-          <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">{analysis.disclaimer}</p>
+          <StatementTable quarters={data.quarters} groups={groups as never} />
+          {analysis && <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">{analysis.disclaimer}</p>}
         </CardContent>
       </Card>
     </>
@@ -459,10 +560,8 @@ function BalanceTab({ data }: { data: BalanceData }) {
 
 // ── Cash Flow Tab ──────────────────────────────────────────────────────────────
 
-function CashflowTab({ data }: { data: CashflowData }) {
-  const { analysis, quarters } = data
-
-  const groups = [
+function CashflowTab({ data, analysis }: { data: CashflowData; analysis: CashflowAnalysis | null }) {
+  const groups: GroupDef[] = [
     {
       title: "Operating Activities",
       rows: [
@@ -476,51 +575,55 @@ function CashflowTab({ data }: { data: CashflowData }) {
     {
       title: "Investing Activities",
       rows: [
-        { label: "Investing Cash Flow",    value: (q: CashflowQuarter) => fmtM(q.investingCashFlow) },
-        { label: "Capex",                  value: (q: CashflowQuarter) => fmtM(q.capex),               yoyValue: (q: CashflowQuarter) => q.yoy.capex },
-        { label: "Purchase Investments",   value: (q: CashflowQuarter) => fmtM(q.purchaseInvestments) },
-        { label: "Sale of Investments",    value: (q: CashflowQuarter) => fmtM(q.saleInvestments) },
+        { label: "Investing Cash Flow",  value: (q: CashflowQuarter) => fmtM(q.investingCashFlow) },
+        { label: "Capex",                value: (q: CashflowQuarter) => fmtM(q.capex),              yoyValue: (q: CashflowQuarter) => q.yoy.capex },
+        { label: "Purchase Investments", value: (q: CashflowQuarter) => fmtM(q.purchaseInvestments) },
+        { label: "Sale of Investments",  value: (q: CashflowQuarter) => fmtM(q.saleInvestments) },
       ],
     },
     {
       title: "Financing Activities",
       rows: [
-        { label: "Financing Cash Flow",    value: (q: CashflowQuarter) => fmtM(q.financingCashFlow) },
-        { label: "Dividends Paid",         value: (q: CashflowQuarter) => fmtM(q.dividendsPaid) },
-        { label: "Stock Buybacks",         value: (q: CashflowQuarter) => fmtM(q.stockBuybacks) },
-        { label: "Debt Issuance",          value: (q: CashflowQuarter) => fmtM(q.debtIssuance) },
-        { label: "Debt Repayment",         value: (q: CashflowQuarter) => fmtM(q.debtRepayment) },
+        { label: "Financing Cash Flow", value: (q: CashflowQuarter) => fmtM(q.financingCashFlow) },
+        { label: "Dividends Paid",      value: (q: CashflowQuarter) => fmtM(q.dividendsPaid) },
+        { label: "Stock Buybacks",      value: (q: CashflowQuarter) => fmtM(q.stockBuybacks) },
+        { label: "Debt Issuance",       value: (q: CashflowQuarter) => fmtM(q.debtIssuance) },
+        { label: "Debt Repayment",      value: (q: CashflowQuarter) => fmtM(q.debtRepayment) },
       ],
     },
     {
       title: "Summary",
       rows: [
-        { label: "Free Cash Flow",         value: (q: CashflowQuarter) => fmtM(q.freeCashFlow),         yoyValue: (q: CashflowQuarter) => q.yoy.freeCashFlow },
-        { label: "FCF / Net Income",       value: (q: CashflowQuarter) => fmtRatio(q.fcfToNetIncome) },
-        { label: "End Cash Position",      value: (q: CashflowQuarter) => fmtM(q.endCashPosition) },
-        { label: "Net Change in Cash",     value: (q: CashflowQuarter) => fmtM(q.changesInCash) },
+        { label: "Free Cash Flow",     value: (q: CashflowQuarter) => fmtM(q.freeCashFlow),     yoyValue: (q: CashflowQuarter) => q.yoy.freeCashFlow },
+        { label: "FCF / Net Income",   value: (q: CashflowQuarter) => fmtRatio(q.fcfToNetIncome) },
+        { label: "End Cash Position",  value: (q: CashflowQuarter) => fmtM(q.endCashPosition) },
+        { label: "Net Change in Cash", value: (q: CashflowQuarter) => fmtM(q.changesInCash) },
       ],
     },
   ]
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-start justify-between gap-6">
-            <div className="flex-1">
-              <p className="text-sm text-muted-foreground">{analysis.summary}</p>
-              <Flags flags={analysis.flags} />
+      {analysis ? (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between gap-6">
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">{analysis.summary}</p>
+                <Flags flags={analysis.flags} />
+              </div>
+              <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-xl border-2 shrink-0 ${GRADE_BG}`}>
+                <span className="text-xs text-muted-foreground mb-1">Quality</span>
+                <span className={`text-lg font-bold capitalize ${QUALITY_COLOR[analysis.quality] ?? "text-foreground"}`}>
+                  {analysis.quality}
+                </span>
+              </div>
             </div>
-            <div className={`flex flex-col items-center justify-center w-24 h-24 rounded-xl border-2 shrink-0 ${GRADE_BG}`}>
-              <span className="text-xs text-muted-foreground mb-1">Quality</span>
-              <span className={`text-lg font-bold capitalize ${QUALITY_COLOR[analysis.quality] ?? "text-foreground"}`}>
-                {analysis.quality}
-              </span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : (
+        <AnalysisSkeleton />
+      )}
 
       <Card>
         <CardHeader>
@@ -528,8 +631,8 @@ function CashflowTab({ data }: { data: CashflowData }) {
           <p className="text-xs text-muted-foreground">Values in millions (M) or billions (B). YoY = year-over-year change.</p>
         </CardHeader>
         <CardContent>
-          <StatementTable quarters={quarters} groups={groups as never} />
-          <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">{analysis.disclaimer}</p>
+          <StatementTable quarters={data.quarters} groups={groups as never} />
+          {analysis && <p className="text-xs text-muted-foreground mt-4 border-t border-border pt-3">{analysis.disclaimer}</p>}
         </CardContent>
       </Card>
     </>
@@ -544,9 +647,15 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
   const [resolvedName, setResolvedName] = useState("")
   const [resolvedSector, setResolvedSector] = useState("")
   const [activeTab, setActiveTab] = useState<StatementTab>("income")
+
   const [incomeData, setIncomeData] = useState<IncomeData | null>(null)
   const [balanceData, setBalanceData] = useState<BalanceData | null>(null)
   const [cashflowData, setCashflowData] = useState<CashflowData | null>(null)
+
+  const [incomeGrading, setIncomeGrading] = useState<IncomeGrading | null>(null)
+  const [balanceAnalysis, setBalanceAnalysis] = useState<BalanceAnalysis | null>(null)
+  const [cashflowAnalysis, setCashflowAnalysis] = useState<CashflowAnalysis | null>(null)
+
   const [loading, setLoading] = useState(false)
   const [tabLoading, setTabLoading] = useState(false)
   const [error, setError] = useState("")
@@ -556,6 +665,23 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
   const headers = {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${apiToken}`
+  }
+
+  const apiFetch = async (path: string) => {
+    const res = await fetch(`${apiUrl}${path}`, { headers })
+    const json = await res.json()
+    if (!res.ok) throw new Error(json.detail || "Request failed")
+    return json
+  }
+
+  const fetchAnalysisInBackground = (t: string, type: "income" | "balance" | "cashflow") => {
+    apiFetch(`/${type}/${t}/analysis`)
+      .then((data) => {
+        if (type === "income") setIncomeGrading(data)
+        if (type === "balance") setBalanceAnalysis(data)
+        if (type === "cashflow") setCashflowAnalysis(data)
+      })
+      .catch(() => {/* silently fail */})
   }
 
   const handleTickerChange = (val: string) => {
@@ -568,43 +694,27 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
     setShowSuggestions(true)
   }
 
-  const fetchIncome = async (t: string) => {
-    const response = await fetch(`${apiUrl}/income/${t}`, { headers })
-    const json = await response.json()
-    if (!response.ok) throw new Error(json.detail || "Not found")
-    return json as IncomeData
-  }
-
-  const fetchBalance = async (t: string) => {
-    const response = await fetch(`${apiUrl}/balance/${t}`, { headers })
-    const json = await response.json()
-    if (!response.ok) throw new Error(json.detail || "Not found")
-    return json as BalanceData
-  }
-
-  const fetchCashflow = async (t: string) => {
-    const response = await fetch(`${apiUrl}/cashflow/${t}`, { headers })
-    const json = await response.json()
-    if (!response.ok) throw new Error(json.detail || "Not found")
-    return json as CashflowData
-  }
-
   const handleSearch = async (overrideTicker?: string) => {
     const t = overrideTicker || ticker
     if (!t.trim()) return
+
     setLoading(true)
     setError("")
     setIncomeData(null)
     setBalanceData(null)
     setCashflowData(null)
+    setIncomeGrading(null)
+    setBalanceAnalysis(null)
+    setCashflowAnalysis(null)
     setActiveTab("income")
 
     try {
-      const data = await fetchIncome(t)
+      const data = await apiFetch(`/income/${t}`)
       setIncomeData(data)
       setResolvedTicker(data.ticker)
       setResolvedName(data.name)
       setResolvedSector(data.sector)
+      fetchAnalysisInBackground(t, "income")
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to fetch")
     } finally {
@@ -615,18 +725,19 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
   const handleTabChange = async (tab: StatementTab) => {
     setActiveTab(tab)
     if (tab === "income" || !resolvedTicker) return
-
     if (tab === "balance" && balanceData) return
     if (tab === "cashflow" && cashflowData) return
 
     setTabLoading(true)
     try {
       if (tab === "balance") {
-        const data = await fetchBalance(resolvedTicker)
+        const data = await apiFetch(`/balance/${resolvedTicker}`)
         setBalanceData(data)
+        fetchAnalysisInBackground(resolvedTicker, "balance")
       } else if (tab === "cashflow") {
-        const data = await fetchCashflow(resolvedTicker)
+        const data = await apiFetch(`/cashflow/${resolvedTicker}`)
         setCashflowData(data)
+        fetchAnalysisInBackground(resolvedTicker, "cashflow")
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to fetch")
@@ -634,8 +745,6 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
       setTabLoading(false)
     }
   }
-
-  const hasData = incomeData !== null
 
   const TABS: { key: StatementTab; label: string }[] = [
     { key: "income",   label: "Income" },
@@ -689,21 +798,23 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
         </CardContent>
       </Card>
 
-      {hasData && (
+      {/* Full page skeleton while initial load */}
+      {loading && <FullPageSkeleton />}
+
+      {/* Content */}
+      {!loading && incomeData && (
         <>
-          {/* Header */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-2xl font-bold">{resolvedTicker}</h2>
             <Badge variant="outline">{resolvedSector}</Badge>
-            {incomeData && (
-              <span className={`text-sm font-medium capitalize ${SENTIMENT_COLOR[incomeData.grading.sentiment]}`}>
-                {incomeData.grading.sentiment}
+            {incomeGrading && (
+              <span className={`text-sm font-medium capitalize ${SENTIMENT_COLOR[incomeGrading.sentiment] ?? ""}`}>
+                {incomeGrading.sentiment}
               </span>
             )}
             <span className="text-muted-foreground text-sm">{resolvedName}</span>
           </div>
 
-          {/* Statement tabs */}
           <div className="flex gap-1">
             {TABS.map(({ key, label }) => (
               <button
@@ -720,18 +831,22 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
             ))}
           </div>
 
+          {/* Tab loading skeleton */}
           {tabLoading && (
-            <p className="text-muted-foreground text-sm">Loading...</p>
+            <>
+              <AnalysisSkeleton />
+              <TableSkeleton />
+            </>
           )}
 
-          {!tabLoading && activeTab === "income" && incomeData && (
-            <IncomeTab data={incomeData} />
+          {!tabLoading && activeTab === "income" && (
+            <IncomeTab data={incomeData} grading={incomeGrading} />
           )}
           {!tabLoading && activeTab === "balance" && balanceData && (
-            <BalanceTab data={balanceData} />
+            <BalanceTab data={balanceData} analysis={balanceAnalysis} />
           )}
           {!tabLoading && activeTab === "cashflow" && cashflowData && (
-            <CashflowTab data={cashflowData} />
+            <CashflowTab data={cashflowData} analysis={cashflowAnalysis} />
           )}
         </>
       )}
