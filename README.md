@@ -1,8 +1,4 @@
 <p align="center">
-  <img src="frontend/public/logo.svg" alt="Alphalytics" height="60" />
-</p>
-
-<p align="center">
   <strong>AI-powered stock research platform</strong><br/>
   Income statement grading, multi-stock comparison, and Claude-powered bull/bear analysis.
 </p>
