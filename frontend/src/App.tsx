@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Compare } from "@/components/Compare"
-import { IncomeStatement } from "@/components/IncomeStatement"
+import { Financials } from "@/components/Financials"
 import { Landing } from "@/components/Landing"
 import { CanvasBackground } from "@/components/CanvasBackground"
 
@@ -412,7 +412,7 @@ function App() {
 
         {/* Income Tab */}
         {activeTab === "income" && (
-          <IncomeStatement apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
+          <Financials apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
         )}
 
         {/* Compare Tab */}
