@@ -59,6 +59,56 @@ r = redis.from_url(redis_url, decode_responses=True)
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
+# ── S&P 500 ticker universe ────────────────────────────────────────────────────
+
+SP500_TICKERS = [
+    'AAPL','MSFT','NVDA','AMZN','GOOGL','GOOG','META','BRK-B','TSLA','AVGO',
+    'JPM','LLY','V','UNH','XOM','MA','COST','HD','PG','JNJ',
+    'ABBV','BAC','NFLX','CRM','CVX','MRK','WMT','KO','PEP','ORCL',
+    'TMO','ACN','MCD','CSCO','ABT','AMD','GE','DHR','LIN','ADBE',
+    'IBM','NOW','TXN','PM','QCOM','INTU','GS','ISRG','RTX','NEE',
+    'AMGN','SPGI','CAT','UNP','LOW','HON','UBER','BKNG','MS','T',
+    'AXP','AMAT','SYK','ELV','BLK','DE','VRTX','GILD','MDT','REGN',
+    'PLD','BSX','PANW','ADI','MU','LRCX','KLAC','ETN','CB','SO',
+    'DUK','CI','MMC','ZTS','CME','TJX','WFC','AON','ICE','ITW',
+    'EMR','SHW','APH','MCO','PH','CDNS','SNPS','WELL','MCK','NOC',
+    'GD','FI','CTAS','ECL','HCA','EW','COF','USB','NSC','HUM',
+    'F','GM','PYPL','INTC','DELL','HPQ','MO','PSA','WM','RSG',
+    'CARR','OTIS','PWR','FAST','ODFL','VRSK','IDXX','IQV','FICO','MPWR',
+    'NEM','FCX','DOW','LYB','PPG','APD','NUE','STLD','MLM','VMC',
+    'IR','XYL','CTSH','ANSS','PTC','CSX','KDP','STZ','CL','GIS',
+    'K','CPB','HRL','MKC','TSN','CAG','MDLZ','MNST','ADM','CF',
+    'ALB','BALL','PKG','IP','AMCR','CCK','DG','DLTR','TGT','KR',
+    'SYY','BDX','BAX','HOLX','ALGN','DXCM','ILMN','MTD','WAT','A',
+    'PFE','BMY','BIIB','MRNA','LMT','BA','HII','TDG','HEI','TXT',
+    'SPG','AMT','CCI','EQIX','DLR','EXR','VTR','SBAC','SBA',
+    'NEE','EXC','AEP','XEL','WEC','ES','CMS','AWK','SRE','PCG',
+    'CVX','COP','EOG','PXD','DVN','APA','MRO','OXY','HES','VLO',
+    'PSX','MPC','LMT','RTX','NOC','GD','BA','SCHW','STT','BK',
+    'AIG','MET','PRU','LNC','TRV','ALL','PGR','CINF',
+    'SNOW','DDOG','ZS','CRWD','NET','OKTA','MDB','ESTC','GTLB','HUBS',
+    'SHOP','SQ','COIN','HOOD','SOFI','AFRM','UPST','LC','DAVE','NU',
+    'PLTR','AI','BBAI','SOUN','ASTS','RKLB','LUNR','PL','SPIR','IRDM',
+]
+
+def get_sp500_tickers():
+    """Fetch current S&P 500 tickers from Wikipedia."""
+    cached = r.get("sp500:tickers")
+    if cached:
+        return json.loads(cached)
+    try:
+        import pandas as pd
+        table = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
+        tickers = table[0]["Symbol"].tolist()
+        # Fix known yfinance ticker differences
+        tickers = [t.replace(".", "-") for t in tickers]
+        r.setex("sp500:tickers", 86400 * 7, json.dumps(tickers))  # cache 7 days
+        print(f"Loaded {len(tickers)} S&P 500 tickers from Wikipedia")
+        return tickers
+    except Exception as e:
+        print(f"Wikipedia fetch failed, using fallback: {e}")
+        return SP500_TICKERS  # fall back to hardcoded list
+
 def load_tickers_into_redis():
     try:
         print("Loading tickers from SEC EDGAR...")
@@ -80,12 +130,78 @@ def load_tickers_into_redis():
         print(f"Error loading tickers: {str(e)}")
         return []
 
+def build_screener_data():
+    """Fetch key metrics for all S&P 500 tickers and cache in Redis."""
+    print("Building screener data...")
+    results = []
+    for ticker in get_sp500_tickers():
+        try:
+            stock = yf.Ticker(ticker)
+            info = stock.info
+            if not info:
+                continue
+
+            price = info.get("currentPrice") or info.get("regularMarketPrice")
+            if not price:
+                continue
+
+            market_cap = info.get("marketCap", 0)
+
+            def fmt_mc(n):
+                if not n:
+                    return None
+                if n >= 1_000_000_000_000:
+                    return f"${n/1_000_000_000_000:.2f}T"
+                if n >= 1_000_000_000:
+                    return f"${n/1_000_000_000:.2f}B"
+                if n >= 1_000_000:
+                    return f"${n/1_000_000:.2f}M"
+                return f"${n:,.0f}"
+
+            def fp(v):
+                if v is None:
+                    return None
+                return round(v * 100, 2)
+
+            def fr(v):
+                if v is None:
+                    return None
+                return round(v, 2)
+
+            results.append({
+                "ticker": ticker,
+                "name": info.get("longName", ticker),
+                "sector": info.get("sector", "N/A"),
+                "industry": info.get("industry", "N/A"),
+                "price": round(price, 2),
+                "change": round(info.get("regularMarketChangePercent", 0), 2),
+                "marketCap": fmt_mc(market_cap),
+                "marketCapRaw": market_cap,
+                "peRatio": fr(info.get("trailingPE")),
+                "forwardPE": fr(info.get("forwardPE")),
+                "psRatio": fr(info.get("priceToSalesTrailing12Months")),
+                "revenueGrowth": fp(info.get("revenueGrowth")),
+                "epsGrowth": fp(info.get("earningsGrowth")),
+                "grossMargin": fp(info.get("grossMargins")),
+                "netMargin": fp(info.get("profitMargins")),
+                "roe": fp(info.get("returnOnEquity")),
+                "debtToEquity": fr(info.get("debtToEquity")),
+            })
+        except Exception as e:
+            print(f"Screener skip {ticker}: {e}")
+            continue
+
+    print(f"Screener built: {len(results)} stocks")
+    r.setex("screener:data", 86400, json.dumps(results))  # 24hr cache
+    return results
+
 @app.on_event("startup")
 async def startup_event():
     if not r.exists("tickers"):
         load_tickers_into_redis()
     else:
         print("Tickers already cached in Redis")
+    # Don't pre-build screener on startup — too slow. Build on first request.
 
 @app.get("/")
 def read_root():
@@ -114,6 +230,7 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
     cache_key = f"stock:{ticker}"
     cached = r.get(cache_key)
     if cached:
+        print(f"Cache hit for {ticker}")
         return json.loads(cached)
 
     try:
@@ -198,6 +315,49 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
         raise
     except Exception as e:
         print(f"ERROR: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Screener ───────────────────────────────────────────────────────────────────
+
+@app.get("/screener/data")
+@limiter.limit("5/minute")
+async def get_screener_data(request: Request, _: None = Depends(verify_token)):
+    """Return the full screener dataset. Build if not cached."""
+    cached = r.get("screener:data")
+    if cached:
+        return json.loads(cached)
+    # Build on first request (takes ~2-3 min for 300+ tickers)
+    # Return building status so frontend can poll
+    building = r.get("screener:building")
+    if building:
+        raise HTTPException(status_code=202, detail="Screener data is being built. Try again in a moment.")
+    # Kick off build
+    r.setex("screener:building", 300, "1")
+    try:
+        data = build_screener_data()
+        r.delete("screener:building")
+        return data
+    except Exception as e:
+        r.delete("screener:building")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/screener/refresh")
+@limiter.limit("1/hour")
+async def refresh_screener(request: Request, _: None = Depends(verify_token)):
+    """Force rebuild the screener dataset."""
+    r.delete("screener:data")
+    building = r.get("screener:building")
+    if building:
+        raise HTTPException(status_code=202, detail="Already building.")
+    r.setex("screener:building", 300, "1")
+    try:
+        data = build_screener_data()
+        r.delete("screener:building")
+        return {"status": "ok", "count": len(data)}
+    except Exception as e:
+        r.delete("screener:building")
         raise HTTPException(status_code=500, detail=str(e))
 
 
