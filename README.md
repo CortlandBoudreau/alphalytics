@@ -2,9 +2,18 @@
   <img src="frontend/public/logo.svg" alt="Alphalytics" height="60" />
 </p>
 
-**AI-powered stock research platform** — income statement grading, multi-stock comparison, and Claude-powered bull/bear analysis.
+<p align="center">
+  <strong>AI-powered stock research platform</strong><br/>
+  Income statement grading, multi-stock comparison, and Claude-powered bull/bear analysis.
+</p>
 
-🔗 **Live Demo**: [alphalytics-theta.vercel.app](https://alphalytics-theta.vercel.app)
+<p align="center">
+  🔗 <a href="https://alphalytics-theta.vercel.app"><strong>alphalytics-theta.vercel.app</strong></a>
+</p>
+
+---
+
+![Landing](screenshots/landing.png)
 
 ---
 
@@ -16,16 +25,20 @@
 - Overall grade with flags for one-time items, tax anomalies, and unusual patterns
 - Bullish / bearish / neutral sentiment per ticker
 
-### 🔍 Stock Research
-- Search 10,000+ tickers with live autocomplete
-- Price, market cap, P/E, Forward P/E, P/S, gross margin, net margin, EPS growth, revenue growth
-- 1-year price chart and quarterly revenue chart
-- Claude-powered bull case / bear case breakdown on demand
+![Income](screenshots/income.png)
 
 ### ⚖️ Stock Compare
 - Side-by-side comparison of up to 3 stocks
 - Grouped metrics: Valuation, Growth, Margins, 52-Week Range
 - YoY growth indicators per metric
+
+![Compare](screenshots/compare.png)
+
+### 🔍 Stock Research
+- Search 10,000+ tickers with live autocomplete
+- Price, market cap, P/E, Forward P/E, P/S, gross margin, net margin, EPS growth, revenue growth
+- 1-year price chart and quarterly revenue chart
+- Claude-powered bull case / bear case breakdown on demand
 
 ---
 
@@ -51,16 +64,16 @@
 
 ```
 ┌─────────────────┐         ┌──────────────────┐         ┌─────────────┐
-│   React Frontend │ ──────▶ │  FastAPI Backend  │ ──────▶ │   yfinance  │
+│  React Frontend  │ ──────▶ │  FastAPI Backend  │ ──────▶ │   yfinance  │
 │   (Vercel)       │         │  (Railway)        │         │   Yahoo API │
 └─────────────────┘         └──────────────────┘         └─────────────┘
-                                      │                          
-                              ┌───────┴───────┐          
-                              │               │          
-                         ┌────▼────┐   ┌──────▼──────┐  
-                         │  Redis  │   │  Anthropic  │  
-                         │  Cache  │   │  Claude API │  
-                         └─────────┘   └─────────────┘  
+                                      │
+                              ┌───────┴───────┐
+                              │               │
+                         ┌────▼────┐   ┌──────▼──────┐
+                         │  Redis  │   │  Anthropic  │
+                         │  Cache  │   │  Claude API │
+                         └─────────┘   └─────────────┘
 ```
 
 ---
@@ -129,5 +142,3 @@ All endpoints require Bearer token authentication.
 - Rate limiting via slowapi (5–10 req/min per endpoint)
 - Prompt injection protection on AI endpoints
 - All secrets in environment variables, never in code
-
----
