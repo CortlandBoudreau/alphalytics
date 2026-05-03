@@ -1,5 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Depends, Query, BackgroundTasks
-from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeout
+from fastapi import FastAPI, Request, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -16,11 +15,7 @@ import os
 import json
 import math
 
-class _TimeoutSession(requests.Session):
-    """requests.Session that enforces a hard socket-level timeout on every call."""
-    def request(self, method, url, **kwargs):
-        kwargs.setdefault("timeout", 10)
-        return super().request(method, url, **kwargs)
+FMP_BASE = "https://financialmodelingprep.com/api/v3"
 
 env = os.getenv("ENV", "development")
 env_file = Path(__file__).parent / f".env.{env}"
@@ -158,69 +153,84 @@ def _fmt_mc(n):
         return f"${n/1_000_000:.2f}M"
     return f"${n:,.0f}"
 
-def _fetch_screener_ticker(ticker: str):
-    """Fetch screener metrics for one ticker. Returns dict or None."""
-    try:
-        info = yf.Ticker(ticker, session=_TimeoutSession()).info
-        if not info:
-            return None
-        price = info.get("currentPrice") or info.get("regularMarketPrice")
-        if not price:
-            return None
-        mc = info.get("marketCap", 0)
-        fp = lambda v: round(v * 100, 2) if v is not None else None
-        fr = lambda v: round(v, 2) if v is not None else None
-        return {
-            "ticker": ticker,
-            "name": info.get("longName", ticker),
-            "sector": info.get("sector", "N/A"),
-            "industry": info.get("industry", "N/A"),
-            "price": round(price, 2),
-            "change": round(info.get("regularMarketChangePercent", 0), 2),
-            "marketCap": _fmt_mc(mc),
-            "marketCapRaw": mc,
-            "peRatio": fr(info.get("trailingPE")),
-            "forwardPE": fr(info.get("forwardPE")),
-            "psRatio": fr(info.get("priceToSalesTrailing12Months")),
-            "revenueGrowth": fp(info.get("revenueGrowth")),
-            "epsGrowth": fp(info.get("earningsGrowth")),
-            "grossMargin": fp(info.get("grossMargins")),
-            "netMargin": fp(info.get("profitMargins")),
-            "roe": fp(info.get("returnOnEquity")),
-            "debtToEquity": fr(info.get("debtToEquity")),
-        }
-    except Exception as e:
-        print(f"Screener skip {ticker}: {e}")
-        return None
-
 def build_screener_data():
-    """Fetch S&P 500 metrics in parallel and cache in Redis."""
-    tickers = get_sp500_tickers()
-    print(f"Building screener data for {len(tickers)} tickers...")
-    results = []
-    # 5 workers: enough parallelism without hammering Yahoo into rate-limiting us.
-    # _TimeoutSession gives each HTTP call a 10s socket timeout so stuck
-    # connections can't block a worker thread indefinitely.
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        futures = {executor.submit(_fetch_screener_ticker, t): t for t in tickers}
-        try:
-            for future in as_completed(futures, timeout=270):
-                try:
-                    data = future.result(timeout=15)
-                    if data:
-                        results.append(data)
-                except Exception as e:
-                    print(f"Screener skip {futures[future]}: {e}")
-        except FuturesTimeout:
-            print(f"Screener build hit overall timeout, saving {len(results)} partial results")
-            for f in futures:
-                f.cancel()
-    if results:
-        print(f"Screener built: {len(results)} stocks")
-        r.setex("screener:data", 86400, json.dumps(results))
-    else:
-        print("Screener build: no results collected")
-    return results
+    """Fetch S&P 500 metrics via FMP and cache in Redis. ~6 API calls total."""
+    api_key = os.getenv("FMP_API_KEY")
+    if not api_key:
+        print("FMP_API_KEY not set")
+        return []
+
+    try:
+        # Step 1: screener endpoint → sector, industry, basic info
+        resp = requests.get(
+            f"{FMP_BASE}/stock-screener",
+            params={"exchange": "NYSE,NASDAQ", "limit": 1000, "apikey": api_key},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        by_symbol = {
+            s["symbol"]: s for s in resp.json()
+            if s.get("symbol") and s.get("isActivelyTrading")
+        }
+
+        # Filter to our S&P 500 list so the screener universe stays consistent
+        sp500 = get_sp500_tickers()
+        tickers = [t for t in sp500 if t in by_symbol]
+        if not tickers:
+            print("FMP screener returned no S&P 500 matches")
+            return []
+
+        # Step 2: batched quote calls → price, change%, PE, marketCap
+        quote_lookup: dict = {}
+        for i in range(0, len(tickers), 100):
+            batch = ",".join(tickers[i:i + 100])
+            q_resp = requests.get(
+                f"{FMP_BASE}/quote/{batch}",
+                params={"apikey": api_key},
+                timeout=30,
+            )
+            if q_resp.ok:
+                for q in q_resp.json():
+                    quote_lookup[q["symbol"]] = q
+
+        # Step 3: merge
+        results = []
+        for ticker in tickers:
+            s = by_symbol.get(ticker, {})
+            q = quote_lookup.get(ticker, {})
+            price = q.get("price") or s.get("price")
+            if not price:
+                continue
+            mc = q.get("marketCap") or s.get("marketCap") or 0
+            pe_raw = q.get("pe")
+            results.append({
+                "ticker": ticker,
+                "name": s.get("companyName", ticker),
+                "sector": s.get("sector") or "N/A",
+                "industry": s.get("industry") or "N/A",
+                "price": round(float(price), 2),
+                "change": round(float(q.get("changesPercentage", 0)), 2),
+                "marketCap": _fmt_mc(mc),
+                "marketCapRaw": mc,
+                "peRatio": round(float(pe_raw), 2) if pe_raw else None,
+                "forwardPE": None,
+                "psRatio": None,
+                "revenueGrowth": None,
+                "epsGrowth": None,
+                "grossMargin": None,
+                "netMargin": None,
+                "roe": None,
+                "debtToEquity": None,
+            })
+
+        print(f"FMP screener built: {len(results)} stocks")
+        if results:
+            r.setex("screener:data", 86400, json.dumps(results))
+        return results
+
+    except Exception as e:
+        print(f"FMP screener error: {e}")
+        return []
 
 @app.on_event("startup")
 async def startup_event():
@@ -228,8 +238,6 @@ async def startup_event():
         load_tickers_into_redis()
     else:
         print("Tickers already cached in Redis")
-    # Clear any stale building flag left over from a previous crashed process
-    r.delete("screener:building")
 
 @app.get("/")
 def read_root():
@@ -348,42 +356,29 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
 
 # ── Screener ───────────────────────────────────────────────────────────────────
 
-def _run_screener_build():
-    try:
-        build_screener_data()
-    except Exception as e:
-        print(f"Screener background build error: {e}")
-    finally:
-        r.delete("screener:building")
-
-
 @app.get("/screener/data")
 @limiter.limit("30/minute")
-async def get_screener_data(request: Request, background_tasks: BackgroundTasks, _: None = Depends(verify_token)):
-    """Return cached screener data, or kick off a background build and return 202."""
+async def get_screener_data(request: Request, _: None = Depends(verify_token)):
+    """Return cached screener data, building inline if not cached (~3-5s on cold start)."""
     cached = r.get("screener:data")
     if cached:
         return json.loads(cached)
 
-    if r.get("screener:building"):
-        raise HTTPException(status_code=202, detail="Screener data is being built. Try again in a moment.")
-
-    r.setex("screener:building", 300, "1")  # 5-min TTL; parallel build finishes in ~2 min
-    background_tasks.add_task(_run_screener_build)
-    raise HTTPException(status_code=202, detail="Screener build started. Try again in a moment.")
+    data = build_screener_data()
+    if not data:
+        raise HTTPException(status_code=503, detail="Failed to build screener data. Check FMP_API_KEY.")
+    return data
 
 
 @app.post("/screener/refresh")
-@limiter.limit("1/hour")
-async def refresh_screener(request: Request, background_tasks: BackgroundTasks, _: None = Depends(verify_token)):
-    """Force rebuild the screener dataset in the background."""
-    if r.get("screener:building"):
-        raise HTTPException(status_code=202, detail="Already building.")
-
+@limiter.limit("5/hour")
+async def refresh_screener(request: Request, _: None = Depends(verify_token)):
+    """Force rebuild the screener dataset."""
     r.delete("screener:data")
-    r.setex("screener:building", 900, "1")
-    background_tasks.add_task(_run_screener_build)
-    return {"status": "building"}
+    data = build_screener_data()
+    if not data:
+        raise HTTPException(status_code=503, detail="Failed to rebuild screener data.")
+    return {"status": "ok", "count": len(data)}
 
 
 # ── Shared helpers ─────────────────────────────────────────────────────────────

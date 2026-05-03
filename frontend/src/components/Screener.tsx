@@ -53,11 +53,6 @@ const MARKET_CAP_OPTIONS = [
   { label: "Small (<$2B)", min: 0, max: 2e9 },
 ]
 
-function fmtPct(v: number | null): string {
-  if (v === null) return "—"
-  return `${v.toFixed(1)}%`
-}
-
 function fmtRatio(v: number | null): string {
   if (v === null) return "—"
   return v.toFixed(1)
@@ -88,7 +83,6 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
 export function Screener({ apiUrl, apiToken }: Props) {
   const [allStocks, setAllStocks] = useState<Stock[]>([])
   const [loading, setLoading] = useState(false)
-  const [building, setBuilding] = useState(false)
   const [error, setError] = useState("")
   const [sortKey, setSortKey] = useState<SortKey>("marketCapRaw")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
@@ -113,20 +107,12 @@ export function Screener({ apiUrl, apiToken }: Props) {
     setError("")
     try {
       const res = await fetch(`${apiUrl}/screener/data`, { headers })
-      if (res.status === 202) {
-        setBuilding(true)
-        setLoading(false)
-        // Poll every 30s while building (~490 tickers takes several minutes)
-        setTimeout(fetchData, 30000)
-        return
-      }
       if (!res.ok) {
         const json = await res.json()
         throw new Error(json.detail || "Failed to load screener data")
       }
       const data = await res.json()
       setAllStocks(data)
-      setBuilding(false)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to load")
     } finally {
@@ -183,18 +169,13 @@ export function Screener({ apiUrl, apiToken }: Props) {
   }
 
   const cols: { label: string; key: SortKey; fmt: (s: Stock) => string; colorFn?: (s: Stock) => string }[] = [
-    { label: "Ticker",    key: "ticker",       fmt: s => s.ticker },
-    { label: "Name",      key: "name",         fmt: s => s.name },
-    { label: "Sector",    key: "sector",       fmt: s => s.sector },
-    { label: "Price",     key: "price",        fmt: s => `$${s.price.toFixed(2)}` },
-    { label: "Change",    key: "change",       fmt: s => `${s.change.toFixed(2)}%`, colorFn: s => s.change >= 0 ? "text-green-500" : "text-red-500" },
-    { label: "Mkt Cap",   key: "marketCapRaw", fmt: s => s.marketCap },
-    { label: "P/E",       key: "peRatio",      fmt: s => fmtRatio(s.peRatio) },
-    { label: "Fwd P/E",   key: "forwardPE",    fmt: s => fmtRatio(s.forwardPE) },
-    { label: "Rev Gr%",   key: "revenueGrowth",fmt: s => fmtPct(s.revenueGrowth), colorFn: s => s.revenueGrowth !== null ? (s.revenueGrowth >= 0 ? "text-green-500" : "text-red-500") : "" },
-    { label: "EPS Gr%",   key: "epsGrowth",    fmt: s => fmtPct(s.epsGrowth),     colorFn: s => s.epsGrowth !== null ? (s.epsGrowth >= 0 ? "text-green-500" : "text-red-500") : "" },
-    { label: "Gross Mg",  key: "grossMargin",  fmt: s => fmtPct(s.grossMargin) },
-    { label: "Net Mg",    key: "netMargin",    fmt: s => fmtPct(s.netMargin),     colorFn: s => s.netMargin !== null ? (s.netMargin >= 0 ? "text-green-500" : "text-red-500") : "" },
+    { label: "Ticker",  key: "ticker",       fmt: s => s.ticker },
+    { label: "Name",    key: "name",         fmt: s => s.name },
+    { label: "Sector",  key: "sector",       fmt: s => s.sector },
+    { label: "Price",   key: "price",        fmt: s => `$${s.price.toFixed(2)}` },
+    { label: "Change",  key: "change",       fmt: s => `${s.change.toFixed(2)}%`, colorFn: s => s.change >= 0 ? "text-green-500" : "text-red-500" },
+    { label: "Mkt Cap", key: "marketCapRaw", fmt: s => s.marketCap },
+    { label: "P/E",     key: "peRatio",      fmt: s => fmtRatio(s.peRatio) },
   ]
 
   return (
@@ -238,12 +219,7 @@ export function Screener({ apiUrl, apiToken }: Props) {
               </select>
             </div>
 
-            <FilterInput label="Min Revenue Growth (%)" placeholder="e.g. 10" value={minRevenueGrowth} onChange={setMinRevenueGrowth} />
             <FilterInput label="Max P/E Ratio" placeholder="e.g. 30" value={maxPE} onChange={setMaxPE} />
-            <FilterInput label="Max Forward P/E" placeholder="e.g. 25" value={maxForwardPE} onChange={setMaxForwardPE} />
-            <FilterInput label="Min Net Margin (%)" placeholder="e.g. 10" value={minNetMargin} onChange={setMinNetMargin} />
-            <FilterInput label="Min Gross Margin (%)" placeholder="e.g. 40" value={minGrossMargin} onChange={setMinGrossMargin} />
-            <FilterInput label="Min EPS Growth (%)" placeholder="e.g. 15" value={minEpsGrowth} onChange={setMinEpsGrowth} />
           </div>
         </CardContent>
       </Card>
@@ -272,11 +248,11 @@ export function Screener({ apiUrl, apiToken }: Props) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {loading && !building && (
+          {loading && (
             <div className="space-y-4">
               <div className="text-center py-4">
-                <p className="text-sm text-muted-foreground">Loading screener data for 300+ stocks...</p>
-                <p className="text-xs text-muted-foreground mt-1">First load may take 1-2 minutes. Cached for 24 hours after.</p>
+                <p className="text-sm text-muted-foreground">Loading screener data...</p>
+                <p className="text-xs text-muted-foreground mt-1">First load fetches live data and caches for 24 hours.</p>
               </div>
               <div className="space-y-3 animate-pulse">
                 {[...Array(8)].map((_, i) => (
@@ -293,23 +269,9 @@ export function Screener({ apiUrl, apiToken }: Props) {
             </div>
           )}
 
-          {building && (
-            <div className="text-center py-12 space-y-3">
-              <div className="text-muted-foreground text-sm">
-                Building screener data for {SP500_COUNT}+ stocks...
-              </div>
-              <div className="text-xs text-muted-foreground">This takes 2-3 minutes on first load, then caches for 24 hours.</div>
-              <div className="flex justify-center gap-1 mt-4">
-                {[0,1,2].map(i => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
-                ))}
-              </div>
-            </div>
-          )}
-
           {error && <p className="text-destructive text-sm">{error}</p>}
 
-          {!loading && !building && allStocks.length > 0 && (
+          {!loading && allStocks.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -367,5 +329,3 @@ export function Screener({ apiUrl, apiToken }: Props) {
   )
 }
 
-// Constant for display only
-const SP500_COUNT = 300
