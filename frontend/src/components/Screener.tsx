@@ -21,6 +21,9 @@ type Stock = {
 type Props = {
   apiUrl: string
   apiToken: string
+  watchlist: string[]
+  onNavigate: (ticker: string) => void
+  onToggleWatchlist: (ticker: string) => void
 }
 
 type SortKey = keyof Stock
@@ -76,7 +79,7 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   return <span className="text-primary ml-1">{dir === "asc" ? "↑" : "↓"}</span>
 }
 
-export function Screener({ apiUrl, apiToken }: Props) {
+export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatchlist }: Props) {
   const [allStocks, setAllStocks] = useState<Stock[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -286,6 +289,7 @@ export function Screener({ apiUrl, apiToken }: Props) {
                         <SortIcon active={sortKey === col.key} dir={sortDir} />
                       </th>
                     ))}
+                    <th className="py-2 px-2 w-6" />
                   </tr>
                 </thead>
                 <tbody>
@@ -297,7 +301,11 @@ export function Screener({ apiUrl, apiToken }: Props) {
                     </tr>
                   )}
                   {filtered.slice(0, 200).map(s => (
-                    <tr key={s.ticker} className="border-b border-border hover:bg-secondary transition-colors">
+                    <tr
+                      key={s.ticker}
+                      className="border-b border-border hover:bg-secondary transition-colors cursor-pointer"
+                      onClick={() => onNavigate(s.ticker)}
+                    >
                       {cols.map((col, i) => (
                         <td
                           key={col.key}
@@ -312,6 +320,14 @@ export function Screener({ apiUrl, apiToken }: Props) {
                           )}
                         </td>
                       ))}
+                      <td
+                        className="py-2.5 px-2 text-right"
+                        onClick={e => { e.stopPropagation(); onToggleWatchlist(s.ticker) }}
+                      >
+                        <span className={`text-sm ${watchlist.includes(s.ticker) ? "text-yellow-400" : "text-muted-foreground hover:text-foreground"}`}>
+                          {watchlist.includes(s.ticker) ? "★" : "☆"}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

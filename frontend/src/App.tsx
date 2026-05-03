@@ -451,7 +451,13 @@ function App() {
 
         {/* Screener Tab */}
         {activeTab === "screener" && (
-          <Screener apiUrl={API_URL} apiToken={API_TOKEN} />
+          <Screener
+            apiUrl={API_URL}
+            apiToken={API_TOKEN}
+            watchlist={watchlist}
+            onNavigate={handleWatchlistNavigate}
+            onToggleWatchlist={toggleWatchlist}
+          />
         )}
 
         {/* Watchlist Tab */}
