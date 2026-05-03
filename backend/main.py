@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Depends, Query
+from fastapi import FastAPI, Request, HTTPException, Depends, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -62,34 +62,44 @@ client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 # ── S&P 500 ticker universe ────────────────────────────────────────────────────
 
 SP500_TICKERS = [
-    'AAPL','MSFT','NVDA','AMZN','GOOGL','GOOG','META','BRK-B','TSLA','AVGO',
-    'JPM','LLY','V','UNH','XOM','MA','COST','HD','PG','JNJ',
-    'ABBV','BAC','NFLX','CRM','CVX','MRK','WMT','KO','PEP','ORCL',
-    'TMO','ACN','MCD','CSCO','ABT','AMD','GE','DHR','LIN','ADBE',
-    'IBM','NOW','TXN','PM','QCOM','INTU','GS','ISRG','RTX','NEE',
-    'AMGN','SPGI','CAT','UNP','LOW','HON','UBER','BKNG','MS','T',
-    'AXP','AMAT','SYK','ELV','BLK','DE','VRTX','GILD','MDT','REGN',
-    'PLD','BSX','PANW','ADI','MU','LRCX','KLAC','ETN','CB','SO',
-    'DUK','CI','MMC','ZTS','CME','TJX','WFC','AON','ICE','ITW',
-    'EMR','SHW','APH','MCO','PH','CDNS','SNPS','WELL','MCK','NOC',
-    'GD','FI','CTAS','ECL','HCA','EW','COF','USB','NSC','HUM',
-    'F','GM','PYPL','INTC','DELL','HPQ','MO','PSA','WM','RSG',
-    'CARR','OTIS','PWR','FAST','ODFL','VRSK','IDXX','IQV','FICO','MPWR',
-    'NEM','FCX','DOW','LYB','PPG','APD','NUE','STLD','MLM','VMC',
-    'IR','XYL','CTSH','ANSS','PTC','CSX','KDP','STZ','CL','GIS',
-    'K','CPB','HRL','MKC','TSN','CAG','MDLZ','MNST','ADM','CF',
-    'ALB','BALL','PKG','IP','AMCR','CCK','DG','DLTR','TGT','KR',
-    'SYY','BDX','BAX','HOLX','ALGN','DXCM','ILMN','MTD','WAT','A',
-    'PFE','BMY','BIIB','MRNA','LMT','BA','HII','TDG','HEI','TXT',
-    'SPG','AMT','CCI','EQIX','DLR','EXR','VTR','SBAC','SBA',
-    'NEE','EXC','AEP','XEL','WEC','ES','CMS','AWK','SRE','PCG',
-    'CVX','COP','EOG','PXD','DVN','APA','MRO','OXY','HES','VLO',
-    'PSX','MPC','LMT','RTX','NOC','GD','BA','SCHW','STT','BK',
-    'AIG','MET','PRU','LNC','TRV','ALL','PGR','CINF',
-    'SNOW','DDOG','ZS','CRWD','NET','OKTA','MDB','ESTC','GTLB','HUBS',
-    'SHOP','SQ','COIN','HOOD','SOFI','AFRM','UPST','LC','DAVE','NU',
-    'PLTR','AI','BBAI','SOUN','ASTS','RKLB','LUNR','PL','SPIR','IRDM',
+    'MMM','AOS','ABT','ABBV','ACN','ADBE','AMD','AES','AFL','A','APD','ABNB','AKAM','ALB','ARE',
+    'ALGN','ALLE','LNT','ALL','GOOGL','GOOG','MO','AMZN','AMCR','AEE','AAL','AEP','AXP','AIG',
+    'AMT','AWK','AMP','AME','AMGN','APH','ADI','ANSS','AON','APA','AAPL','AMAT','APTV','ACGL',
+    'ADM','ANET','AJG','AIZ','T','ATO','ADSK','ADP','AZO','AVB','AVY','AXON','BKR','BALL',
+    'BAC','BAX','BDX','BRK-B','BBY','BIO','TECH','BIIB','BLK','BX','BA','BCR','BSX','BMY',
+    'AVGO','BR','BRO','BF-B','BLDR','BG','CDNS','CZR','CPT','CPB','COF','CAH','KMX','CCL',
+    'CARR','CTLT','CAT','CBOE','CBRE','CDW','CE','COR','CNC','CNX','CDAY','CF','CRL','SCHW',
+    'CHTR','CVX','CMG','CB','CHD','CI','CINF','CTAS','CSCO','C','CFG','CLX','CME','CMS',
+    'KO','CTSH','CL','CMCSA','CMA','CAG','COP','ED','STZ','CEG','COO','CPRT','GLW','CTVA',
+    'CSGP','COST','CTRA','CCI','CSX','CMI','CVS','DHI','DHR','DRI','DVA','DAY','DECK','DE',
+    'DAL','DVN','DXCM','FANG','DLR','DFS','DG','DLTR','D','DPZ','DOV','DOW','DTE',
+    'DUK','DD','EMN','ETN','EBAY','ECL','EIX','EW','EA','ELV','LLY','EMR','ENPH','ETR',
+    'EOG','EPAM','EQT','EFX','EQIX','EQR','ESS','EL','ETSY','EG','EVRG','ES','EXC','EXPE',
+    'EXPD','EXR','XOM','FFIV','FDS','FICO','FAST','FRT','FDX','FIS','FITB','FSLR','FE','FI',
+    'FMC','F','FTNT','FTV','FOXA','FOX','BEN','FCX','GRMN','IT','GE','GEHC','GEN','GNRC',
+    'GD','GIS','GM','GPC','GILD','GPN','GL','GDDY','GS','HAL','HIG','HAS','HCA','DOC',
+    'HSIC','HSY','HES','HPE','HLT','HOLX','HD','HON','HRL','HST','HWM','HPQ','HUBB','HUM',
+    'HBAN','HII','IBM','IEX','IDXX','ITW','INCY','IR','PODD','INTC','ICE','IFF','IP','IPG',
+    'INTU','ISRG','IVZ','INVH','IQV','IRM','JBHT','JBL','JKHY','J','JNJ','JCI','JPM','JNPR',
+    'K','KVUE','KDP','KEY','KEYS','KMB','KIM','KMI','KLAC','KHC','KR','LHX','LH','LRCX',
+    'LW','LVS','LDOS','LEN','LNC','LIN','LYV','LKQ','LMT','L','LOW','LULU','LYB','MTB',
+    'MRO','MPC','MKTX','MAR','MMC','MLM','MAS','MA','MTCH','MKC','MCD','MCK','MDT','MRK',
+    'META','MET','MTD','MGM','MCHP','MU','MSFT','MAA','MRNA','MHK','MOH','TAP','MDLZ',
+    'MPWR','MNST','MCO','MS','MOS','MSI','MSCI','NDAQ','NTAP','NFLX','NEM','NWSA','NWS',
+    'NEE','NKE','NI','NDSN','NSC','NTRS','NOC','NCLH','NRG','NUE','NVDA','NVR','NXPI',
+    'ORLY','OXY','ODFL','OMC','ON','OKE','ORCL','OTIS','OGN','PCAR','PKG','PANW',
+    'PH','PAYX','PAYC','PYPL','PNR','PEP','PFE','PCG','PM','PSX','PNW','PNC','POOL',
+    'PPG','PPL','PFG','PG','PGR','PLD','PRU','PEG','PTC','PSA','PHM','QRVO','PWR','QCOM',
+    'DGX','RL','RJF','RTX','O','REG','REGN','RF','RSG','RMD','RVTY','ROK','ROL','ROP',
+    'ROST','RCL','SPGI','SLB','STX','SRE','NOW','SHW','SPG','SWKS','SJM','SNA','SOLV',
+    'SO','LUV','SWK','SBUX','STT','STLD','STE','SYK','SYF','SNPS','SYY','TMUS','TROW',
+    'TTWO','TPR','TRGP','TGT','TEL','TDY','TFX','TER','TSLA','TXN','TXT','TMO','TJX',
+    'TSCO','TT','TDG','TRV','TRMB','TFC','TYL','TSN','USB','UDR','ULTA','UNP','UAL',
+    'UPS','URI','UNH','UHS','VLO','VTR','VLTO','VRSN','VRSK','VZ','VRTX','VICI','V',
+    'VMC','WRB','WAB','WMT','WBA','WM','WAT','WEC','WFC','WELL','WST','WDC','WRK','WY',
+    'WHR','WMB','WTW','GWW','WYNN','XEL','XYL','YUM','ZBRA','ZBH','ZTS',
 ]
+SP500_TICKERS = list(dict.fromkeys(SP500_TICKERS))
 
 def get_sp500_tickers():
     """Fetch current S&P 500 tickers from Wikipedia."""
@@ -320,45 +330,42 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
 
 # ── Screener ───────────────────────────────────────────────────────────────────
 
+def _run_screener_build():
+    try:
+        build_screener_data()
+    except Exception as e:
+        print(f"Screener background build error: {e}")
+    finally:
+        r.delete("screener:building")
+
+
 @app.get("/screener/data")
 @limiter.limit("5/minute")
-async def get_screener_data(request: Request, _: None = Depends(verify_token)):
-    """Return the full screener dataset. Build if not cached."""
+async def get_screener_data(request: Request, background_tasks: BackgroundTasks, _: None = Depends(verify_token)):
+    """Return cached screener data, or kick off a background build and return 202."""
     cached = r.get("screener:data")
     if cached:
         return json.loads(cached)
-    # Build on first request (takes ~2-3 min for 300+ tickers)
-    # Return building status so frontend can poll
-    building = r.get("screener:building")
-    if building:
+
+    if r.get("screener:building"):
         raise HTTPException(status_code=202, detail="Screener data is being built. Try again in a moment.")
-    # Kick off build
-    r.setex("screener:building", 300, "1")
-    try:
-        data = build_screener_data()
-        r.delete("screener:building")
-        return data
-    except Exception as e:
-        r.delete("screener:building")
-        raise HTTPException(status_code=500, detail=str(e))
+
+    r.setex("screener:building", 900, "1")  # 15-min safety TTL for ~500 tickers
+    background_tasks.add_task(_run_screener_build)
+    raise HTTPException(status_code=202, detail="Screener build started. Try again in a moment.")
 
 
 @app.post("/screener/refresh")
 @limiter.limit("1/hour")
-async def refresh_screener(request: Request, _: None = Depends(verify_token)):
-    """Force rebuild the screener dataset."""
-    r.delete("screener:data")
-    building = r.get("screener:building")
-    if building:
+async def refresh_screener(request: Request, background_tasks: BackgroundTasks, _: None = Depends(verify_token)):
+    """Force rebuild the screener dataset in the background."""
+    if r.get("screener:building"):
         raise HTTPException(status_code=202, detail="Already building.")
-    r.setex("screener:building", 300, "1")
-    try:
-        data = build_screener_data()
-        r.delete("screener:building")
-        return {"status": "ok", "count": len(data)}
-    except Exception as e:
-        r.delete("screener:building")
-        raise HTTPException(status_code=500, detail=str(e))
+
+    r.delete("screener:data")
+    r.setex("screener:building", 900, "1")
+    background_tasks.add_task(_run_screener_build)
+    return {"status": "building"}
 
 
 # ── Shared helpers ─────────────────────────────────────────────────────────────
