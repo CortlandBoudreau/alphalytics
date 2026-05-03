@@ -116,8 +116,8 @@ export function Screener({ apiUrl, apiToken }: Props) {
       if (res.status === 202) {
         setBuilding(true)
         setLoading(false)
-        // Poll every 10s while building
-        setTimeout(fetchData, 10000)
+        // Poll every 30s while building (~490 tickers takes several minutes)
+        setTimeout(fetchData, 30000)
         return
       }
       if (!res.ok) {
