@@ -384,7 +384,7 @@ function StatementTable({ quarters, groups }: { quarters: { label: string }[]; g
 
 // ── Income Tab ─────────────────────────────────────────────────────────────────
 
-function IncomeTab({ data, grading }: { data: IncomeData; grading: IncomeGrading | null }) {
+function IncomeTab({ data, grading, period }: { data: IncomeData; grading: IncomeGrading | null; period: "quarterly" | "annual" }) {
   const groups: GroupDef[] = [
     {
       title: "Revenue",
@@ -461,7 +461,7 @@ function IncomeTab({ data, grading }: { data: IncomeData; grading: IncomeGrading
 
       <Card>
         <CardHeader>
-          <CardTitle>Income Statements — Last 4 Quarters</CardTitle>
+          <CardTitle>Income Statements — Last 4 {period === "annual" ? "Years" : "Quarters"}</CardTitle>
           <p className="text-xs text-muted-foreground">Values in millions (M) or billions (B). YoY = year-over-year change.</p>
         </CardHeader>
         <CardContent>
@@ -475,7 +475,7 @@ function IncomeTab({ data, grading }: { data: IncomeData; grading: IncomeGrading
 
 // ── Balance Sheet Tab ──────────────────────────────────────────────────────────
 
-function BalanceTab({ data, analysis }: { data: BalanceData; analysis: BalanceAnalysis | null }) {
+function BalanceTab({ data, analysis, period }: { data: BalanceData; analysis: BalanceAnalysis | null; period: "quarterly" | "annual" }) {
   const groups: GroupDef[] = [
     {
       title: "Assets",
@@ -546,7 +546,7 @@ function BalanceTab({ data, analysis }: { data: BalanceData; analysis: BalanceAn
 
       <Card>
         <CardHeader>
-          <CardTitle>Balance Sheet — Last 4 Quarters</CardTitle>
+          <CardTitle>Balance Sheet — Last 4 {period === "annual" ? "Years" : "Quarters"}</CardTitle>
           <p className="text-xs text-muted-foreground">Values in millions (M) or billions (B). YoY = year-over-year change.</p>
         </CardHeader>
         <CardContent>
@@ -560,7 +560,7 @@ function BalanceTab({ data, analysis }: { data: BalanceData; analysis: BalanceAn
 
 // ── Cash Flow Tab ──────────────────────────────────────────────────────────────
 
-function CashflowTab({ data, analysis }: { data: CashflowData; analysis: CashflowAnalysis | null }) {
+function CashflowTab({ data, analysis, period }: { data: CashflowData; analysis: CashflowAnalysis | null; period: "quarterly" | "annual" }) {
   const groups: GroupDef[] = [
     {
       title: "Operating Activities",
@@ -627,7 +627,7 @@ function CashflowTab({ data, analysis }: { data: CashflowData; analysis: Cashflo
 
       <Card>
         <CardHeader>
-          <CardTitle>Cash Flow — Last 4 Quarters</CardTitle>
+          <CardTitle>Cash Flow — Last 4 {period === "annual" ? "Years" : "Quarters"}</CardTitle>
           <p className="text-xs text-muted-foreground">Values in millions (M) or billions (B). YoY = year-over-year change.</p>
         </CardHeader>
         <CardContent>
@@ -656,6 +656,8 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
   const [balanceAnalysis, setBalanceAnalysis] = useState<BalanceAnalysis | null>(null)
   const [cashflowAnalysis, setCashflowAnalysis] = useState<CashflowAnalysis | null>(null)
 
+  const [period, setPeriod] = useState<"quarterly" | "annual">("quarterly")
+
   const [loading, setLoading] = useState(false)
   const [tabLoading, setTabLoading] = useState(false)
   const [error, setError] = useState("")
@@ -674,8 +676,8 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
     return json
   }
 
-  const fetchAnalysisInBackground = (t: string, type: "income" | "balance" | "cashflow") => {
-    apiFetch(`/${type}/${t}/analysis`)
+  const fetchAnalysisInBackground = (t: string, type: "income" | "balance" | "cashflow", p: string) => {
+    apiFetch(`/${type}/${t}/analysis?period=${p}`)
       .then((data) => {
         if (type === "income") setIncomeGrading(data)
         if (type === "balance") setBalanceAnalysis(data)
@@ -694,9 +696,10 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
     setShowSuggestions(true)
   }
 
-  const handleSearch = async (overrideTicker?: string) => {
+  const handleSearch = async (overrideTicker?: string, overridePeriod?: "quarterly" | "annual") => {
     const t = overrideTicker || ticker
     if (!t.trim()) return
+    const p = overridePeriod ?? period
 
     setLoading(true)
     setError("")
@@ -709,12 +712,12 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
     setActiveTab("income")
 
     try {
-      const data = await apiFetch(`/income/${t}`)
+      const data = await apiFetch(`/income/${t}?period=${p}`)
       setIncomeData(data)
       setResolvedTicker(data.ticker)
       setResolvedName(data.name)
       setResolvedSector(data.sector)
-      fetchAnalysisInBackground(t, "income")
+      fetchAnalysisInBackground(data.ticker, "income", p)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to fetch")
     } finally {
@@ -731,18 +734,44 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
     setTabLoading(true)
     try {
       if (tab === "balance") {
-        const data = await apiFetch(`/balance/${resolvedTicker}`)
+        const data = await apiFetch(`/balance/${resolvedTicker}?period=${period}`)
         setBalanceData(data)
-        fetchAnalysisInBackground(resolvedTicker, "balance")
+        fetchAnalysisInBackground(resolvedTicker, "balance", period)
       } else if (tab === "cashflow") {
-        const data = await apiFetch(`/cashflow/${resolvedTicker}`)
+        const data = await apiFetch(`/cashflow/${resolvedTicker}?period=${period}`)
         setCashflowData(data)
-        fetchAnalysisInBackground(resolvedTicker, "cashflow")
+        fetchAnalysisInBackground(resolvedTicker, "cashflow", period)
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to fetch")
     } finally {
       setTabLoading(false)
+    }
+  }
+
+  const handlePeriodChange = async (newPeriod: "quarterly" | "annual") => {
+    if (newPeriod === period) return
+    setPeriod(newPeriod)
+    if (!resolvedTicker) return
+
+    setIncomeData(null)
+    setBalanceData(null)
+    setCashflowData(null)
+    setIncomeGrading(null)
+    setBalanceAnalysis(null)
+    setCashflowAnalysis(null)
+    setActiveTab("income")
+    setError("")
+
+    setLoading(true)
+    try {
+      const data = await apiFetch(`/income/${resolvedTicker}?period=${newPeriod}`)
+      setIncomeData(data)
+      fetchAnalysisInBackground(data.ticker, "income", newPeriod)
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to fetch")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -815,20 +844,37 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
             <span className="text-muted-foreground text-sm">{resolvedName}</span>
           </div>
 
-          <div className="flex gap-1">
-            {TABS.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => handleTabChange(key)}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === key
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex gap-1">
+              {TABS.map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => handleTabChange(key)}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === key
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-1">
+              {(["quarterly", "annual"] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => handlePeriodChange(p)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium capitalize transition-colors ${
+                    period === p
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  }`}
+                >
+                  {p === "quarterly" ? "Quarterly" : "Annual"}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Tab loading skeleton */}
@@ -840,13 +886,13 @@ export function Financials({ apiUrl, apiToken, allTickers }: Props) {
           )}
 
           {!tabLoading && activeTab === "income" && (
-            <IncomeTab data={incomeData} grading={incomeGrading} />
+            <IncomeTab data={incomeData} grading={incomeGrading} period={period} />
           )}
           {!tabLoading && activeTab === "balance" && balanceData && (
-            <BalanceTab data={balanceData} analysis={balanceAnalysis} />
+            <BalanceTab data={balanceData} analysis={balanceAnalysis} period={period} />
           )}
           {!tabLoading && activeTab === "cashflow" && cashflowData && (
-            <CashflowTab data={cashflowData} analysis={cashflowAnalysis} />
+            <CashflowTab data={cashflowData} analysis={cashflowAnalysis} period={period} />
           )}
         </>
       )}

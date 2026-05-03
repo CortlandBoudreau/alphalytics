@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi import FastAPI, Request, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -409,18 +409,23 @@ def call_claude(prompt: str, max_tokens: int = 512) -> dict:
 
 # ── Income Statement ───────────────────────────────────────────────────────────
 
-def build_income_quarters(ticker: str):
+def build_income_quarters(ticker: str, period: str = "quarterly"):
     stock = yf.Ticker(ticker)
     info = stock.info
 
     if not info or ("regularMarketPrice" not in info and "currentPrice" not in info):
         raise HTTPException(status_code=404, detail="Stock not found")
 
-    stmt = stock.quarterly_income_stmt
-    if stmt is None or stmt.empty:
-        stmt = stock.quarterly_financials
-    if stmt is None or stmt.empty:
-        raise HTTPException(status_code=404, detail="Income statement data not available")
+    if period == "annual":
+        stmt = stock.income_stmt
+        if stmt is None or stmt.empty:
+            raise HTTPException(status_code=404, detail="Annual income statement data not available")
+    else:
+        stmt = stock.quarterly_income_stmt
+        if stmt is None or stmt.empty:
+            stmt = stock.quarterly_financials
+        if stmt is None or stmt.empty:
+            raise HTTPException(status_code=404, detail="Income statement data not available")
 
     quarters = get_quarters(stmt)
 
@@ -446,7 +451,10 @@ def build_income_quarters(ticker: str):
 
     quarter_data = []
     for i, col in enumerate(quarters):
-        label    = f"Q{col.quarter} {col.year}" if hasattr(col, 'quarter') else str(col)[:7]
+        if period == "annual":
+            label = str(col.year) if hasattr(col, 'year') else str(col)[:4]
+        else:
+            label = f"Q{col.quarter} {col.year}" if hasattr(col, 'quarter') else str(col)[:7]
         prev_col = quarters[i + 1] if i + 1 < len(quarters) else None
 
         def pv(key):
@@ -514,18 +522,19 @@ def build_income_quarters(ticker: str):
 
 @app.get("/income/{ticker}")
 @limiter.limit("10/minute")
-async def get_income(request: Request, ticker: str, _: None = Depends(verify_token)):
+async def get_income(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
     ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
     if not ticker or len(ticker) > 10:
         raise HTTPException(status_code=400, detail="Invalid ticker")
+    period = period if period in ("quarterly", "annual") else "quarterly"
 
-    cache_key = f"income:data:{ticker}"
+    cache_key = f"income:data:{ticker}:{period}"
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
 
     try:
-        quarter_data, info = build_income_quarters(ticker)
+        quarter_data, info = build_income_quarters(ticker, period)
         result = {
             "ticker": ticker,
             "name": info.get("longName", ticker),
@@ -543,20 +552,23 @@ async def get_income(request: Request, ticker: str, _: None = Depends(verify_tok
 
 @app.get("/income/{ticker}/analysis")
 @limiter.limit("5/minute")
-async def get_income_analysis(request: Request, ticker: str, _: None = Depends(verify_token)):
+async def get_income_analysis(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
     ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
     if not ticker or len(ticker) > 10:
         raise HTTPException(status_code=400, detail="Invalid ticker")
+    period = period if period in ("quarterly", "annual") else "quarterly"
 
-    cache_key = f"income:analysis:{ticker}"
+    cache_key = f"income:analysis:{ticker}:{period}"
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
 
     try:
-        quarter_data, info = build_income_quarters(ticker)
+        quarter_data, info = build_income_quarters(ticker, period)
         sector = info.get("sector", "Unknown")
         name   = info.get("longName", ticker)
+        period_word = "annual" if period == "annual" else "quarterly"
+        period_unit = "year" if period == "annual" else "quarter"
 
         quarters_summary = []
         for q in quarter_data:
@@ -573,9 +585,9 @@ async def get_income_analysis(request: Request, ticker: str, _: None = Depends(v
   EBITDA: ${q['ebitda']}M | Tax: ${q['taxProvision']}M
 """)
 
-        prompt = f"""You are a financial analyst grading quarterly income statements for {name} ({ticker}), sector: {sector}.
+        prompt = f"""You are a financial analyst grading {period_word} income statements for {name} ({ticker}), sector: {sector}.
 
-Grade each quarter AND provide an overall grade: A+, A, A-, B+, B, B-, C+, C, C-, D, F
+Grade each {period_unit} AND provide an overall grade: A+, A, A-, B+, B, B-, C+, C, C-, D, F
 
 Criteria (contextual by sector):
 - Revenue growth rate and trend
@@ -610,14 +622,17 @@ Return ONLY this JSON, no markdown, no backticks:
 
 # ── Balance Sheet ──────────────────────────────────────────────────────────────
 
-def build_balance_quarters(ticker: str):
+def build_balance_quarters(ticker: str, period: str = "quarterly"):
     stock = yf.Ticker(ticker)
     info  = stock.info
 
     if not info or ("regularMarketPrice" not in info and "currentPrice" not in info):
         raise HTTPException(status_code=404, detail="Stock not found")
 
-    stmt = stock.quarterly_balance_sheet
+    if period == "annual":
+        stmt = stock.balance_sheet
+    else:
+        stmt = stock.quarterly_balance_sheet
     if stmt is None or stmt.empty:
         raise HTTPException(status_code=404, detail="Balance sheet data not available")
 
@@ -650,7 +665,10 @@ def build_balance_quarters(ticker: str):
 
     quarter_data = []
     for i, col in enumerate(quarters):
-        label    = f"Q{col.quarter} {col.year}" if hasattr(col, 'quarter') else str(col)[:7]
+        if period == "annual":
+            label = str(col.year) if hasattr(col, 'year') else str(col)[:4]
+        else:
+            label = f"Q{col.quarter} {col.year}" if hasattr(col, 'quarter') else str(col)[:7]
         prev_col = quarters[i + 1] if i + 1 < len(quarters) else None
 
         def pv(key):
@@ -724,18 +742,19 @@ def build_balance_quarters(ticker: str):
 
 @app.get("/balance/{ticker}")
 @limiter.limit("10/minute")
-async def get_balance(request: Request, ticker: str, _: None = Depends(verify_token)):
+async def get_balance(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
     ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
     if not ticker or len(ticker) > 10:
         raise HTTPException(status_code=400, detail="Invalid ticker")
+    period = period if period in ("quarterly", "annual") else "quarterly"
 
-    cache_key = f"balance:data:{ticker}"
+    cache_key = f"balance:data:{ticker}:{period}"
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
 
     try:
-        quarter_data, info = build_balance_quarters(ticker)
+        quarter_data, info = build_balance_quarters(ticker, period)
         result = {
             "ticker": ticker,
             "name": info.get("longName", ticker),
@@ -753,18 +772,19 @@ async def get_balance(request: Request, ticker: str, _: None = Depends(verify_to
 
 @app.get("/balance/{ticker}/analysis")
 @limiter.limit("5/minute")
-async def get_balance_analysis(request: Request, ticker: str, _: None = Depends(verify_token)):
+async def get_balance_analysis(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
     ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
     if not ticker or len(ticker) > 10:
         raise HTTPException(status_code=400, detail="Invalid ticker")
+    period = period if period in ("quarterly", "annual") else "quarterly"
 
-    cache_key = f"balance:analysis:{ticker}"
+    cache_key = f"balance:analysis:{ticker}:{period}"
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
 
     try:
-        quarter_data, info = build_balance_quarters(ticker)
+        quarter_data, info = build_balance_quarters(ticker, period)
         sector = info.get("sector", "Unknown")
         name   = info.get("longName", ticker)
         q      = quarter_data[0]
@@ -801,14 +821,17 @@ Return ONLY this JSON, no markdown, no backticks:
 
 # ── Cash Flow ──────────────────────────────────────────────────────────────────
 
-def build_cashflow_quarters(ticker: str):
+def build_cashflow_quarters(ticker: str, period: str = "quarterly"):
     stock = yf.Ticker(ticker)
     info  = stock.info
 
     if not info or ("regularMarketPrice" not in info and "currentPrice" not in info):
         raise HTTPException(status_code=404, detail="Stock not found")
 
-    stmt = stock.quarterly_cashflow
+    if period == "annual":
+        stmt = stock.cashflow
+    else:
+        stmt = stock.quarterly_cashflow
     if stmt is None or stmt.empty:
         raise HTTPException(status_code=404, detail="Cash flow data not available")
 
@@ -839,7 +862,10 @@ def build_cashflow_quarters(ticker: str):
 
     quarter_data = []
     for i, col in enumerate(quarters):
-        label    = f"Q{col.quarter} {col.year}" if hasattr(col, 'quarter') else str(col)[:7]
+        if period == "annual":
+            label = str(col.year) if hasattr(col, 'year') else str(col)[:4]
+        else:
+            label = f"Q{col.quarter} {col.year}" if hasattr(col, 'quarter') else str(col)[:7]
         prev_col = quarters[i + 1] if i + 1 < len(quarters) else None
 
         def pv(key):
@@ -904,18 +930,19 @@ def build_cashflow_quarters(ticker: str):
 
 @app.get("/cashflow/{ticker}")
 @limiter.limit("10/minute")
-async def get_cashflow(request: Request, ticker: str, _: None = Depends(verify_token)):
+async def get_cashflow(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
     ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
     if not ticker or len(ticker) > 10:
         raise HTTPException(status_code=400, detail="Invalid ticker")
+    period = period if period in ("quarterly", "annual") else "quarterly"
 
-    cache_key = f"cashflow:data:{ticker}"
+    cache_key = f"cashflow:data:{ticker}:{period}"
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
 
     try:
-        quarter_data, info = build_cashflow_quarters(ticker)
+        quarter_data, info = build_cashflow_quarters(ticker, period)
         result = {
             "ticker": ticker,
             "name": info.get("longName", ticker),
@@ -933,18 +960,19 @@ async def get_cashflow(request: Request, ticker: str, _: None = Depends(verify_t
 
 @app.get("/cashflow/{ticker}/analysis")
 @limiter.limit("5/minute")
-async def get_cashflow_analysis(request: Request, ticker: str, _: None = Depends(verify_token)):
+async def get_cashflow_analysis(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
     ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
     if not ticker or len(ticker) > 10:
         raise HTTPException(status_code=400, detail="Invalid ticker")
+    period = period if period in ("quarterly", "annual") else "quarterly"
 
-    cache_key = f"cashflow:analysis:{ticker}"
+    cache_key = f"cashflow:analysis:{ticker}:{period}"
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
 
     try:
-        quarter_data, info = build_cashflow_quarters(ticker)
+        quarter_data, info = build_cashflow_quarters(ticker, period)
         sector = info.get("sector", "Unknown")
         name   = info.get("longName", ticker)
         q      = quarter_data[0]

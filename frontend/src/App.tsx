@@ -7,6 +7,7 @@ import { Financials } from "@/components/Financials"
 import { Landing } from "@/components/Landing"
 import { CanvasBackground } from "@/components/CanvasBackground"
 import { Screener } from "@/components/Screener"
+import { Watchlist } from "@/components/Watchlist"
 
 type StockData = {
   ticker: string
@@ -39,7 +40,7 @@ type Analysis = {
   disclaimer: string
 }
 
-type Tab = "research" | "income" | "screener" | "compare"
+type Tab = "research" | "income" | "screener" | "compare" | "watchlist"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 const API_TOKEN = import.meta.env.VITE_API_SECRET_TOKEN
@@ -65,6 +66,10 @@ function App() {
   const [suggestions, setSuggestions] = useState<{ ticker: string; name: string }[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [chartTab, setChartTab] = useState<"price" | "revenue">("price")
+  const [watchlist, setWatchlist] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("alphalytics_watchlist") || "[]") }
+    catch { return [] }
+  })
 
   useEffect(() => {
     const fetchTickers = async () => {
@@ -140,6 +145,20 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    localStorage.setItem("alphalytics_watchlist", JSON.stringify(watchlist))
+  }, [watchlist])
+
+  const toggleWatchlist = (t: string) => {
+    setWatchlist((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t])
+  }
+
+  const handleWatchlistNavigate = (t: string) => {
+    setTicker(t)
+    setActiveTab("research")
+    handleSearch(t)
+  }
+
   const sentimentColor = {
     bullish: "text-green-500",
     bearish: "text-red-500",
@@ -151,6 +170,7 @@ function App() {
     { key: "income",    label: "Income" },
     { key: "screener",  label: "Screener" },
     { key: "compare",   label: "Compare" },
+    { key: "watchlist", label: `Watchlist${watchlist.length > 0 ? ` (${watchlist.length})` : ""}` },
   ]
 
   if (showLanding) {
@@ -250,6 +270,13 @@ function App() {
                         <div className="flex items-center gap-3">
                           <h2 className="text-2xl font-bold">{stock.ticker}</h2>
                           <Badge variant="outline">{stock.sector}</Badge>
+                          <button
+                            onClick={() => toggleWatchlist(stock.ticker)}
+                            className="text-xl leading-none hover:scale-110 transition-transform"
+                            title={watchlist.includes(stock.ticker) ? "Remove from watchlist" : "Add to watchlist"}
+                          >
+                            {watchlist.includes(stock.ticker) ? "★" : "☆"}
+                          </button>
                         </div>
                         <p className="text-muted-foreground">{stock.name}</p>
                       </div>
@@ -425,6 +452,17 @@ function App() {
         {/* Screener Tab */}
         {activeTab === "screener" && (
           <Screener apiUrl={API_URL} apiToken={API_TOKEN} />
+        )}
+
+        {/* Watchlist Tab */}
+        {activeTab === "watchlist" && (
+          <Watchlist
+            apiUrl={API_URL}
+            apiToken={API_TOKEN}
+            watchlist={watchlist}
+            onRemove={toggleWatchlist}
+            onNavigate={handleWatchlistNavigate}
+          />
         )}
       </div>
     </div>

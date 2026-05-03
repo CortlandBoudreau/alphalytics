@@ -1,0 +1,23 @@
+# Claude Code
+.claude/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+dist-ssr
+
+# Misc
+.DS_Store
+*.log
