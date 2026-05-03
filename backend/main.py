@@ -26,6 +26,11 @@ env_file = Path(__file__).parent / f".env.{env}"
 if env_file.exists():
     load_dotenv(dotenv_path=env_file, override=True)
 
+print(f"[startup] backend dir: {Path(__file__).parent.resolve()}")
+print(f"[startup] .env exists: {base_env.exists()} ({base_env.resolve()})")
+print(f"[startup] .env.{env} exists: {env_file.exists()} ({env_file.resolve()})")
+print(f"[startup] FMP_API_KEY set: {bool(os.getenv('FMP_API_KEY'))}")
+
 security = HTTPBearer()
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
