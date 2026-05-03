@@ -340,7 +340,7 @@ def _run_screener_build():
 
 
 @app.get("/screener/data")
-@limiter.limit("5/minute")
+@limiter.limit("30/minute")
 async def get_screener_data(request: Request, background_tasks: BackgroundTasks, _: None = Depends(verify_token)):
     """Return cached screener data, or kick off a background build and return 202."""
     cached = r.get("screener:data")
