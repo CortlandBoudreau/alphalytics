@@ -6,6 +6,7 @@ import { Compare } from "@/components/Compare"
 import { Financials } from "@/components/Financials"
 import { Landing } from "@/components/Landing"
 import { CanvasBackground } from "@/components/CanvasBackground"
+import { Screener } from "@/components/Screener"
 
 type StockData = {
   ticker: string
@@ -38,7 +39,7 @@ type Analysis = {
   disclaimer: string
 }
 
-type Tab = "research" | "compare" | "income"
+type Tab = "research" | "income" | "screener" | "compare"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 const API_TOKEN = import.meta.env.VITE_API_SECRET_TOKEN
@@ -146,9 +147,10 @@ function App() {
   }
 
   const NAV_TABS: { key: Tab; label: string }[] = [
-    { key: "research", label: "Research" },
-    { key: "income",   label: "Income" },
-    { key: "compare",  label: "Compare" },
+    { key: "research",  label: "Research" },
+    { key: "income",    label: "Income" },
+    { key: "screener",  label: "Screener" },
+    { key: "compare",   label: "Compare" },
   ]
 
   if (showLanding) {
@@ -420,6 +422,10 @@ function App() {
           <Compare apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
         )}
 
+        {/* Screener Tab */}
+        {activeTab === "screener" && (
+          <Screener apiUrl={API_URL} apiToken={API_TOKEN} />
+        )}
       </div>
     </div>
   )
