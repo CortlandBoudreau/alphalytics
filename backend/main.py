@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, HTTPException, Depends, Query, BackgroundTasks
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError as FuturesTimeout
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -15,6 +15,12 @@ import requests
 import os
 import json
 import math
+
+class _TimeoutSession(requests.Session):
+    """requests.Session that enforces a hard socket-level timeout on every call."""
+    def request(self, method, url, **kwargs):
+        kwargs.setdefault("timeout", 10)
+        return super().request(method, url, **kwargs)
 
 env = os.getenv("ENV", "development")
 env_file = Path(__file__).parent / f".env.{env}"
@@ -155,7 +161,7 @@ def _fmt_mc(n):
 def _fetch_screener_ticker(ticker: str):
     """Fetch screener metrics for one ticker. Returns dict or None."""
     try:
-        info = yf.Ticker(ticker).info
+        info = yf.Ticker(ticker, session=_TimeoutSession()).info
         if not info:
             return None
         price = info.get("currentPrice") or info.get("regularMarketPrice")
@@ -192,17 +198,28 @@ def build_screener_data():
     tickers = get_sp500_tickers()
     print(f"Building screener data for {len(tickers)} tickers...")
     results = []
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    # 5 workers: enough parallelism without hammering Yahoo into rate-limiting us.
+    # _TimeoutSession gives each HTTP call a 10s socket timeout so stuck
+    # connections can't block a worker thread indefinitely.
+    with ThreadPoolExecutor(max_workers=5) as executor:
         futures = {executor.submit(_fetch_screener_ticker, t): t for t in tickers}
-        for future in as_completed(futures):
-            try:
-                data = future.result(timeout=20)
-                if data:
-                    results.append(data)
-            except Exception as e:
-                print(f"Screener future error {futures[future]}: {e}")
-    print(f"Screener built: {len(results)} stocks")
-    r.setex("screener:data", 86400, json.dumps(results))
+        try:
+            for future in as_completed(futures, timeout=270):
+                try:
+                    data = future.result(timeout=15)
+                    if data:
+                        results.append(data)
+                except Exception as e:
+                    print(f"Screener skip {futures[future]}: {e}")
+        except FuturesTimeout:
+            print(f"Screener build hit overall timeout, saving {len(results)} partial results")
+            for f in futures:
+                f.cancel()
+    if results:
+        print(f"Screener built: {len(results)} stocks")
+        r.setex("screener:data", 86400, json.dumps(results))
+    else:
+        print("Screener build: no results collected")
     return results
 
 @app.on_event("startup")
