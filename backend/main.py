@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, HTTPException, Depends, Query, BackgroundTasks
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -140,69 +141,68 @@ def load_tickers_into_redis():
         print(f"Error loading tickers: {str(e)}")
         return []
 
+def _fmt_mc(n):
+    if not n:
+        return None
+    if n >= 1_000_000_000_000:
+        return f"${n/1_000_000_000_000:.2f}T"
+    if n >= 1_000_000_000:
+        return f"${n/1_000_000_000:.2f}B"
+    if n >= 1_000_000:
+        return f"${n/1_000_000:.2f}M"
+    return f"${n:,.0f}"
+
+def _fetch_screener_ticker(ticker: str):
+    """Fetch screener metrics for one ticker. Returns dict or None."""
+    try:
+        info = yf.Ticker(ticker).info
+        if not info:
+            return None
+        price = info.get("currentPrice") or info.get("regularMarketPrice")
+        if not price:
+            return None
+        mc = info.get("marketCap", 0)
+        fp = lambda v: round(v * 100, 2) if v is not None else None
+        fr = lambda v: round(v, 2) if v is not None else None
+        return {
+            "ticker": ticker,
+            "name": info.get("longName", ticker),
+            "sector": info.get("sector", "N/A"),
+            "industry": info.get("industry", "N/A"),
+            "price": round(price, 2),
+            "change": round(info.get("regularMarketChangePercent", 0), 2),
+            "marketCap": _fmt_mc(mc),
+            "marketCapRaw": mc,
+            "peRatio": fr(info.get("trailingPE")),
+            "forwardPE": fr(info.get("forwardPE")),
+            "psRatio": fr(info.get("priceToSalesTrailing12Months")),
+            "revenueGrowth": fp(info.get("revenueGrowth")),
+            "epsGrowth": fp(info.get("earningsGrowth")),
+            "grossMargin": fp(info.get("grossMargins")),
+            "netMargin": fp(info.get("profitMargins")),
+            "roe": fp(info.get("returnOnEquity")),
+            "debtToEquity": fr(info.get("debtToEquity")),
+        }
+    except Exception as e:
+        print(f"Screener skip {ticker}: {e}")
+        return None
+
 def build_screener_data():
-    """Fetch key metrics for all S&P 500 tickers and cache in Redis."""
-    print("Building screener data...")
+    """Fetch S&P 500 metrics in parallel and cache in Redis."""
+    tickers = get_sp500_tickers()
+    print(f"Building screener data for {len(tickers)} tickers...")
     results = []
-    for ticker in get_sp500_tickers():
-        try:
-            stock = yf.Ticker(ticker)
-            info = stock.info
-            if not info:
-                continue
-
-            price = info.get("currentPrice") or info.get("regularMarketPrice")
-            if not price:
-                continue
-
-            market_cap = info.get("marketCap", 0)
-
-            def fmt_mc(n):
-                if not n:
-                    return None
-                if n >= 1_000_000_000_000:
-                    return f"${n/1_000_000_000_000:.2f}T"
-                if n >= 1_000_000_000:
-                    return f"${n/1_000_000_000:.2f}B"
-                if n >= 1_000_000:
-                    return f"${n/1_000_000:.2f}M"
-                return f"${n:,.0f}"
-
-            def fp(v):
-                if v is None:
-                    return None
-                return round(v * 100, 2)
-
-            def fr(v):
-                if v is None:
-                    return None
-                return round(v, 2)
-
-            results.append({
-                "ticker": ticker,
-                "name": info.get("longName", ticker),
-                "sector": info.get("sector", "N/A"),
-                "industry": info.get("industry", "N/A"),
-                "price": round(price, 2),
-                "change": round(info.get("regularMarketChangePercent", 0), 2),
-                "marketCap": fmt_mc(market_cap),
-                "marketCapRaw": market_cap,
-                "peRatio": fr(info.get("trailingPE")),
-                "forwardPE": fr(info.get("forwardPE")),
-                "psRatio": fr(info.get("priceToSalesTrailing12Months")),
-                "revenueGrowth": fp(info.get("revenueGrowth")),
-                "epsGrowth": fp(info.get("earningsGrowth")),
-                "grossMargin": fp(info.get("grossMargins")),
-                "netMargin": fp(info.get("profitMargins")),
-                "roe": fp(info.get("returnOnEquity")),
-                "debtToEquity": fr(info.get("debtToEquity")),
-            })
-        except Exception as e:
-            print(f"Screener skip {ticker}: {e}")
-            continue
-
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = {executor.submit(_fetch_screener_ticker, t): t for t in tickers}
+        for future in as_completed(futures):
+            try:
+                data = future.result(timeout=20)
+                if data:
+                    results.append(data)
+            except Exception as e:
+                print(f"Screener future error {futures[future]}: {e}")
     print(f"Screener built: {len(results)} stocks")
-    r.setex("screener:data", 86400, json.dumps(results))  # 24hr cache
+    r.setex("screener:data", 86400, json.dumps(results))
     return results
 
 @app.on_event("startup")
@@ -211,7 +211,8 @@ async def startup_event():
         load_tickers_into_redis()
     else:
         print("Tickers already cached in Redis")
-    # Don't pre-build screener on startup — too slow. Build on first request.
+    # Clear any stale building flag left over from a previous crashed process
+    r.delete("screener:building")
 
 @app.get("/")
 def read_root():
@@ -350,7 +351,7 @@ async def get_screener_data(request: Request, background_tasks: BackgroundTasks,
     if r.get("screener:building"):
         raise HTTPException(status_code=202, detail="Screener data is being built. Try again in a moment.")
 
-    r.setex("screener:building", 900, "1")  # 15-min safety TTL for ~500 tickers
+    r.setex("screener:building", 300, "1")  # 5-min TTL; parallel build finishes in ~2 min
     background_tasks.add_task(_run_screener_build)
     raise HTTPException(status_code=202, detail="Screener build started. Try again in a moment.")
 
