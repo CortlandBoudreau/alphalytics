@@ -53,6 +53,11 @@ const MARKET_CAP_OPTIONS = [
   { label: "Small (<$2B)", min: 0, max: 2e9 },
 ]
 
+function fmtPct(v: number | null): string {
+  if (v === null) return "—"
+  return `${v.toFixed(1)}%`
+}
+
 function fmtRatio(v: number | null): string {
   if (v === null) return "—"
   return v.toFixed(1)
@@ -169,13 +174,18 @@ export function Screener({ apiUrl, apiToken }: Props) {
   }
 
   const cols: { label: string; key: SortKey; fmt: (s: Stock) => string; colorFn?: (s: Stock) => string }[] = [
-    { label: "Ticker",  key: "ticker",       fmt: s => s.ticker },
-    { label: "Name",    key: "name",         fmt: s => s.name },
-    { label: "Sector",  key: "sector",       fmt: s => s.sector },
-    { label: "Price",   key: "price",        fmt: s => `$${s.price.toFixed(2)}` },
-    { label: "Change",  key: "change",       fmt: s => `${s.change.toFixed(2)}%`, colorFn: s => s.change >= 0 ? "text-green-500" : "text-red-500" },
-    { label: "Mkt Cap", key: "marketCapRaw", fmt: s => s.marketCap },
-    { label: "P/E",     key: "peRatio",      fmt: s => fmtRatio(s.peRatio) },
+    { label: "Ticker",   key: "ticker",        fmt: s => s.ticker },
+    { label: "Name",     key: "name",          fmt: s => s.name },
+    { label: "Sector",   key: "sector",        fmt: s => s.sector },
+    { label: "Price",    key: "price",         fmt: s => `$${s.price.toFixed(2)}` },
+    { label: "Change",   key: "change",        fmt: s => `${s.change.toFixed(2)}%`,    colorFn: s => s.change >= 0 ? "text-green-500" : "text-red-500" },
+    { label: "Mkt Cap",  key: "marketCapRaw",  fmt: s => s.marketCap },
+    { label: "P/E",      key: "peRatio",       fmt: s => fmtRatio(s.peRatio) },
+    { label: "Fwd P/E",  key: "forwardPE",     fmt: s => fmtRatio(s.forwardPE) },
+    { label: "Rev Gr%",  key: "revenueGrowth", fmt: s => fmtPct(s.revenueGrowth),     colorFn: s => s.revenueGrowth !== null ? (s.revenueGrowth >= 0 ? "text-green-500" : "text-red-500") : "" },
+    { label: "EPS Gr%",  key: "epsGrowth",     fmt: s => fmtPct(s.epsGrowth),         colorFn: s => s.epsGrowth !== null ? (s.epsGrowth >= 0 ? "text-green-500" : "text-red-500") : "" },
+    { label: "Gross Mg", key: "grossMargin",   fmt: s => fmtPct(s.grossMargin) },
+    { label: "Net Mg",   key: "netMargin",     fmt: s => fmtPct(s.netMargin),         colorFn: s => s.netMargin !== null ? (s.netMargin >= 0 ? "text-green-500" : "text-red-500") : "" },
   ]
 
   return (
@@ -219,7 +229,12 @@ export function Screener({ apiUrl, apiToken }: Props) {
               </select>
             </div>
 
-            <FilterInput label="Max P/E Ratio" placeholder="e.g. 30" value={maxPE} onChange={setMaxPE} />
+            <FilterInput label="Max P/E Ratio"         placeholder="e.g. 30" value={maxPE}            onChange={setMaxPE} />
+            <FilterInput label="Max Forward P/E"       placeholder="e.g. 25" value={maxForwardPE}     onChange={setMaxForwardPE} />
+            <FilterInput label="Min Revenue Growth (%)" placeholder="e.g. 10" value={minRevenueGrowth} onChange={setMinRevenueGrowth} />
+            <FilterInput label="Min EPS Growth (%)"    placeholder="e.g. 15" value={minEpsGrowth}     onChange={setMinEpsGrowth} />
+            <FilterInput label="Min Gross Margin (%)"  placeholder="e.g. 40" value={minGrossMargin}   onChange={setMinGrossMargin} />
+            <FilterInput label="Min Net Margin (%)"    placeholder="e.g. 10" value={minNetMargin}     onChange={setMinNetMargin} />
           </div>
         </CardContent>
       </Card>

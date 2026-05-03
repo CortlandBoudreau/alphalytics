@@ -205,7 +205,11 @@ def build_screener_data():
 
         fields = ",".join([
             "regularMarketPrice", "regularMarketChangePercent",
-            "marketCap", "trailingPE", "shortName",
+            "marketCap", "trailingPE", "forwardPE",
+            "priceToSalesTrailing12Months", "shortName",
+            "profitMargins", "grossMargins",
+            "revenueGrowth", "earningsGrowth",
+            "returnOnEquity", "debtToEquity",
         ])
         quote_lookup: dict = {}
         for i in range(0, len(tickers), 200):
@@ -222,6 +226,12 @@ def build_screener_data():
             else:
                 print(f"[screener] YF quote batch {i//200+1} failed: {resp.status_code} {resp.text[:200]}")
 
+        def _pct(v):
+            return round(v * 100, 2) if v is not None else None
+
+        def _ratio(v):
+            return round(v, 2) if v is not None else None
+
         results = []
         for ticker, meta in sp500.items():
             q = quote_lookup.get(ticker, {})
@@ -229,7 +239,6 @@ def build_screener_data():
             if not price:
                 continue
             mc = q.get("marketCap") or 0
-            pe_raw = q.get("trailingPE")
             results.append({
                 "ticker": ticker,
                 "name": q.get("shortName") or meta["name"],
@@ -239,15 +248,15 @@ def build_screener_data():
                 "change": round(float(q.get("regularMarketChangePercent", 0)), 2),
                 "marketCap": _fmt_mc(mc),
                 "marketCapRaw": mc,
-                "peRatio": round(float(pe_raw), 2) if pe_raw else None,
-                "forwardPE": None,
-                "psRatio": None,
-                "revenueGrowth": None,
-                "epsGrowth": None,
-                "grossMargin": None,
-                "netMargin": None,
-                "roe": None,
-                "debtToEquity": None,
+                "peRatio": _ratio(q.get("trailingPE")),
+                "forwardPE": _ratio(q.get("forwardPE")),
+                "psRatio": _ratio(q.get("priceToSalesTrailing12Months")),
+                "revenueGrowth": _pct(q.get("revenueGrowth")),
+                "epsGrowth": _pct(q.get("earningsGrowth")),
+                "grossMargin": _pct(q.get("grossMargins")),
+                "netMargin": _pct(q.get("profitMargins")),
+                "roe": _pct(q.get("returnOnEquity")),
+                "debtToEquity": _ratio(q.get("debtToEquity")),
             })
 
         print(f"Screener built: {len(results)} stocks")
