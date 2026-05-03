@@ -15,8 +15,6 @@ import os
 import json
 import math
 
-FMP_BASE = "https://financialmodelingprep.com/api/v3"
-
 env = os.getenv("ENV", "development")
 # Load base .env first, then environment-specific overrides
 base_env = Path(__file__).parent / ".env"
@@ -25,11 +23,6 @@ if base_env.exists():
 env_file = Path(__file__).parent / f".env.{env}"
 if env_file.exists():
     load_dotenv(dotenv_path=env_file, override=True)
-
-print(f"[startup] backend dir: {Path(__file__).parent.resolve()}")
-print(f"[startup] .env exists: {base_env.exists()} ({base_env.resolve()})")
-print(f"[startup] .env.{env} exists: {env_file.exists()} ({env_file.resolve()})")
-print(f"[startup] FMP_API_KEY set: {bool(os.getenv('FMP_API_KEY'))}")
 
 security = HTTPBearer()
 
@@ -113,22 +106,45 @@ SP500_TICKERS = [
 SP500_TICKERS = list(dict.fromkeys(SP500_TICKERS))
 
 def get_sp500_tickers():
-    """Fetch current S&P 500 tickers from Wikipedia."""
-    cached = r.get("sp500:tickers")
+    """Return S&P 500 ticker list (from metadata cache or fallback)."""
+    meta = get_sp500_metadata()
+    return list(meta.keys())
+
+def get_sp500_metadata():
+    """Fetch S&P 500 list with sector/industry/name from Wikipedia. Cached 7 days."""
+    cached = r.get("sp500:metadata")
     if cached:
         return json.loads(cached)
     try:
         import pandas as pd
         table = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
-        tickers = table[0]["Symbol"].tolist()
-        # Fix known yfinance ticker differences
-        tickers = [t.replace(".", "-") for t in tickers]
-        r.setex("sp500:tickers", 86400 * 7, json.dumps(tickers))  # cache 7 days
-        print(f"Loaded {len(tickers)} S&P 500 tickers from Wikipedia")
-        return tickers
+        df = table[0]
+        data = {}
+        for _, row in df.iterrows():
+            ticker = str(row["Symbol"]).replace(".", "-")
+            data[ticker] = {
+                "name": str(row["Security"]),
+                "sector": str(row["GICS Sector"]),
+                "industry": str(row["GICS Sub-Industry"]),
+            }
+        r.setex("sp500:metadata", 86400 * 7, json.dumps(data))
+        print(f"Loaded S&P 500 metadata: {len(data)} companies")
+        return data
     except Exception as e:
-        print(f"Wikipedia fetch failed, using fallback: {e}")
-        return SP500_TICKERS  # fall back to hardcoded list
+        print(f"Wikipedia metadata fetch failed, using fallback: {e}")
+        return {t: {"name": t, "sector": "N/A", "industry": "N/A"} for t in SP500_TICKERS}
+
+def _yf_session_and_crumb():
+    """Return a requests.Session with Yahoo Finance cookies and a valid crumb."""
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    session = requests.Session()
+    session.headers.update({"User-Agent": ua, "Accept": "application/json"})
+    session.get("https://finance.yahoo.com", timeout=10)
+    crumb_resp = session.get(
+        "https://query1.finance.yahoo.com/v1/test/getcrumb", timeout=10
+    )
+    crumb_resp.raise_for_status()
+    return session, crumb_resp.text.strip()
 
 def load_tickers_into_redis():
     try:
@@ -163,62 +179,46 @@ def _fmt_mc(n):
     return f"${n:,.0f}"
 
 def build_screener_data():
-    """Fetch S&P 500 metrics via FMP and cache in Redis. ~6 API calls total."""
-    api_key = os.getenv("FMP_API_KEY")
-    if not api_key:
-        print("FMP_API_KEY not set")
-        return []
-
+    """Fetch S&P 500 metrics via Yahoo Finance bulk quote API. ~5 HTTP calls total."""
     try:
-        # Step 1: screener endpoint → sector, industry, basic info
-        resp = requests.get(
-            f"{FMP_BASE}/stock-screener",
-            params={"exchange": "NYSE,NASDAQ", "limit": 1000, "apikey": api_key},
-            timeout=30,
-        )
-        resp.raise_for_status()
-        by_symbol = {
-            s["symbol"]: s for s in resp.json()
-            if s.get("symbol") and s.get("isActivelyTrading")
-        }
+        sp500 = get_sp500_metadata()
+        tickers = list(sp500.keys())
 
-        # Filter to our S&P 500 list so the screener universe stays consistent
-        sp500 = get_sp500_tickers()
-        tickers = [t for t in sp500 if t in by_symbol]
-        if not tickers:
-            print("FMP screener returned no S&P 500 matches")
-            return []
+        session, crumb = _yf_session_and_crumb()
 
-        # Step 2: batched quote calls → price, change%, PE, marketCap
+        fields = ",".join([
+            "regularMarketPrice", "regularMarketChangePercent",
+            "marketCap", "trailingPE", "shortName",
+        ])
         quote_lookup: dict = {}
-        for i in range(0, len(tickers), 100):
-            batch = ",".join(tickers[i:i + 100])
-            q_resp = requests.get(
-                f"{FMP_BASE}/quote/{batch}",
-                params={"apikey": api_key},
+        for i in range(0, len(tickers), 200):
+            batch = ",".join(tickers[i:i + 200])
+            resp = session.get(
+                "https://query1.finance.yahoo.com/v7/finance/quote",
+                params={"symbols": batch, "fields": fields, "crumb": crumb, "formatted": "false"},
                 timeout=30,
             )
-            if q_resp.ok:
-                for q in q_resp.json():
+            if resp.ok:
+                for q in (resp.json().get("quoteResponse") or {}).get("result") or []:
                     quote_lookup[q["symbol"]] = q
+            else:
+                print(f"[screener] YF quote batch {i//200+1} failed: {resp.status_code} {resp.text[:200]}")
 
-        # Step 3: merge
         results = []
-        for ticker in tickers:
-            s = by_symbol.get(ticker, {})
+        for ticker, meta in sp500.items():
             q = quote_lookup.get(ticker, {})
-            price = q.get("price") or s.get("price")
+            price = q.get("regularMarketPrice")
             if not price:
                 continue
-            mc = q.get("marketCap") or s.get("marketCap") or 0
-            pe_raw = q.get("pe")
+            mc = q.get("marketCap") or 0
+            pe_raw = q.get("trailingPE")
             results.append({
                 "ticker": ticker,
-                "name": s.get("companyName", ticker),
-                "sector": s.get("sector") or "N/A",
-                "industry": s.get("industry") or "N/A",
+                "name": q.get("shortName") or meta["name"],
+                "sector": meta["sector"],
+                "industry": meta["industry"],
                 "price": round(float(price), 2),
-                "change": round(float(q.get("changesPercentage", 0)), 2),
+                "change": round(float(q.get("regularMarketChangePercent", 0)), 2),
                 "marketCap": _fmt_mc(mc),
                 "marketCapRaw": mc,
                 "peRatio": round(float(pe_raw), 2) if pe_raw else None,
@@ -232,13 +232,13 @@ def build_screener_data():
                 "debtToEquity": None,
             })
 
-        print(f"FMP screener built: {len(results)} stocks")
+        print(f"Screener built: {len(results)} stocks")
         if results:
             r.setex("screener:data", 86400, json.dumps(results))
         return results
 
     except Exception as e:
-        print(f"FMP screener error: {e}")
+        print(f"Screener build error: {e}")
         return []
 
 @app.on_event("startup")
