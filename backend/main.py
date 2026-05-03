@@ -18,6 +18,10 @@ import math
 FMP_BASE = "https://financialmodelingprep.com/api/v3"
 
 env = os.getenv("ENV", "development")
+# Load base .env first, then environment-specific overrides
+base_env = Path(__file__).parent / ".env"
+if base_env.exists():
+    load_dotenv(dotenv_path=base_env)
 env_file = Path(__file__).parent / f".env.{env}"
 if env_file.exists():
     load_dotenv(dotenv_path=env_file, override=True)
