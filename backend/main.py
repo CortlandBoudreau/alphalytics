@@ -203,18 +203,12 @@ def build_screener_data():
 
         session, crumb = _yf_session_and_crumb()
 
-        fields = ",".join([
-            "regularMarketPrice", "regularMarketChangePercent",
-            "marketCap", "trailingPE", "shortName",
-            "beta", "trailingAnnualDividendYield", "priceToBook",
-            "fiftyTwoWeekChangePercent",
-        ])
         quote_lookup: dict = {}
         for i in range(0, len(tickers), 200):
             batch = ",".join(tickers[i:i + 200])
             resp = session.get(
                 "https://query2.finance.yahoo.com/v7/finance/quote",
-                params={"symbols": batch, "fields": fields, "crumb": crumb, "formatted": "false"},
+                params={"symbols": batch, "crumb": crumb, "formatted": "false"},
                 headers={"Accept": "application/json"},
                 timeout=30,
             )
