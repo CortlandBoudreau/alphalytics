@@ -12,6 +12,10 @@ type Stock = {
   marketCap: string
   marketCapRaw: number
   peRatio: number | null
+  pbRatio: number | null
+  beta: number | null
+  dividendYield: number | null
+  weekChange52: number | null
 }
 
 type Props = {
@@ -83,6 +87,10 @@ export function Screener({ apiUrl, apiToken }: Props) {
   const [sector, setSector] = useState("All Sectors")
   const [marketCap, setMarketCap] = useState(0)
   const [maxPE, setMaxPE] = useState("")
+  const [maxPB, setMaxPB] = useState("")
+  const [minDivYield, setMinDivYield] = useState("")
+  const [minBeta, setMinBeta] = useState("")
+  const [maxBeta, setMaxBeta] = useState("")
 
   const headers = {
     "Content-Type": "application/json",
@@ -126,6 +134,10 @@ export function Screener({ apiUrl, apiToken }: Props) {
       if (sector !== "All Sectors" && s.sector !== sector) return false
       if (s.marketCapRaw < capOption.min || s.marketCapRaw > capOption.max) return false
       if (maxPE && s.peRatio !== null && s.peRatio > parseFloat(maxPE)) return false
+      if (maxPB && s.pbRatio !== null && s.pbRatio > parseFloat(maxPB)) return false
+      if (minDivYield && (s.dividendYield === null || s.dividendYield < parseFloat(minDivYield))) return false
+      if (minBeta && (s.beta === null || s.beta < parseFloat(minBeta))) return false
+      if (maxBeta && s.beta !== null && s.beta > parseFloat(maxBeta)) return false
       return true
     }).sort((a, b) => {
       const av = a[sortKey]
@@ -137,22 +149,30 @@ export function Screener({ apiUrl, apiToken }: Props) {
       }
       return sortDir === "asc" ? (av as number) - (bv as number) : (bv as number) - (av as number)
     })
-  }, [allStocks, sector, marketCap, maxPE, sortKey, sortDir])
+  }, [allStocks, sector, marketCap, maxPE, maxPB, minDivYield, minBeta, maxBeta, sortKey, sortDir])
 
   const resetFilters = () => {
     setSector("All Sectors")
     setMarketCap(0)
     setMaxPE("")
+    setMaxPB("")
+    setMinDivYield("")
+    setMinBeta("")
+    setMaxBeta("")
   }
 
   const cols: { label: string; key: SortKey; fmt: (s: Stock) => string; colorFn?: (s: Stock) => string }[] = [
-    { label: "Ticker",  key: "ticker",      fmt: s => s.ticker },
-    { label: "Name",    key: "name",        fmt: s => s.name },
-    { label: "Sector",  key: "sector",      fmt: s => s.sector },
-    { label: "Price",   key: "price",       fmt: s => `$${s.price.toFixed(2)}` },
-    { label: "Change",  key: "change",      fmt: s => `${s.change.toFixed(2)}%`, colorFn: s => s.change >= 0 ? "text-green-500" : "text-red-500" },
-    { label: "Mkt Cap", key: "marketCapRaw", fmt: s => s.marketCap },
-    { label: "P/E",     key: "peRatio",     fmt: s => fmtRatio(s.peRatio) },
+    { label: "Ticker",   key: "ticker",      fmt: s => s.ticker },
+    { label: "Name",     key: "name",        fmt: s => s.name },
+    { label: "Sector",   key: "sector",      fmt: s => s.sector },
+    { label: "Price",    key: "price",       fmt: s => `$${s.price.toFixed(2)}` },
+    { label: "Change",   key: "change",      fmt: s => `${s.change.toFixed(2)}%`,  colorFn: s => s.change >= 0 ? "text-green-500" : "text-red-500" },
+    { label: "52W Chg",  key: "weekChange52", fmt: s => s.weekChange52 !== null ? `${s.weekChange52.toFixed(1)}%` : "—", colorFn: s => s.weekChange52 !== null ? (s.weekChange52 >= 0 ? "text-green-500" : "text-red-500") : "" },
+    { label: "Mkt Cap",  key: "marketCapRaw", fmt: s => s.marketCap },
+    { label: "P/E",      key: "peRatio",     fmt: s => fmtRatio(s.peRatio) },
+    { label: "P/B",      key: "pbRatio",     fmt: s => fmtRatio(s.pbRatio) },
+    { label: "Beta",     key: "beta",        fmt: s => fmtRatio(s.beta) },
+    { label: "Div Yield",key: "dividendYield", fmt: s => s.dividendYield !== null ? `${s.dividendYield.toFixed(2)}%` : "—" },
   ]
 
   return (
@@ -196,7 +216,11 @@ export function Screener({ apiUrl, apiToken }: Props) {
               </select>
             </div>
 
-            <FilterInput label="Max P/E Ratio" placeholder="e.g. 30" value={maxPE} onChange={setMaxPE} />
+            <FilterInput label="Max P/E"           placeholder="e.g. 30"  value={maxPE}       onChange={setMaxPE} />
+            <FilterInput label="Max P/B"           placeholder="e.g. 5"   value={maxPB}       onChange={setMaxPB} />
+            <FilterInput label="Min Dividend Yield (%)" placeholder="e.g. 2" value={minDivYield} onChange={setMinDivYield} />
+            <FilterInput label="Min Beta"          placeholder="e.g. 0.5" value={minBeta}     onChange={setMinBeta} />
+            <FilterInput label="Max Beta"          placeholder="e.g. 1.5" value={maxBeta}     onChange={setMaxBeta} />
           </div>
         </CardContent>
       </Card>
