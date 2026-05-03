@@ -167,7 +167,6 @@ export function Screener({ apiUrl, apiToken }: Props) {
     { label: "Sector",   key: "sector",      fmt: s => s.sector },
     { label: "Price",    key: "price",       fmt: s => `$${s.price.toFixed(2)}` },
     { label: "Change",   key: "change",      fmt: s => `${s.change.toFixed(2)}%`,  colorFn: s => s.change >= 0 ? "text-green-500" : "text-red-500" },
-    { label: "52W Chg",  key: "weekChange52", fmt: s => s.weekChange52 != null ? `${s.weekChange52.toFixed(1)}%` : "—", colorFn: s => s.weekChange52 != null ? (s.weekChange52 >= 0 ? "text-green-500" : "text-red-500") : "" },
     { label: "Mkt Cap",  key: "marketCapRaw", fmt: s => s.marketCap },
     { label: "P/E",      key: "peRatio",     fmt: s => fmtRatio(s.peRatio) },
     { label: "P/B",      key: "pbRatio",     fmt: s => fmtRatio(s.pbRatio) },
@@ -305,7 +304,7 @@ export function Screener({ apiUrl, apiToken }: Props) {
                           className={`py-2.5 px-2 whitespace-nowrap ${i === 0 ? "font-medium text-primary" : "text-right"} ${col.colorFn ? col.colorFn(s) : ""}`}
                         >
                           {i === 1 ? (
-                            <span className="text-muted-foreground truncate max-w-[160px] block">{col.fmt(s)}</span>
+                            <span className="text-muted-foreground truncate max-w-[120px] block">{col.fmt(s)}</span>
                           ) : i === 2 ? (
                             <Badge variant="outline" className="text-xs">{col.fmt(s)}</Badge>
                           ) : (
