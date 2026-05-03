@@ -116,16 +116,25 @@ def get_sp500_metadata():
     if cached:
         return json.loads(cached)
     try:
-        import pandas as pd
-        table = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
-        df = table[0]
+        from bs4 import BeautifulSoup
+        resp = requests.get(
+            "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies",
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+        table = soup.find("table", {"id": "constituents"})
         data = {}
-        for _, row in df.iterrows():
-            ticker = str(row["Symbol"]).replace(".", "-")
+        for row in table.find("tbody").find_all("tr"):
+            cols = row.find_all("td")
+            if len(cols) < 4:
+                continue
+            ticker = cols[0].text.strip().replace(".", "-")
             data[ticker] = {
-                "name": str(row["Security"]),
-                "sector": str(row["GICS Sector"]),
-                "industry": str(row["GICS Sub-Industry"]),
+                "name": cols[1].text.strip(),
+                "sector": cols[2].text.strip(),
+                "industry": cols[3].text.strip(),
             }
         r.setex("sp500:metadata", 86400 * 7, json.dumps(data))
         print(f"Loaded S&P 500 metadata: {len(data)} companies")
@@ -134,17 +143,25 @@ def get_sp500_metadata():
         print(f"Wikipedia metadata fetch failed, using fallback: {e}")
         return {t: {"name": t, "sector": "N/A", "industry": "N/A"} for t in SP500_TICKERS}
 
+_BROWSER_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
 def _yf_session_and_crumb():
     """Return a requests.Session with Yahoo Finance cookies and a valid crumb."""
-    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
     session = requests.Session()
-    session.headers.update({"User-Agent": ua, "Accept": "application/json"})
+    session.headers.update(_BROWSER_HEADERS)
     session.get("https://finance.yahoo.com", timeout=10)
-    crumb_resp = session.get(
-        "https://query1.finance.yahoo.com/v1/test/getcrumb", timeout=10
-    )
-    crumb_resp.raise_for_status()
-    return session, crumb_resp.text.strip()
+    # Try both query hosts; Yahoo load-balances between them
+    for host in ("query2", "query1"):
+        crumb_resp = session.get(
+            f"https://{host}.finance.yahoo.com/v1/test/getcrumb", timeout=10
+        )
+        if crumb_resp.ok and crumb_resp.text.strip():
+            return session, crumb_resp.text.strip()
+    raise RuntimeError(f"Could not fetch YF crumb (last status {crumb_resp.status_code})")
 
 def load_tickers_into_redis():
     try:
@@ -194,8 +211,9 @@ def build_screener_data():
         for i in range(0, len(tickers), 200):
             batch = ",".join(tickers[i:i + 200])
             resp = session.get(
-                "https://query1.finance.yahoo.com/v7/finance/quote",
+                "https://query2.finance.yahoo.com/v7/finance/quote",
                 params={"symbols": batch, "fields": fields, "crumb": crumb, "formatted": "false"},
+                headers={"Accept": "application/json"},
                 timeout=30,
             )
             if resp.ok:
