@@ -76,7 +76,7 @@
 
 ## UX & Quality
 
-- **Keyboard shortcuts** — `/` to focus search, `Escape` to clear, `↑ ↓` to navigate autocomplete, `Enter` to confirm
+- **Keyboard shortcuts** — `/` or `⌘K` to jump to search, `Escape` to dismiss, `Enter` to confirm
 - **Toast notifications** — non-blocking feedback for watchlist / portfolio actions
 - **Error boundaries** — each tab is isolated; a render crash shows a friendly fallback with a "Try again" button rather than a blank screen
 - **Rate-limit UX** — 429 responses show a draining countdown bar that auto-retries when it hits 0
