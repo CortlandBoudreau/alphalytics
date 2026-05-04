@@ -112,11 +112,11 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   return (
     <div className="space-y-6">
       {/* Add Holding */}
-      <Card>
+      <Card className="overflow-visible">
         <CardHeader>
           <CardTitle>Add Holding</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-visible">
           <div className="flex flex-wrap gap-3 items-end">
             {/* Ticker with autocomplete */}
             <div className="space-y-1 flex-1 min-w-[140px] relative">
