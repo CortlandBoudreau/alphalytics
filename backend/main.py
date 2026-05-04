@@ -16,11 +16,12 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import yfinance as yf
+import pandas as pd
 import json
 
 from db import r
 from auth import security, verify_token
-from screener import build_screener_data, load_tickers_into_redis
+from screener import build_screener_data, load_tickers_into_redis, _yf_session_and_crumb
 from financials import build_income_quarters, build_balance_quarters, build_cashflow_quarters
 from ai import call_claude, AnalysisRequest, client
 
@@ -96,13 +97,18 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
         if not info or "regularMarketPrice" not in info and "currentPrice" not in info:
             raise HTTPException(status_code=404, detail="Stock not found")
 
-        hist = stock.history(period="1y", interval="1mo")
+        hist = stock.history(period="2y", interval="1d")
+        hist["ma50"]  = hist["Close"].rolling(50).mean()
+        hist["ma200"] = hist["Close"].rolling(200).mean()
+        display = hist.tail(252)
         chart_data = []
-        for date, row in hist.iterrows():
+        for date, row in display.iterrows():
             chart_data.append({
-                "date": date.strftime("%b %Y"),
-                "price": round(row["Close"], 2),
-                "volume": int(row["Volume"])
+                "date":   date.strftime("%b '%y"),
+                "price":  round(float(row["Close"]), 2),
+                "volume": int(row["Volume"]),
+                "ma50":   round(float(row["ma50"]),  2) if not pd.isna(row["ma50"])  else None,
+                "ma200":  round(float(row["ma200"]), 2) if not pd.isna(row["ma200"]) else None,
             })
 
         financials = stock.quarterly_financials
@@ -196,6 +202,49 @@ async def refresh_screener(request: Request, _: None = Depends(verify_token)):
     if not data:
         raise HTTPException(status_code=503, detail="Failed to rebuild screener data.")
     return {"status": "ok", "count": len(data)}
+
+
+# ── Bulk Quotes (portfolio) ────────────────────────────────────────────────────
+
+@app.get("/quotes")
+@limiter.limit("30/minute")
+async def get_quotes(request: Request, tickers: str, _: None = Depends(verify_token)):
+    ticker_list = [t.strip().upper() for t in tickers.split(",") if t.strip()][:50]
+    if not ticker_list:
+        return {}
+
+    cache_key = f"quotes:{','.join(sorted(ticker_list))}"
+    cached = r.get(cache_key)
+    if cached:
+        return json.loads(cached)
+
+    try:
+        session, crumb = _yf_session_and_crumb()
+        resp = session.get(
+            "https://query2.finance.yahoo.com/v7/finance/quote",
+            params={"symbols": ",".join(ticker_list), "crumb": crumb, "formatted": "false"},
+            headers={"Accept": "application/json"},
+            timeout=30,
+        )
+        if not resp.ok:
+            raise HTTPException(status_code=502, detail="Failed to fetch quotes")
+
+        result = {}
+        for q in (resp.json().get("quoteResponse") or {}).get("result") or []:
+            result[q["symbol"]] = {
+                "ticker": q["symbol"],
+                "name":   q.get("shortName") or q["symbol"],
+                "price":  round(float(q["regularMarketPrice"]), 2),
+                "change": round(float(q.get("regularMarketChangePercent", 0)), 2),
+            }
+
+        r.setex(cache_key, 300, json.dumps(result))
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ── Income Statement ───────────────────────────────────────────────────────────

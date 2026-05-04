@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { ComposedChart, Area, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Compare } from "@/components/Compare"
 import { Financials } from "@/components/Financials"
 import { Landing } from "@/components/Landing"
 import { CanvasBackground } from "@/components/CanvasBackground"
+import { Portfolio } from "@/components/Portfolio"
 import { Screener } from "@/components/Screener"
 import { Watchlist } from "@/components/Watchlist"
 
@@ -28,7 +29,7 @@ type StockData = {
   grossMargin: number | null
   netMargin: number | null
   ttmPsRatio: number | null
-  chartData: { date: string; price: number; volume: number }[]
+  chartData: { date: string; price: number; volume: number; ma50: number | null; ma200: number | null }[]
   revenueData: { quarter: string; revenue: number }[]
 }
 
@@ -40,7 +41,7 @@ type Analysis = {
   disclaimer: string
 }
 
-type Tab = "research" | "income" | "screener" | "compare" | "watchlist"
+type Tab = "research" | "income" | "screener" | "compare" | "watchlist" | "portfolio"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 const API_TOKEN = import.meta.env.VITE_API_SECRET_TOKEN
@@ -171,6 +172,7 @@ function App() {
     { key: "screener",  label: "Screener" },
     { key: "compare",   label: "Compare" },
     { key: "watchlist", label: `Watchlist${watchlist.length > 0 ? ` (${watchlist.length})` : ""}` },
+    { key: "portfolio", label: "Portfolio" },
   ]
 
   if (showLanding) {
@@ -332,24 +334,47 @@ function App() {
                   </CardHeader>
                   <CardContent>
                     {chartTab === "price" && (
-                      <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart data={stock.chartData}>
-                          <defs>
-                            <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#1f1f1f" />
-                          <XAxis dataKey="date" stroke="#888888" tick={{ fontSize: 12 }} />
-                          <YAxis stroke="#888888" tick={{ fontSize: 12 }} />
-                          <Tooltip
-                            contentStyle={{ backgroundColor: "#111111", border: "1px solid #1f1f1f" }}
-                            formatter={(value) => [`$${Number(value).toFixed(2)}`, "Price"]}
-                          />
-                          <Area type="monotone" dataKey="price" stroke="#3b82f6" fill="url(#priceGradient)" strokeWidth={2} />
-                        </AreaChart>
-                      </ResponsiveContainer>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+                          <span className="flex items-center gap-1.5"><span className="inline-block w-6 h-0.5 bg-blue-500" />Price</span>
+                          <span className="flex items-center gap-1.5"><span className="inline-block w-6 h-0.5 bg-amber-400" />MA50</span>
+                          <span className="flex items-center gap-1.5"><span className="inline-block w-6 h-0.5 bg-red-500" />MA200</span>
+                        </div>
+                        <ResponsiveContainer width="100%" height={240}>
+                          <ComposedChart data={stock.chartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+                            <defs>
+                              <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.25} />
+                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1f1f1f" />
+                            <XAxis dataKey="date" stroke="#888888" tick={{ fontSize: 11 }} interval={Math.floor(stock.chartData.length / 7)} />
+                            <YAxis stroke="#888888" tick={{ fontSize: 11 }} domain={["auto", "auto"]} width={55} tickFormatter={(v) => `$${v}`} />
+                            <Tooltip
+                              contentStyle={{ backgroundColor: "#111111", border: "1px solid #333" }}
+                              formatter={(value: number, name: string) => {
+                                const labels: Record<string, string> = { price: "Price", ma50: "MA 50", ma200: "MA 200" }
+                                return value != null ? [`$${value.toFixed(2)}`, labels[name] ?? name] : [null, null]
+                              }}
+                            />
+                            <Area type="monotone" dataKey="price" stroke="#3b82f6" fill="url(#priceGradient)" strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="ma50" stroke="#f59e0b" strokeWidth={1.5} dot={false} connectNulls />
+                            <Line type="monotone" dataKey="ma200" stroke="#ef4444" strokeWidth={1.5} dot={false} connectNulls />
+                          </ComposedChart>
+                        </ResponsiveContainer>
+                        <ResponsiveContainer width="100%" height={60}>
+                          <BarChart data={stock.chartData} margin={{ top: 0, right: 4, left: 0, bottom: 0 }}>
+                            <XAxis dataKey="date" hide />
+                            <YAxis stroke="#888888" tick={{ fontSize: 10 }} width={55} tickFormatter={(v) => `${(v / 1e6).toFixed(0)}M`} tickCount={2} />
+                            <Tooltip
+                              contentStyle={{ backgroundColor: "#111111", border: "1px solid #333" }}
+                              formatter={(value: number) => [`${(value / 1e6).toFixed(1)}M`, "Volume"]}
+                            />
+                            <Bar dataKey="volume" fill="#3b82f6" opacity={0.4} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                     )}
                     {chartTab === "revenue" && (
                       <ResponsiveContainer width="100%" height={300}>
@@ -469,6 +494,11 @@ function App() {
             onRemove={toggleWatchlist}
             onNavigate={handleWatchlistNavigate}
           />
+        )}
+
+        {/* Portfolio Tab */}
+        {activeTab === "portfolio" && (
+          <Portfolio apiUrl={API_URL} apiToken={API_TOKEN} />
         )}
       </div>
     </div>
