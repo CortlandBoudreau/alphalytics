@@ -1,14 +1,27 @@
 import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts"
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts"
 
 type Holding = { id: string; ticker: string; shares: number; costBasis: number }
 type QuoteMap = Record<string, { ticker: string; name: string; price: number; change: number }>
+type HistoryMap = Record<string, Record<string, number>>
 
 const COLORS = ["#3b82f6","#f59e0b","#10b981","#ef4444","#8b5cf6","#ec4899","#06b6d4","#f97316","#a3e635","#e879f9"]
 
 const fmt$ = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 })
 const fmtPct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`
+
+function downloadCSV(filename: string, headers: string[], rows: (string | number)[][]) {
+  const escape = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`
+  const csv = [headers, ...rows].map(r => r.map(escape).join(",")).join("\n")
+  const blob = new Blob([csv], { type: "text/csv" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
 
 type Props = {
   apiUrl: string
@@ -27,6 +40,11 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   const [formError, setFormError] = useState("")
   const [suggestions, setSuggestions] = useState<{ ticker: string; name: string }[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [holdingsView, setHoldingsView] = useState<"table" | "performance">("table")
+  const [historyData, setHistoryData] = useState<HistoryMap>({})
+  const [historyLoading, setHistoryLoading] = useState(false)
+
+  const authHeaders = { "Content-Type": "application/json", Authorization: `Bearer ${apiToken}` }
 
   useEffect(() => {
     localStorage.setItem("alphalytics_portfolio", JSON.stringify(holdings))
@@ -38,7 +56,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     setQuotesLoading(true)
     try {
       const res = await fetch(`${apiUrl}/quotes?tickers=${encodeURIComponent(tickers.join(","))}`, {
-        headers: { Authorization: `Bearer ${apiToken}` }
+        headers: authHeaders
       })
       if (res.ok) setQuotes(await res.json())
     } catch (e) {
@@ -48,7 +66,29 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     }
   }
 
+  const fetchHistory = async (hs: Holding[]) => {
+    const tickers = [...new Set(hs.map(h => h.ticker))]
+    if (tickers.length === 0) return
+    setHistoryLoading(true)
+    try {
+      const res = await fetch(`${apiUrl}/history?tickers=${encodeURIComponent(tickers.join(","))}`, {
+        headers: authHeaders
+      })
+      if (res.ok) setHistoryData(await res.json())
+    } catch (e) {
+      console.error("Failed to fetch history", e)
+    } finally {
+      setHistoryLoading(false)
+    }
+  }
+
   useEffect(() => { fetchQuotes(holdings) }, [holdings])
+
+  useEffect(() => {
+    if (holdingsView === "performance" && holdings.length > 0) {
+      fetchHistory(holdings)
+    }
+  }, [holdingsView, holdings.length])
 
   const addHolding = () => {
     const ticker = form.ticker.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "")
@@ -103,11 +143,56 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     .map(r => ({ name: r.ticker, value: totalValue > 0 ? (r.currentValue! / totalValue) * 100 : 0 }))
 
   const summaryMetrics = [
-    { label: "Total Value", value: fmt$(totalValue),                      color: "" },
-    { label: "Total Cost",  value: fmt$(totalCost),                       color: "" },
-    { label: "Total P&L",   value: fmt$(totalPnl),                        color: totalPnl >= 0 ? "text-green-500" : "text-red-500" },
-    { label: "Return",      value: fmtPct(totalPnlPct),                   color: totalPnlPct >= 0 ? "text-green-500" : "text-red-500" },
+    { label: "Total Value", value: fmt$(totalValue),       color: "" },
+    { label: "Total Cost",  value: fmt$(totalCost),        color: "" },
+    { label: "Total P&L",   value: fmt$(totalPnl),         color: totalPnl >= 0 ? "text-green-500" : "text-red-500" },
+    { label: "Return",      value: fmtPct(totalPnlPct),    color: totalPnlPct >= 0 ? "text-green-500" : "text-red-500" },
   ]
+
+  // Portfolio performance series vs SPY
+  const perfSeries = useMemo(() => {
+    if (!Object.keys(historyData).length || !holdings.length) return []
+
+    // Get all dates present in SPY (our benchmark anchor)
+    const spyPrices = historyData["SPY"] || {}
+    const dates = Object.keys(spyPrices).sort()
+    if (dates.length < 2) return []
+
+    const series = dates.map(date => {
+      let portValue = 0
+      for (const h of holdings) {
+        const price = historyData[h.ticker]?.[date]
+        if (price != null) portValue += h.shares * price
+      }
+      return { date, portValue, spyPrice: spyPrices[date] }
+    }).filter(d => d.portValue > 0)
+
+    if (series.length < 2) return []
+
+    const basePort = series[0].portValue
+    const baseSpy  = series[0].spyPrice
+    return series.map(d => ({
+      date: d.date.slice(5),  // "MM-DD"
+      portfolio: parseFloat(((d.portValue / basePort - 1) * 100).toFixed(2)),
+      spy:       parseFloat(((d.spyPrice  / baseSpy  - 1) * 100).toFixed(2)),
+    }))
+  }, [historyData, holdings])
+
+  const exportPortfolioCSV = () => {
+    const headers = ["Ticker", "Name", "Shares", "Cost Basis/Share", "Current Price", "Current Value", "Total Cost", "P&L ($)", "P&L (%)"]
+    const csvRows = rows.map(r => [
+      r.ticker,
+      r.name,
+      r.shares,
+      r.costBasis.toFixed(2),
+      r.price != null ? r.price.toFixed(2) : "",
+      r.currentValue != null ? r.currentValue.toFixed(2) : "",
+      r.totalCost.toFixed(2),
+      r.pnlDollar != null ? r.pnlDollar.toFixed(2) : "",
+      r.pnlPct != null ? r.pnlPct.toFixed(2) + "%" : "",
+    ])
+    downloadCSV("portfolio.csv", headers, csvRows)
+  }
 
   return (
     <div className="space-y-6">
@@ -216,70 +301,134 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
             <Card className="md:col-span-3">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  Holdings
-                  <button
-                    onClick={() => fetchQuotes(holdings)}
-                    disabled={quotesLoading}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
-                  >
-                    {quotesLoading ? "Refreshing..." : "Refresh prices"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <span>Holdings</span>
+                    <div className="flex gap-1">
+                      {(["table", "performance"] as const).map(v => (
+                        <button
+                          key={v}
+                          onClick={() => setHoldingsView(v)}
+                          className={`px-3 py-0.5 rounded text-xs font-medium capitalize transition-colors ${
+                            holdingsView === v
+                              ? "bg-primary text-primary-foreground"
+                              : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                          }`}
+                        >
+                          {v}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={exportPortfolioCSV}
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                      title="Export to CSV"
+                    >
+                      Export CSV
+                    </button>
+                    <button
+                      onClick={() => fetchQuotes(holdings)}
+                      disabled={quotesLoading}
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                    >
+                      {quotesLoading ? "Refreshing..." : "Refresh prices"}
+                    </button>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border text-muted-foreground text-right">
-                        <th className="py-2 text-left font-medium">Ticker</th>
-                        <th className="py-2 font-medium">Shares</th>
-                        <th className="py-2 font-medium">Price</th>
-                        <th className="py-2 font-medium">Value</th>
-                        <th className="py-2 font-medium">P&L</th>
-                        <th className="py-2 w-6" />
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rows.map((row, i) => (
-                        <tr key={row.id} className="border-b border-border hover:bg-secondary transition-colors">
-                          <td className="py-2.5">
-                            <div className="flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
-                              <div>
-                                <p className="font-medium text-primary">{row.ticker}</p>
-                                <p className="text-xs text-muted-foreground truncate max-w-[100px]">{row.name}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-2.5 text-right">{row.shares}</td>
-                          <td className="py-2.5 text-right">
-                            {row.price != null ? fmt$(row.price) : <span className="text-muted-foreground">—</span>}
-                          </td>
-                          <td className="py-2.5 text-right">
-                            {row.currentValue != null ? fmt$(row.currentValue) : <span className="text-muted-foreground">—</span>}
-                          </td>
-                          <td className="py-2.5 text-right">
-                            {row.pnlDollar != null ? (
-                              <div className={row.pnlDollar >= 0 ? "text-green-500" : "text-red-500"}>
-                                <p>{fmt$(row.pnlDollar)}</p>
-                                <p className="text-xs">{fmtPct(row.pnlPct!)}</p>
-                              </div>
-                            ) : <span className="text-muted-foreground">—</span>}
-                          </td>
-                          <td className="py-2.5 text-right">
-                            <button
-                              onClick={() => removeHolding(row.id)}
-                              className="text-muted-foreground hover:text-destructive transition-colors text-xs"
-                              title="Remove"
-                            >
-                              ✕
-                            </button>
-                          </td>
+                {holdingsView === "table" && (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border text-muted-foreground text-right">
+                          <th className="py-2 text-left font-medium">Ticker</th>
+                          <th className="py-2 font-medium">Shares</th>
+                          <th className="py-2 font-medium">Price</th>
+                          <th className="py-2 font-medium">Value</th>
+                          <th className="py-2 font-medium">P&L</th>
+                          <th className="py-2 w-6" />
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {rows.map((row, i) => (
+                          <tr key={row.id} className="border-b border-border hover:bg-secondary transition-colors">
+                            <td className="py-2.5">
+                              <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
+                                <div>
+                                  <p className="font-medium text-primary">{row.ticker}</p>
+                                  <p className="text-xs text-muted-foreground truncate max-w-[100px]">{row.name}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-2.5 text-right">{row.shares}</td>
+                            <td className="py-2.5 text-right">
+                              {row.price != null ? fmt$(row.price) : <span className="text-muted-foreground">—</span>}
+                            </td>
+                            <td className="py-2.5 text-right">
+                              {row.currentValue != null ? fmt$(row.currentValue) : <span className="text-muted-foreground">—</span>}
+                            </td>
+                            <td className="py-2.5 text-right">
+                              {row.pnlDollar != null ? (
+                                <div className={row.pnlDollar >= 0 ? "text-green-500" : "text-red-500"}>
+                                  <p>{fmt$(row.pnlDollar)}</p>
+                                  <p className="text-xs">{fmtPct(row.pnlPct!)}</p>
+                                </div>
+                              ) : <span className="text-muted-foreground">—</span>}
+                            </td>
+                            <td className="py-2.5 text-right">
+                              <button
+                                onClick={() => removeHolding(row.id)}
+                                className="text-muted-foreground hover:text-destructive transition-colors text-xs"
+                                title="Remove"
+                              >
+                                ✕
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {holdingsView === "performance" && (
+                  <div>
+                    {historyLoading && (
+                      <p className="text-muted-foreground text-sm text-center py-8">Loading performance data...</p>
+                    )}
+                    {!historyLoading && perfSeries.length > 1 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1.5"><span className="inline-block w-6 h-0.5 bg-blue-500" />Portfolio</span>
+                          <span className="flex items-center gap-1.5"><span className="inline-block w-6 h-0.5 bg-amber-400" />SPY</span>
+                        </div>
+                        <ResponsiveContainer width="100%" height={220}>
+                          <LineChart data={perfSeries} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1f1f1f" />
+                            <XAxis dataKey="date" stroke="#888888" tick={{ fontSize: 10 }} interval={Math.floor(perfSeries.length / 6)} />
+                            <YAxis stroke="#888888" tick={{ fontSize: 11 }} tickFormatter={v => `${v > 0 ? "+" : ""}${v.toFixed(0)}%`} width={52} />
+                            <Tooltip
+                              contentStyle={{ backgroundColor: "#111111", border: "1px solid #333" }}
+                              formatter={(value, name) => [
+                                `${Number(value) >= 0 ? "+" : ""}${Number(value).toFixed(2)}%`,
+                                name === "portfolio" ? "Portfolio" : "SPY"
+                              ]}
+                            />
+                            <Line type="monotone" dataKey="portfolio" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="spy" stroke="#f59e0b" strokeWidth={1.5} dot={false} strokeDasharray="4 2" />
+                          </LineChart>
+                        </ResponsiveContainer>
+                        <p className="text-xs text-muted-foreground text-center">% return over past 12 months (marks-to-market current holdings)</p>
+                      </div>
+                    )}
+                    {!historyLoading && perfSeries.length <= 1 && (
+                      <p className="text-muted-foreground text-sm text-center py-8">Not enough data to show performance chart.</p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

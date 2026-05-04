@@ -11,6 +11,7 @@ import { Screener } from "@/components/Screener"
 import { StockNews } from "@/components/StockNews"
 import { Watchlist } from "@/components/Watchlist"
 import { AnalystRatings } from "@/components/AnalystRatings"
+import { EarningsHistory } from "@/components/EarningsHistory"
 
 type StockData = {
   ticker: string
@@ -40,6 +41,8 @@ type StockData = {
   targetLow: number | null
   targetMean: number | null
   targetMedian: number | null
+  earningsHistory: { quarter: string; estimate: number | null; actual: number | null; surprise: number | null }[]
+  nextEarningsDate: string | null
 }
 
 type Analysis = {
@@ -425,6 +428,11 @@ function App() {
                     )}
                   </CardContent>
                 </Card>
+
+                <EarningsHistory
+                  earningsHistory={stock.earningsHistory}
+                  nextEarningsDate={stock.nextEarningsDate}
+                />
 
                 <Card>
                   <CardHeader>
