@@ -123,6 +123,36 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
                     })
             revenue_data.reverse()
 
+        # Earnings history
+        earnings_data = []
+        next_earnings = None
+        try:
+            ed = stock.earnings_dates
+            if ed is not None and not ed.empty:
+                past = ed[ed["Reported EPS"].notna()].head(4)
+                for date, row in past.iterrows():
+                    dt = pd.Timestamp(date)
+                    if dt.tzinfo:
+                        dt = dt.tz_localize(None)
+                    est = row.get("EPS Estimate")
+                    act = row.get("Reported EPS")
+                    sur = row.get("Surprise(%)")
+                    earnings_data.append({
+                        "quarter": f"Q{(dt.month - 1) // 3 + 1} '{str(dt.year)[2:]}",
+                        "estimate": round(float(est), 2) if pd.notna(est) else None,
+                        "actual":   round(float(act), 2) if pd.notna(act) else None,
+                        "surprise": round(float(sur), 1) if pd.notna(sur) else None,
+                    })
+                earnings_data.reverse()
+                future = ed[ed["Reported EPS"].isna()]
+                if not future.empty:
+                    ndt = pd.Timestamp(future.index[0])
+                    if ndt.tzinfo:
+                        ndt = ndt.tz_localize(None)
+                    next_earnings = ndt.strftime("%b %d, %Y")
+        except Exception as ex:
+            print(f"Earnings fetch error: {ex}")
+
         price = info.get("currentPrice") or info.get("regularMarketPrice") or 0
         market_cap = info.get("marketCap", 0)
 
@@ -174,6 +204,9 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
             "ttmPsRatio": format_ratio(info.get("priceToSalesTrailing12Months")),
             "chartData": chart_data,
             "revenueData": revenue_data,
+            # Earnings
+            "earningsHistory": earnings_data,
+            "nextEarningsDate": next_earnings,
             # Analyst ratings
             "analystCount": info.get("numberOfAnalystOpinions"),
             "recommendationKey": info.get("recommendationKey"),
@@ -309,6 +342,37 @@ async def get_quotes(request: Request, tickers: str, _: None = Depends(verify_to
     except Exception as e:
         print(f"ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Price History (portfolio performance) ─────────────────────────────────────
+
+@app.get("/history")
+@limiter.limit("20/minute")
+async def get_price_history(request: Request, tickers: str, _: None = Depends(verify_token)):
+    ticker_list = [t.strip().upper() for t in tickers.split(",") if t.strip()][:20]
+    if not ticker_list:
+        return {}
+
+    all_tickers = list(set(ticker_list + ["SPY"]))
+    cache_key = f"history:{','.join(sorted(all_tickers))}"
+    cached = r.get(cache_key)
+    if cached:
+        return json.loads(cached)
+
+    result = {}
+    for t in all_tickers:
+        try:
+            hist = yf.Ticker(t).history(period="1y", interval="1d")
+            if not hist.empty:
+                result[t] = {
+                    date.strftime("%Y-%m-%d"): round(float(row["Close"]), 4)
+                    for date, row in hist.iterrows()
+                }
+        except Exception as ex:
+            print(f"History fetch error for {t}: {ex}")
+
+    r.setex(cache_key, 900, json.dumps(result))
+    return result
 
 
 # ── Income Statement ───────────────────────────────────────────────────────────

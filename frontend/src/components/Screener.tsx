@@ -57,6 +57,18 @@ function fmtRatio(v: number | null | undefined): string {
   return v.toFixed(1)
 }
 
+function downloadCSV(filename: string, headers: string[], rows: string[][]) {
+  const escape = (v: string) => `"${v.replace(/"/g, '""')}"`
+  const csv = [headers, ...rows].map(r => r.map(escape).join(",")).join("\n")
+  const blob = new Blob([csv], { type: "text/csv" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function FilterInput({
   label, placeholder, value, onChange
 }: { label: string; placeholder: string; value: string; onChange: (v: string) => void }) {
@@ -240,13 +252,36 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
               )}
             </span>
             {allStocks.length > 0 && (
-              <button
-                onClick={fetchData}
-                disabled={loading}
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
-              >
-                Refresh data
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    const headers = ["Ticker", "Name", "Sector", "Price", "Change %", "Market Cap", "P/E", "P/B", "Beta", "Div Yield %"]
+                    const csvRows = filtered.map(s => [
+                      s.ticker,
+                      s.name,
+                      s.sector,
+                      s.price.toFixed(2),
+                      s.change.toFixed(2),
+                      s.marketCap,
+                      s.peRatio != null ? s.peRatio.toFixed(1) : "",
+                      s.pbRatio != null ? s.pbRatio.toFixed(1) : "",
+                      s.beta != null ? s.beta.toFixed(2) : "",
+                      s.dividendYield != null ? s.dividendYield.toFixed(2) : "",
+                    ])
+                    downloadCSV("screener.csv", headers, csvRows)
+                  }}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Export CSV
+                </button>
+                <button
+                  onClick={fetchData}
+                  disabled={loading}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                >
+                  Refresh data
+                </button>
+              </div>
             )}
           </CardTitle>
         </CardHeader>
