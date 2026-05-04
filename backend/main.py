@@ -123,6 +123,29 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
                     })
             revenue_data.reverse()
 
+        # Insider transactions
+        insiders = []
+        try:
+            it = stock.insider_transactions
+            if it is not None and not it.empty:
+                it = it.reset_index()
+                for _, row in it.head(10).iterrows():
+                    date_val = row.get("Date") or row.get("Start Date")
+                    date_str = pd.Timestamp(date_val).strftime("%b %d, %Y") if date_val is not None and not pd.isna(date_val) else ""
+                    shares_val = row.get("#Shares") or row.get("Shares") or 0
+                    value_val  = row.get("Value") or 0
+                    txn = str(row.get("Transaction") or "")
+                    insiders.append({
+                        "date":        date_str,
+                        "insider":     str(row.get("Insider") or ""),
+                        "position":    str(row.get("Position") or ""),
+                        "transaction": txn,
+                        "shares":      int(shares_val) if shares_val and not pd.isna(shares_val) else 0,
+                        "value":       int(value_val)  if value_val  and not pd.isna(value_val)  else 0,
+                    })
+        except Exception as ex:
+            print(f"Insider transactions error: {ex}")
+
         # Earnings history
         earnings_data = []
         next_earnings = None
@@ -204,6 +227,8 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
             "ttmPsRatio": format_ratio(info.get("priceToSalesTrailing12Months")),
             "chartData": chart_data,
             "revenueData": revenue_data,
+            # Insider transactions
+            "insiderTransactions": insiders,
             # Earnings
             "earningsHistory": earnings_data,
             "nextEarningsDate": next_earnings,
