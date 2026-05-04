@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ComposedChart, Area, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
@@ -13,6 +13,9 @@ import { Watchlist } from "@/components/Watchlist"
 import { AnalystRatings } from "@/components/AnalystRatings"
 import { EarningsHistory } from "@/components/EarningsHistory"
 import { InsiderTransactions } from "@/components/InsiderTransactions"
+import { SectorHeatmap } from "@/components/SectorHeatmap"
+import { Toaster } from "@/components/Toaster"
+import { toast } from "@/lib/toast"
 
 type StockData = {
   ticker: string
@@ -55,7 +58,7 @@ type Analysis = {
   disclaimer: string
 }
 
-type Tab = "research" | "income" | "screener" | "compare" | "watchlist" | "portfolio"
+type Tab = "research" | "income" | "screener" | "compare" | "watchlist" | "portfolio" | "markets"
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 const API_TOKEN = import.meta.env.VITE_API_SECRET_TOKEN
@@ -89,6 +92,38 @@ function App() {
     try { return JSON.parse(localStorage.getItem("alphalytics_recent") || "[]") }
     catch { return [] }
   })
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (document.activeElement as HTMLElement)?.tagName
+      const inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT"
+
+      // / — focus search (when not already typing)
+      if (e.key === "/" && !inInput) {
+        e.preventDefault()
+        setActiveTab("research")
+        setTimeout(() => searchInputRef.current?.focus(), 30)
+      }
+
+      // Cmd+K / Ctrl+K — focus search from anywhere
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setActiveTab("research")
+        setTimeout(() => searchInputRef.current?.focus(), 30)
+      }
+
+      // Esc — clear search input
+      if (e.key === "Escape" && document.activeElement === searchInputRef.current) {
+        setTicker("")
+        setShowSuggestions(false)
+        searchInputRef.current?.blur()
+      }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [])
 
   useEffect(() => {
     const fetchTickers = async () => {
@@ -174,7 +209,9 @@ function App() {
   }, [watchlist])
 
   const toggleWatchlist = (t: string) => {
+    const adding = !watchlist.includes(t)
     setWatchlist((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t])
+    toast(adding ? `Added ${t} to watchlist ★` : `Removed ${t} from watchlist`, adding ? "success" : "info")
   }
 
   const handleWatchlistNavigate = (t: string) => {
@@ -194,6 +231,7 @@ function App() {
     { key: "income",    label: "Income" },
     { key: "screener",  label: "Screener" },
     { key: "compare",   label: "Compare" },
+    { key: "markets",   label: "Markets" },
     { key: "watchlist", label: `Watchlist${watchlist.length > 0 ? ` (${watchlist.length})` : ""}` },
     { key: "portfolio", label: "Portfolio" },
   ]
@@ -241,8 +279,9 @@ function App() {
                 <div className="flex gap-3">
                   <div className="relative flex-1">
                     <input
+                      ref={searchInputRef}
                       type="text"
-                      placeholder="Search ticker or company name..."
+                      placeholder="Search ticker or company… (/ or ⌘K)"
                       value={ticker}
                       onChange={(e) => handleTickerChange(e.target.value)}
                       onKeyDown={(e) => {
@@ -577,11 +616,18 @@ function App() {
           />
         )}
 
+        {/* Markets Tab */}
+        {activeTab === "markets" && (
+          <SectorHeatmap apiUrl={API_URL} apiToken={API_TOKEN} />
+        )}
+
         {/* Portfolio Tab */}
         {activeTab === "portfolio" && (
           <Portfolio apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
         )}
       </div>
+
+      <Toaster />
     </div>
   )
 }

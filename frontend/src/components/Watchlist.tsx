@@ -73,11 +73,15 @@ export function Watchlist({ apiUrl, apiToken, watchlist, onRemove, onNavigate }:
   if (watchlist.length === 0) {
     return (
       <Card>
-        <CardContent className="pt-10 pb-10 text-center">
-          <p className="text-4xl mb-4">☆</p>
-          <p className="text-muted-foreground text-sm">Your watchlist is empty.</p>
-          <p className="text-muted-foreground text-xs mt-1">
-            Search a stock in the Research tab and click the star to add it here.
+        <CardContent className="pt-16 pb-16 text-center">
+          <svg className="mx-auto mb-5 opacity-20" width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <path d="M32 8L39.5 23.5L57 26.5L44.5 38.5L47.5 56L32 48L16.5 56L19.5 38.5L7 26.5L24.5 23.5L32 8Z"
+              stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" className="text-primary" />
+            <path d="M22 38L28 44L42 30" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground" />
+          </svg>
+          <h3 className="text-base font-semibold mb-2">Your watchlist is empty</h3>
+          <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+            Search for a stock in the <span className="text-foreground font-medium">Research</span> tab and click the <span className="text-yellow-400">★</span> to start tracking it here.
           </p>
         </CardContent>
       </Card>

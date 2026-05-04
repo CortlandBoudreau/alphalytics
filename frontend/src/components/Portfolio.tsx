@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts"
+import { toast } from "@/lib/toast"
 
 type Holding = { id: string; ticker: string; shares: number; costBasis: number }
 type QuoteMap = Record<string, { ticker: string; name: string; price: number; change: number }>
@@ -100,9 +101,14 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     setHoldings(prev => [...prev, { id: crypto.randomUUID(), ticker, shares, costBasis }])
     setForm({ ticker: "", shares: "", costBasis: "" })
     setFormError("")
+    toast(`Added ${ticker} to portfolio`)
   }
 
-  const removeHolding = (id: string) => setHoldings(prev => prev.filter(h => h.id !== id))
+  const removeHolding = (id: string) => {
+    const h = holdings.find(x => x.id === id)
+    setHoldings(prev => prev.filter(x => x.id !== id))
+    if (h) toast(`Removed ${h.ticker} from portfolio`, "info")
+  }
 
   const handleTickerInput = (val: string) => {
     const upper = val.toUpperCase()
@@ -276,9 +282,19 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
       </Card>
 
       {holdings.length === 0 && (
-        <p className="text-center text-muted-foreground text-sm py-12">
-          No holdings yet. Add your first position above.
-        </p>
+        <Card>
+          <CardContent className="pt-16 pb-16 text-center">
+            <svg className="mx-auto mb-5 opacity-20" width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <rect x="8" y="20" width="48" height="36" rx="3" stroke="currentColor" strokeWidth="2.5" className="text-primary" />
+              <path d="M22 20V16a10 10 0 0 1 20 0v4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="text-primary" />
+              <path d="M24 36h16M32 30v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-muted-foreground" />
+            </svg>
+            <h3 className="text-base font-semibold mb-2">No holdings yet</h3>
+            <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+              Add your first position using the form above to start tracking your portfolio's performance and P&L.
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {holdings.length > 0 && (
