@@ -10,6 +10,7 @@ import { Portfolio } from "@/components/Portfolio"
 import { Screener } from "@/components/Screener"
 import { StockNews } from "@/components/StockNews"
 import { Watchlist } from "@/components/Watchlist"
+import { AnalystRatings } from "@/components/AnalystRatings"
 
 type StockData = {
   ticker: string
@@ -32,6 +33,13 @@ type StockData = {
   ttmPsRatio: number | null
   chartData: { date: string; price: number; volume: number; ma50: number | null; ma200: number | null }[]
   revenueData: { quarter: string; revenue: number }[]
+  analystCount: number | null
+  recommendationKey: string | null
+  recommendationMean: number | null
+  targetHigh: number | null
+  targetLow: number | null
+  targetMean: number | null
+  targetMedian: number | null
 }
 
 type Analysis = {
@@ -471,6 +479,17 @@ function App() {
                     )}
                   </CardContent>
                 </Card>
+
+                <AnalystRatings
+                  price={stock.price}
+                  analystCount={stock.analystCount}
+                  recommendationKey={stock.recommendationKey}
+                  recommendationMean={stock.recommendationMean}
+                  targetHigh={stock.targetHigh}
+                  targetLow={stock.targetLow}
+                  targetMean={stock.targetMean}
+                  targetMedian={stock.targetMedian}
+                />
 
                 <Card>
                   <CardHeader>

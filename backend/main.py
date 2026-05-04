@@ -147,6 +147,12 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
                 return None
             return round(v, 2)
 
+        def safe_price(v):
+            try:
+                return round(float(v), 2) if v is not None else None
+            except (TypeError, ValueError):
+                return None
+
         result = {
             "ticker": ticker,
             "name": info.get("longName", ticker),
@@ -168,6 +174,14 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
             "ttmPsRatio": format_ratio(info.get("priceToSalesTrailing12Months")),
             "chartData": chart_data,
             "revenueData": revenue_data,
+            # Analyst ratings
+            "analystCount": info.get("numberOfAnalystOpinions"),
+            "recommendationKey": info.get("recommendationKey"),
+            "recommendationMean": format_ratio(info.get("recommendationMean")),
+            "targetHigh": safe_price(info.get("targetHighPrice")),
+            "targetLow": safe_price(info.get("targetLowPrice")),
+            "targetMean": safe_price(info.get("targetMeanPrice")),
+            "targetMedian": safe_price(info.get("targetMedianPrice")),
         }
 
         r.setex(cache_key, 900, json.dumps(result))
