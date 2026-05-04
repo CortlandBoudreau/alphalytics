@@ -353,9 +353,10 @@ function App() {
                             <YAxis stroke="#888888" tick={{ fontSize: 11 }} domain={["auto", "auto"]} width={55} tickFormatter={(v) => `$${v}`} />
                             <Tooltip
                               contentStyle={{ backgroundColor: "#111111", border: "1px solid #333" }}
-                              formatter={(value: number, name: string) => {
+                              formatter={(value, name) => {
                                 const labels: Record<string, string> = { price: "Price", ma50: "MA 50", ma200: "MA 200" }
-                                return value != null ? [`$${value.toFixed(2)}`, labels[name] ?? name] : [null, null]
+                                const n = Number(value)
+                                return [`$${n.toFixed(2)}`, labels[String(name)] ?? String(name)]
                               }}
                             />
                             <Area type="monotone" dataKey="price" stroke="#3b82f6" fill="url(#priceGradient)" strokeWidth={2} dot={false} />
@@ -369,7 +370,7 @@ function App() {
                             <YAxis stroke="#888888" tick={{ fontSize: 10 }} width={55} tickFormatter={(v) => `${(v / 1e6).toFixed(0)}M`} tickCount={2} />
                             <Tooltip
                               contentStyle={{ backgroundColor: "#111111", border: "1px solid #333" }}
-                              formatter={(value: number) => [`${(value / 1e6).toFixed(1)}M`, "Volume"]}
+                              formatter={(value) => [`${(Number(value) / 1e6).toFixed(1)}M`, "Volume"]}
                             />
                             <Bar dataKey="volume" fill="#3b82f6" opacity={0.4} />
                           </BarChart>
@@ -498,7 +499,7 @@ function App() {
 
         {/* Portfolio Tab */}
         {activeTab === "portfolio" && (
-          <Portfolio apiUrl={API_URL} apiToken={API_TOKEN} />
+          <Portfolio apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
         )}
       </div>
     </div>

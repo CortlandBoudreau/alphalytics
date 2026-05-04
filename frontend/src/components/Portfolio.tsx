@@ -10,9 +10,13 @@ const COLORS = ["#3b82f6","#f59e0b","#10b981","#ef4444","#8b5cf6","#ec4899","#06
 const fmt$ = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 })
 const fmtPct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`
 
-type Props = { apiUrl: string; apiToken: string }
+type Props = {
+  apiUrl: string
+  apiToken: string
+  allTickers: { ticker: string; name: string }[]
+}
 
-export function Portfolio({ apiUrl, apiToken }: Props) {
+export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   const [holdings, setHoldings] = useState<Holding[]>(() => {
     try { return JSON.parse(localStorage.getItem("alphalytics_portfolio") || "[]") }
     catch { return [] }
@@ -21,6 +25,8 @@ export function Portfolio({ apiUrl, apiToken }: Props) {
   const [quotesLoading, setQuotesLoading] = useState(false)
   const [form, setForm] = useState({ ticker: "", shares: "", costBasis: "" })
   const [formError, setFormError] = useState("")
+  const [suggestions, setSuggestions] = useState<{ ticker: string; name: string }[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   useEffect(() => {
     localStorage.setItem("alphalytics_portfolio", JSON.stringify(holdings))
@@ -58,6 +64,25 @@ export function Portfolio({ apiUrl, apiToken }: Props) {
 
   const removeHolding = (id: string) => setHoldings(prev => prev.filter(h => h.id !== id))
 
+  const handleTickerInput = (val: string) => {
+    const upper = val.toUpperCase()
+    setForm(f => ({ ...f, ticker: upper }))
+    if (upper.length < 1) { setSuggestions([]); setShowSuggestions(false); return }
+    const tickerMatches = allTickers.filter(t => t.ticker.startsWith(upper)).slice(0, 6)
+    const nameMatches = allTickers
+      .filter(t => !t.ticker.startsWith(upper) && t.name.toUpperCase().startsWith(upper))
+      .slice(0, 2)
+    const next = [...tickerMatches, ...nameMatches]
+    setSuggestions(next)
+    setShowSuggestions(next.length > 0)
+  }
+
+  const selectSuggestion = (t: string) => {
+    setForm(f => ({ ...f, ticker: t }))
+    setSuggestions([])
+    setShowSuggestions(false)
+  }
+
   const rows = useMemo(() => holdings.map(h => {
     const q = quotes[h.ticker]
     const price        = q?.price ?? null
@@ -93,23 +118,67 @@ export function Portfolio({ apiUrl, apiToken }: Props) {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3 items-end">
-            {[
-              { field: "ticker",    label: "Ticker",          placeholder: "AAPL",   type: "text"   },
-              { field: "shares",    label: "Shares",          placeholder: "10",     type: "number" },
-              { field: "costBasis", label: "Cost Basis / Share", placeholder: "150.00", type: "number" },
-            ].map(({ field, label, placeholder, type }) => (
-              <div key={field} className="space-y-1 flex-1 min-w-[120px]">
-                <label className="text-xs text-muted-foreground">{label}</label>
-                <input
-                  type={type}
-                  placeholder={placeholder}
-                  value={form[field as keyof typeof form]}
-                  onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
-                  onKeyDown={e => e.key === "Enter" && addHolding()}
-                  className="w-full px-3 py-1.5 rounded-md bg-secondary border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm"
-                />
-              </div>
-            ))}
+            {/* Ticker with autocomplete */}
+            <div className="space-y-1 flex-1 min-w-[140px] relative">
+              <label className="text-xs text-muted-foreground">Ticker</label>
+              <input
+                type="text"
+                placeholder="AAPL"
+                value={form.ticker}
+                onChange={e => handleTickerInput(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") { setShowSuggestions(false); addHolding() }
+                  if (e.key === "Escape") setShowSuggestions(false)
+                }}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                className="w-full px-3 py-1.5 rounded-md bg-secondary border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+              />
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-card border border-border rounded-md shadow-lg overflow-hidden">
+                  {suggestions.map(s => (
+                    <button
+                      key={s.ticker}
+                      className="w-full text-left px-3 py-1.5 text-sm hover:bg-secondary transition-colors flex items-center justify-between"
+                      onMouseDown={() => selectSuggestion(s.ticker)}
+                    >
+                      <span className="font-medium text-primary">{s.ticker}</span>
+                      <span className="text-muted-foreground text-xs truncate ml-3">{s.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Shares */}
+            <div className="space-y-1 flex-1 min-w-[100px]">
+              <label className="text-xs text-muted-foreground">Shares</label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                placeholder="10"
+                value={form.shares}
+                onChange={e => setForm(f => ({ ...f, shares: e.target.value }))}
+                onKeyDown={e => e.key === "Enter" && addHolding()}
+                className="w-full px-3 py-1.5 rounded-md bg-secondary border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+              />
+            </div>
+
+            {/* Cost basis */}
+            <div className="space-y-1 flex-1 min-w-[130px]">
+              <label className="text-xs text-muted-foreground">Cost Basis / Share</label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                placeholder="150.00"
+                value={form.costBasis}
+                onChange={e => setForm(f => ({ ...f, costBasis: e.target.value }))}
+                onKeyDown={e => e.key === "Enter" && addHolding()}
+                className="w-full px-3 py-1.5 rounded-md bg-secondary border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+              />
+            </div>
+
             <button
               onClick={addHolding}
               className="px-5 py-1.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
@@ -239,7 +308,7 @@ export function Portfolio({ apiUrl, apiToken }: Props) {
                         </Pie>
                         <Tooltip
                           contentStyle={{ backgroundColor: "#111", border: "1px solid #333" }}
-                          formatter={(v: number) => [`${v.toFixed(1)}%`, "Allocation"]}
+                          formatter={(v) => [`${Number(v).toFixed(1)}%`, "Allocation"]}
                         />
                       </PieChart>
                     </ResponsiveContainer>
