@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts"
 import { toast } from "@/lib/toast"
+import { apiFetch } from "@/lib/api"
+import { RateLimitError } from "@/components/RateLimitError"
 
 type Holding = { id: string; ticker: string; shares: number; costBasis: number }
 type QuoteMap = Record<string, { ticker: string; name: string; price: number; change: number }>
@@ -37,6 +39,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   })
   const [quotes, setQuotes] = useState<QuoteMap>({})
   const [quotesLoading, setQuotesLoading] = useState(false)
+  const [quotesError, setQuotesError] = useState<{ kind: "message"; text: string } | { kind: "rate_limit"; retryAfter: number } | null>(null)
   const [form, setForm] = useState({ ticker: "", shares: "", costBasis: "" })
   const [formError, setFormError] = useState("")
   const [suggestions, setSuggestions] = useState<{ ticker: string; name: string }[]>([])
@@ -55,16 +58,22 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     const tickers = [...new Set(hs.map(h => h.ticker))]
     if (tickers.length === 0) { setQuotes({}); return }
     setQuotesLoading(true)
-    try {
-      const res = await fetch(`${apiUrl}/quotes?tickers=${encodeURIComponent(tickers.join(","))}`, {
-        headers: authHeaders
-      })
-      if (res.ok) setQuotes(await res.json())
-    } catch (e) {
-      console.error("Failed to fetch quotes", e)
-    } finally {
-      setQuotesLoading(false)
+    setQuotesError(null)
+    const result = await apiFetch<QuoteMap>(
+      `${apiUrl}/quotes?tickers=${encodeURIComponent(tickers.join(","))}`,
+      { headers: authHeaders }
+    )
+    setQuotesLoading(false)
+    if (!result.ok) {
+      const err = result.error
+      if (err.kind === "rate_limit") {
+        setQuotesError({ kind: "rate_limit", retryAfter: err.retryAfter })
+      } else {
+        setQuotesError({ kind: "message", text: err.detail ?? "Failed to fetch quotes" })
+      }
+      return
     }
+    setQuotes(result.data)
   }
 
   const fetchHistory = async (hs: Holding[]) => {
@@ -280,6 +289,28 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
           {formError && <p className="text-destructive text-xs mt-2">{formError}</p>}
         </CardContent>
       </Card>
+
+      {quotesError && quotesError.kind === "rate_limit" && (
+        <RateLimitError
+          retryAfter={quotesError.retryAfter}
+          onRetry={() => fetchQuotes(holdings)}
+          message="Quote prices rate limited."
+        />
+      )}
+      {quotesError && quotesError.kind === "message" && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 flex items-start gap-3">
+          <span className="text-destructive text-sm mt-0.5">⚠</span>
+          <div className="flex-1">
+            <p className="text-sm text-destructive font-medium">{quotesError.text}</p>
+            <button
+              onClick={() => fetchQuotes(holdings)}
+              className="text-xs text-muted-foreground hover:text-foreground mt-1 underline transition-colors"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      )}
 
       {holdings.length === 0 && (
         <Card>
