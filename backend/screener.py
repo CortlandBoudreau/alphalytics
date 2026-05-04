@@ -132,6 +132,17 @@ def load_tickers_into_redis():
         return []
 
 
+# Map Wikipedia/GICS sector names → yfinance-style names used in the UI filters
+_SECTOR_MAP = {
+    "Information Technology": "Technology",
+    "Health Care":            "Healthcare",
+    "Financials":             "Financial Services",
+    "Consumer Discretionary": "Consumer Cyclical",
+    "Consumer Staples":       "Consumer Defensive",
+    "Materials":              "Basic Materials",
+}
+
+
 def build_screener_data():
     """Fetch S&P 500 metrics via Yahoo Finance bulk quote API. ~5 HTTP calls total."""
     try:
@@ -171,7 +182,7 @@ def build_screener_data():
             results.append({
                 "ticker": ticker,
                 "name": q.get("shortName") or meta["name"],
-                "sector": meta["sector"],
+                "sector": _SECTOR_MAP.get(meta["sector"], meta["sector"]),
                 "industry": meta["industry"],
                 "price": round(float(price), 2),
                 "change": round(float(q.get("regularMarketChangePercent", 0)), 2),
