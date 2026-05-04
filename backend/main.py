@@ -204,6 +204,56 @@ async def refresh_screener(request: Request, _: None = Depends(verify_token)):
     return {"status": "ok", "count": len(data)}
 
 
+# ── News ──────────────────────────────────────────────────────────────────────
+
+@app.get("/news/{ticker}")
+@limiter.limit("10/minute")
+async def get_news(request: Request, ticker: str, _: None = Depends(verify_token)):
+    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
+    if not ticker or len(ticker) > 10:
+        raise HTTPException(status_code=400, detail="Invalid ticker")
+
+    cache_key = f"news:{ticker}"
+    cached = r.get(cache_key)
+    if cached:
+        return json.loads(cached)
+
+    try:
+        raw = yf.Ticker(ticker).news or []
+        news = []
+        for item in raw[:8]:
+            # yfinance 1.x wraps items under a "content" key
+            content = item.get("content") if isinstance(item, dict) else None
+            if content:
+                title     = content.get("title", "")
+                publisher = (content.get("provider") or {}).get("displayName", "")
+                url       = (content.get("canonicalUrl") or content.get("clickThroughUrl") or {}).get("url", "")
+                pub_date  = content.get("pubDate", "")
+                thumb     = (content.get("thumbnail") or {}).get("originalUrl")
+            else:
+                title     = item.get("title", "")
+                publisher = item.get("publisher", "")
+                url       = item.get("link", "")
+                pub_date  = item.get("providerPublishTime", 0)
+                resolutions = (item.get("thumbnail") or {}).get("resolutions") or []
+                thumb     = resolutions[0].get("url") if resolutions else None
+
+            if title and url:
+                news.append({
+                    "title":       title,
+                    "publisher":   publisher,
+                    "url":         url,
+                    "publishedAt": pub_date,
+                    "thumbnail":   thumb,
+                })
+
+        r.setex(cache_key, 1800, json.dumps(news))
+        return news
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ── Bulk Quotes (portfolio) ────────────────────────────────────────────────────
 
 @app.get("/quotes")
