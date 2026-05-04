@@ -8,6 +8,7 @@ import { Landing } from "@/components/Landing"
 import { CanvasBackground } from "@/components/CanvasBackground"
 import { Portfolio } from "@/components/Portfolio"
 import { Screener } from "@/components/Screener"
+import { StockNews } from "@/components/StockNews"
 import { Watchlist } from "@/components/Watchlist"
 
 type StockData = {
@@ -308,6 +309,29 @@ function App() {
                         </div>
                       ))}
                     </div>
+
+                    {/* 52W Range bar */}
+                    {stock.weekHigh52 > stock.weekLow52 && (() => {
+                      const pct = Math.max(0, Math.min(100,
+                        (stock.price - stock.weekLow52) / (stock.weekHigh52 - stock.weekLow52) * 100
+                      ))
+                      return (
+                        <div className="mt-5 space-y-1.5">
+                          <p className="text-xs text-muted-foreground">52W Range</p>
+                          <div className="flex items-center gap-3">
+                            <span className="text-xs text-muted-foreground w-16 text-right shrink-0">${stock.weekLow52.toFixed(2)}</span>
+                            <div className="relative flex-1 h-1.5 bg-secondary rounded-full">
+                              <div className="absolute inset-y-0 left-0 bg-primary/30 rounded-full" style={{ width: `${pct}%` }} />
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full border-2 border-background shadow"
+                                style={{ left: `calc(${pct}% - 6px)` }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground w-16 shrink-0">${stock.weekHigh52.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      )
+                    })()}
                   </CardContent>
                 </Card>
 
@@ -460,6 +484,8 @@ function App() {
                     </div>
                   </CardContent>
                 </Card>
+
+                <StockNews ticker={stock.ticker} apiUrl={API_URL} apiToken={API_TOKEN} />
               </>
             )}
           </>
