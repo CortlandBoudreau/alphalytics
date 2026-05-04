@@ -12,6 +12,7 @@ import { StockNews } from "@/components/StockNews"
 import { Watchlist } from "@/components/Watchlist"
 import { AnalystRatings } from "@/components/AnalystRatings"
 import { EarningsHistory } from "@/components/EarningsHistory"
+import { InsiderTransactions } from "@/components/InsiderTransactions"
 
 type StockData = {
   ticker: string
@@ -43,6 +44,7 @@ type StockData = {
   targetMedian: number | null
   earningsHistory: { quarter: string; estimate: number | null; actual: number | null; surprise: number | null }[]
   nextEarningsDate: string | null
+  insiderTransactions: { date: string; insider: string; position: string; transaction: string; shares: number; value: number }[]
 }
 
 type Analysis = {
@@ -81,6 +83,10 @@ function App() {
   const [chartTab, setChartTab] = useState<"price" | "revenue">("price")
   const [watchlist, setWatchlist] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("alphalytics_watchlist") || "[]") }
+    catch { return [] }
+  })
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("alphalytics_recent") || "[]") }
     catch { return [] }
   })
 
@@ -132,6 +138,11 @@ function App() {
         return
       }
       setStock(data)
+      setRecentSearches(prev => {
+        const updated = [searchTicker, ...prev.filter(t => t !== searchTicker)].slice(0, 8)
+        localStorage.setItem("alphalytics_recent", JSON.stringify(updated))
+        return updated
+      })
     } catch (err) {
       setError("Failed to connect to API")
     } finally {
@@ -197,15 +208,15 @@ function App() {
 
       {/* Top Nav */}
       <div className="border-b border-border bg-background sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-8">
-          <div className="flex items-center gap-8 h-14">
-            <span className="text-lg font-bold text-primary shrink-0">Alphalytics</span>
-            <nav className="flex items-center gap-1">
+        <div className="max-w-5xl mx-auto px-4 md:px-8">
+          <div className="flex items-center gap-3 md:gap-6 h-14 min-w-0">
+            <span className="text-base md:text-lg font-bold text-primary shrink-0">Alphalytics</span>
+            <nav className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide min-w-0">
               {NAV_TABS.map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setActiveTab(key)}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-2.5 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap ${
                     activeTab === key
                       ? "bg-primary text-primary-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -220,7 +231,7 @@ function App() {
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-8 py-8 space-y-6">
+      <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-8 space-y-6">
 
         {/* Research Tab */}
         {activeTab === "research" && (
@@ -272,6 +283,20 @@ function App() {
                   </button>
                 </div>
                 {error && <p className="text-destructive text-sm mt-2">{error}</p>}
+                {recentSearches.length > 0 && !stock && (
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    <span className="text-xs text-muted-foreground shrink-0">Recent:</span>
+                    {recentSearches.map(t => (
+                      <button
+                        key={t}
+                        onMouseDown={() => { setTicker(t); setShowSuggestions(false); handleSearch(t) }}
+                        className="text-xs px-2.5 py-0.5 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/70 transition-colors"
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -279,10 +304,10 @@ function App() {
               <>
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-3">
-                          <h2 className="text-2xl font-bold">{stock.ticker}</h2>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className="text-xl md:text-2xl font-bold">{stock.ticker}</h2>
                           <Badge variant="outline">{stock.sector}</Badge>
                           <button
                             onClick={() => toggleWatchlist(stock.ticker)}
@@ -292,10 +317,10 @@ function App() {
                             {watchlist.includes(stock.ticker) ? "★" : "☆"}
                           </button>
                         </div>
-                        <p className="text-muted-foreground">{stock.name}</p>
+                        <p className="text-muted-foreground text-sm md:text-base truncate">{stock.name}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-3xl font-bold">${stock.price.toFixed(2)}</p>
+                      <div className="text-right shrink-0">
+                        <p className="text-2xl md:text-3xl font-bold">${stock.price.toFixed(2)}</p>
                         <p className={stock.change >= 0 ? "text-green-500" : "text-red-500"}>
                           {stock.change >= 0 ? "▲" : "▼"} {Math.abs(stock.change).toFixed(2)}%
                         </p>
@@ -511,6 +536,8 @@ function App() {
                     </div>
                   </CardContent>
                 </Card>
+
+                <InsiderTransactions insiderTransactions={stock.insiderTransactions} />
 
                 <StockNews ticker={stock.ticker} apiUrl={API_URL} apiToken={API_TOKEN} />
               </>

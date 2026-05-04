@@ -106,6 +106,7 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
   const [minDivYield, setMinDivYield] = useState("")
   const [minBeta, setMinBeta] = useState("")
   const [maxBeta, setMaxBeta] = useState("")
+  const [minWeekChange, setMinWeekChange] = useState("")
 
   const headers = {
     "Content-Type": "application/json",
@@ -153,6 +154,7 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
       if (minDivYield && (s.dividendYield == null || s.dividendYield < parseFloat(minDivYield))) return false
       if (minBeta && (s.beta == null || s.beta < parseFloat(minBeta))) return false
       if (maxBeta && s.beta != null && s.beta > parseFloat(maxBeta)) return false
+      if (minWeekChange && (s.weekChange52 == null || s.weekChange52 < parseFloat(minWeekChange))) return false
       return true
     }).sort((a, b) => {
       const av = a[sortKey]
@@ -174,7 +176,31 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
     setMinDivYield("")
     setMinBeta("")
     setMaxBeta("")
+    setMinWeekChange("")
   }
+
+  const PRESETS: { label: string; apply: () => void }[] = [
+    {
+      label: "Value",
+      apply: () => { resetFilters(); setMaxPE("15"); setMaxPB("2") },
+    },
+    {
+      label: "High Dividend",
+      apply: () => { resetFilters(); setMinDivYield("3") },
+    },
+    {
+      label: "Low Volatility",
+      apply: () => { resetFilters(); setMaxBeta("0.8") },
+    },
+    {
+      label: "Momentum",
+      apply: () => { resetFilters(); setMinWeekChange("20") },
+    },
+    {
+      label: "Mega Cap",
+      apply: () => { resetFilters(); setMarketCap(1) },
+    },
+  ]
 
   const cols: { label: string; key: SortKey; fmt: (s: Stock) => string; colorFn?: (s: Stock) => string }[] = [
     { label: "Ticker",   key: "ticker",      fmt: s => s.ticker },
@@ -204,7 +230,19 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
             </button>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {/* Presets */}
+          <div className="flex flex-wrap gap-2">
+            {PRESETS.map(p => (
+              <button
+                key={p.label}
+                onClick={p.apply}
+                className="px-3 py-1 rounded-full text-xs font-medium bg-secondary text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {/* Sector */}
             <div className="space-y-1">
@@ -233,8 +271,9 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
             <FilterInput label="Max P/E"           placeholder="e.g. 30"  value={maxPE}       onChange={setMaxPE} />
             <FilterInput label="Max P/B"           placeholder="e.g. 5"   value={maxPB}       onChange={setMaxPB} />
             <FilterInput label="Min Dividend Yield (%)" placeholder="e.g. 2" value={minDivYield} onChange={setMinDivYield} />
-            <FilterInput label="Min Beta"          placeholder="e.g. 0.5" value={minBeta}     onChange={setMinBeta} />
-            <FilterInput label="Max Beta"          placeholder="e.g. 1.5" value={maxBeta}     onChange={setMaxBeta} />
+            <FilterInput label="Min Beta"           placeholder="e.g. 0.5"  value={minBeta}       onChange={setMinBeta} />
+            <FilterInput label="Max Beta"           placeholder="e.g. 1.5"  value={maxBeta}       onChange={setMaxBeta} />
+            <FilterInput label="Min 52W Change (%)" placeholder="e.g. 20"   value={minWeekChange} onChange={setMinWeekChange} />
           </div>
         </CardContent>
       </Card>
