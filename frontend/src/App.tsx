@@ -290,7 +290,7 @@ function App() {
                     <input
                       ref={searchInputRef}
                       type="text"
-                      placeholder="Search ticker or company… (/ or ⌘K)"
+                      placeholder="Search ticker or company…"
                       value={ticker}
                       onChange={(e) => handleTickerChange(e.target.value)}
                       onKeyDown={(e) => {
