@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { RateLimitError } from "@/components/RateLimitError"
+import { apiFetch } from "@/lib/api"
 
 type Stock = {
   ticker: string
@@ -94,7 +96,7 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
 export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatchlist }: Props) {
   const [allStocks, setAllStocks] = useState<Stock[]>([])
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [error, setError] = useState<{ kind: "message"; text: string } | { kind: "rate_limit"; retryAfter: number } | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>("marketCapRaw")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
 
@@ -115,20 +117,19 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
 
   const fetchData = async () => {
     setLoading(true)
-    setError("")
-    try {
-      const res = await fetch(`${apiUrl}/screener/data`, { headers })
-      if (!res.ok) {
-        const json = await res.json()
-        throw new Error(json.detail || "Failed to load screener data")
+    setError(null)
+    const result = await apiFetch<Stock[]>(`${apiUrl}/screener/data`, { headers })
+    setLoading(false)
+    if (!result.ok) {
+      const err = result.error
+      if (err.kind === "rate_limit") {
+        setError({ kind: "rate_limit", retryAfter: err.retryAfter })
+      } else {
+        setError({ kind: "message", text: err.kind === "network" ? err.detail : (err as { detail: string }).detail || "Failed to load screener data" })
       }
-      const data = await res.json()
-      setAllStocks(data)
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to load")
-    } finally {
-      setLoading(false)
+      return
     }
+    setAllStocks(result.data)
   }
 
   useEffect(() => {
@@ -346,7 +347,27 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
             </div>
           )}
 
-          {error && <p className="text-destructive text-sm">{error}</p>}
+          {error && error.kind === "rate_limit" && (
+            <RateLimitError
+              retryAfter={error.retryAfter}
+              onRetry={fetchData}
+              message="Screener data rate limited."
+            />
+          )}
+          {error && error.kind === "message" && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 flex items-start gap-3">
+              <span className="text-destructive text-sm mt-0.5">⚠</span>
+              <div className="flex-1">
+                <p className="text-sm text-destructive font-medium">{error.text}</p>
+                <button
+                  onClick={fetchData}
+                  className="text-xs text-muted-foreground hover:text-foreground mt-1 underline transition-colors"
+                >
+                  Try again
+                </button>
+              </div>
+            </div>
+          )}
 
           {!loading && allStocks.length > 0 && (
             <div className="overflow-x-auto">

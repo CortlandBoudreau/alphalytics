@@ -15,7 +15,10 @@ import { EarningsHistory } from "@/components/EarningsHistory"
 import { InsiderTransactions } from "@/components/InsiderTransactions"
 import { SectorHeatmap } from "@/components/SectorHeatmap"
 import { Toaster } from "@/components/Toaster"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { RateLimitError } from "@/components/RateLimitError"
 import { toast } from "@/lib/toast"
+import { apiFetch } from "@/lib/api"
 
 type StockData = {
   ticker: string
@@ -79,7 +82,7 @@ function App() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null)
   const [loading, setLoading] = useState(false)
   const [analysisLoading, setAnalysisLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [error, setError] = useState<{ kind: "message"; text: string } | { kind: "rate_limit"; retryAfter: number } | null>(null)
   const [allTickers, setAllTickers] = useState<{ ticker: string; name: string }[]>([])
   const [suggestions, setSuggestions] = useState<{ ticker: string; name: string }[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -158,31 +161,37 @@ function App() {
   }
 
   const handleSearch = async (overrideTicker?: string) => {
-    const searchTicker = overrideTicker || ticker
-    if (!searchTicker.trim()) return
+    const searchTicker = (overrideTicker || ticker).trim().toUpperCase()
+    if (!searchTicker) return
     setLoading(true)
-    setError("")
+    setError(null)
     setStock(null)
     setAnalysis(null)
 
-    try {
-      const response = await fetch(`${API_URL}/stock/${searchTicker}`, { headers })
-      const data = await response.json()
-      if (!response.ok) {
-        setError(data.detail || "Stock not found")
-        return
+    const result = await apiFetch<StockData>(`${API_URL}/stock/${searchTicker}`, { headers })
+
+    setLoading(false)
+
+    if (!result.ok) {
+      const err = result.error
+      if (err.kind === "rate_limit") {
+        setError({ kind: "rate_limit", retryAfter: err.retryAfter })
+      } else if (err.kind === "not_found") {
+        setError({ kind: "message", text: `"${searchTicker}" not found. Check the ticker and try again.` })
+      } else if (err.kind === "network") {
+        setError({ kind: "message", text: "Cannot reach the server. Make sure the backend is running." })
+      } else {
+        setError({ kind: "message", text: err.detail })
       }
-      setStock(data)
-      setRecentSearches(prev => {
-        const updated = [searchTicker, ...prev.filter(t => t !== searchTicker)].slice(0, 8)
-        localStorage.setItem("alphalytics_recent", JSON.stringify(updated))
-        return updated
-      })
-    } catch (err) {
-      setError("Failed to connect to API")
-    } finally {
-      setLoading(false)
+      return
     }
+
+    setStock(result.data)
+    setRecentSearches(prev => {
+      const updated = [searchTicker, ...prev.filter(t => t !== searchTicker)].slice(0, 8)
+      localStorage.setItem("alphalytics_recent", JSON.stringify(updated))
+      return updated
+    })
   }
 
   const handleAnalyze = async () => {
@@ -321,7 +330,11 @@ function App() {
                     {loading ? "Loading..." : "Search"}
                   </button>
                 </div>
-                {error && <p className="text-destructive text-sm mt-2">{error}</p>}
+                {error && (
+                  error.kind === "rate_limit"
+                    ? <div className="mt-3"><RateLimitError retryAfter={error.retryAfter} onRetry={() => handleSearch()} /></div>
+                    : <p className="text-destructive text-sm mt-2">{error.text}</p>
+                )}
                 {recentSearches.length > 0 && !stock && (
                   <div className="flex flex-wrap items-center gap-2 mt-3">
                     <span className="text-xs text-muted-foreground shrink-0">Recent:</span>
@@ -586,44 +599,56 @@ function App() {
 
         {/* Income Tab */}
         {activeTab === "income" && (
-          <Financials apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
+          <ErrorBoundary label="Financials">
+            <Financials apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
+          </ErrorBoundary>
         )}
 
         {/* Compare Tab */}
         {activeTab === "compare" && (
-          <Compare apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
+          <ErrorBoundary label="Compare">
+            <Compare apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
+          </ErrorBoundary>
         )}
 
         {/* Screener Tab */}
         {activeTab === "screener" && (
-          <Screener
-            apiUrl={API_URL}
-            apiToken={API_TOKEN}
-            watchlist={watchlist}
-            onNavigate={handleWatchlistNavigate}
-            onToggleWatchlist={toggleWatchlist}
-          />
+          <ErrorBoundary label="Screener">
+            <Screener
+              apiUrl={API_URL}
+              apiToken={API_TOKEN}
+              watchlist={watchlist}
+              onNavigate={handleWatchlistNavigate}
+              onToggleWatchlist={toggleWatchlist}
+            />
+          </ErrorBoundary>
         )}
 
         {/* Watchlist Tab */}
         {activeTab === "watchlist" && (
-          <Watchlist
-            apiUrl={API_URL}
-            apiToken={API_TOKEN}
-            watchlist={watchlist}
-            onRemove={toggleWatchlist}
-            onNavigate={handleWatchlistNavigate}
-          />
+          <ErrorBoundary label="Watchlist">
+            <Watchlist
+              apiUrl={API_URL}
+              apiToken={API_TOKEN}
+              watchlist={watchlist}
+              onRemove={toggleWatchlist}
+              onNavigate={handleWatchlistNavigate}
+            />
+          </ErrorBoundary>
         )}
 
         {/* Markets Tab */}
         {activeTab === "markets" && (
-          <SectorHeatmap apiUrl={API_URL} apiToken={API_TOKEN} />
+          <ErrorBoundary label="Markets">
+            <SectorHeatmap apiUrl={API_URL} apiToken={API_TOKEN} />
+          </ErrorBoundary>
         )}
 
         {/* Portfolio Tab */}
         {activeTab === "portfolio" && (
-          <Portfolio apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
+          <ErrorBoundary label="Portfolio">
+            <Portfolio apiUrl={API_URL} apiToken={API_TOKEN} allTickers={allTickers} />
+          </ErrorBoundary>
         )}
       </div>
 

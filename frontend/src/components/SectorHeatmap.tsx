@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { apiFetch } from "@/lib/api"
+import { RateLimitError } from "@/components/RateLimitError"
 
 const SECTOR_ETFS = [
   { etf: "XLK",  label: "Technology" },
@@ -39,26 +41,30 @@ function textColor(change: number): string {
 export function SectorHeatmap({ apiUrl, apiToken }: Props) {
   const [quotes, setQuotes] = useState<Record<string, Quote>>({})
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<{ kind: "message"; text: string } | { kind: "rate_limit"; retryAfter: number } | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   const tickers = [...SECTOR_ETFS.map(s => s.etf), "SPY", "QQQ", "DIA", "IWM"].join(",")
 
   const fetchQuotes = async () => {
     setLoading(true)
-    try {
-      const res = await fetch(
-        `${apiUrl}/quotes?tickers=${encodeURIComponent(tickers)}`,
-        { headers: { Authorization: `Bearer ${apiToken}` } }
-      )
-      if (res.ok) {
-        setQuotes(await res.json())
-        setLastUpdated(new Date())
+    setError(null)
+    const result = await apiFetch<Record<string, Quote>>(
+      `${apiUrl}/quotes?tickers=${encodeURIComponent(tickers)}`,
+      { headers: { Authorization: `Bearer ${apiToken}` } }
+    )
+    setLoading(false)
+    if (!result.ok) {
+      const err = result.error
+      if (err.kind === "rate_limit") {
+        setError({ kind: "rate_limit", retryAfter: err.retryAfter })
+      } else {
+        setError({ kind: "message", text: err.detail ?? "Failed to load market data" })
       }
-    } catch (e) {
-      console.error("Sector heatmap fetch failed", e)
-    } finally {
-      setLoading(false)
+      return
     }
+    setQuotes(result.data)
+    setLastUpdated(new Date())
   }
 
   useEffect(() => { fetchQuotes() }, [])
@@ -99,6 +105,28 @@ export function SectorHeatmap({ apiUrl, apiToken }: Props) {
           )
         })}
       </div>
+
+      {error && error.kind === "rate_limit" && (
+        <RateLimitError
+          retryAfter={error.retryAfter}
+          onRetry={fetchQuotes}
+          message="Market data rate limited."
+        />
+      )}
+      {error && error.kind === "message" && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 flex items-start gap-3">
+          <span className="text-destructive text-sm mt-0.5">⚠</span>
+          <div className="flex-1">
+            <p className="text-sm text-destructive font-medium">{error.text}</p>
+            <button
+              onClick={fetchQuotes}
+              className="text-xs text-muted-foreground hover:text-foreground mt-1 underline transition-colors"
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Sector heatmap */}
       <Card>
