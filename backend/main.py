@@ -32,7 +32,7 @@ from db import r
 from auth import security, verify_token
 from screener import build_screener_data, load_tickers_into_redis, _yf_session_and_crumb
 from financials import build_income_quarters, build_balance_quarters, build_cashflow_quarters
-from ai import call_claude, AnalysisRequest, client, sanitize_for_prompt
+from ai import call_claude, AnalysisRequest, client, sanitize_for_prompt, _SYSTEM_PROMPT
 
 app = FastAPI()
 
@@ -105,7 +105,8 @@ async def startup_event():
 # ── Health ─────────────────────────────────────────────────────────────────────
 
 @app.get("/")
-def read_root():
+@limiter.limit("60/minute")
+async def read_root(request: Request):
     return {"status": "ok"}
 
 
@@ -730,6 +731,7 @@ Return this exact JSON structure:
         message = client.messages.create(
             model=os.getenv("ANTHROPIC_MODEL", "claude-haiku-4-5"),
             max_tokens=1024,
+            system=_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": prompt}]
         )
 
