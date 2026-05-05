@@ -207,7 +207,7 @@ function App() {
       const data = await response.json()
       setAnalysis(data)
     } catch (err) {
-      setError("Failed to get analysis")
+      setError({ kind: "message", text: "Failed to get analysis" })
     } finally {
       setAnalysisLoading(false)
     }
