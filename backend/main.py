@@ -1,4 +1,6 @@
 import os
+import logging
+import logging.config
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -9,6 +11,13 @@ if base_env.exists():
 env_file = Path(__file__).parent / f".env.{env}"
 if env_file.exists():
     load_dotenv(dotenv_path=env_file, override=True)
+
+# ── Logging setup ──────────────────────────────────────────────────────────────
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, Request, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,7 +32,7 @@ from db import r
 from auth import security, verify_token
 from screener import build_screener_data, load_tickers_into_redis, _yf_session_and_crumb
 from financials import build_income_quarters, build_balance_quarters, build_cashflow_quarters
-from ai import call_claude, AnalysisRequest, client
+from ai import call_claude, AnalysisRequest, client, sanitize_for_prompt
 
 app = FastAPI()
 
@@ -31,6 +40,7 @@ limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# ── CORS ───────────────────────────────────────────────────────────────────────
 allowed_origins = [
     "http://localhost:5173",
     "http://localhost:5174",
@@ -45,25 +55,61 @@ if frontend_url:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    # Only allow *this* project's Vercel preview deployments, not any *.vercel.app
+    allow_origin_regex=r"https://alphalytics[^.]*\.vercel\.app",
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
+
+# ── Helpers ────────────────────────────────────────────────────────────────────
+
+def _internal_error(exc: Exception, context: str = "") -> HTTPException:
+    """Log the real error server-side; return a generic 500 to the client."""
+    logger.exception("Internal error%s", f" [{context}]" if context else "")
+    return HTTPException(status_code=500, detail="An unexpected error occurred")
+
+
+def _validate_ticker(ticker: str) -> str:
+    """Sanitize and validate a single ticker symbol."""
+    clean = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
+    if not clean or len(clean) > 10:
+        raise HTTPException(status_code=400, detail="Invalid ticker symbol")
+    return clean
+
+
+def _validate_ticker_list(raw: str, limit: int = 50) -> list[str]:
+    """Sanitize and validate a comma-separated list of ticker symbols."""
+    tickers = [
+        "".join(c for c in t.strip().upper() if c.isalnum() or c == "-")
+        for t in raw.split(",")
+        if t.strip()
+    ]
+    valid = [t for t in tickers if t and len(t) <= 10][:limit]
+    if not valid:
+        raise HTTPException(status_code=400, detail="No valid ticker symbols provided")
+    return valid
+
+
+# ── Startup ────────────────────────────────────────────────────────────────────
 
 @app.on_event("startup")
 async def startup_event():
     if not r.exists("tickers"):
         load_tickers_into_redis()
     else:
-        print("Tickers already cached in Redis")
+        logger.info("Tickers already cached in Redis")
 
+
+# ── Health ─────────────────────────────────────────────────────────────────────
 
 @app.get("/")
 def read_root():
-    return {"status": "Alphalytics API is running"}
+    return {"status": "ok"}
 
+
+# ── Tickers ────────────────────────────────────────────────────────────────────
 
 @app.get("/tickers")
 @limiter.limit("10/minute")
@@ -73,22 +119,23 @@ async def get_tickers(request: Request, _: None = Depends(verify_token)):
         if cached:
             return json.loads(cached)
         return load_tickers_into_redis()
+    except HTTPException:
+        raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, "get_tickers")
 
+
+# ── Stock ──────────────────────────────────────────────────────────────────────
 
 @app.get("/stock/{ticker}")
 @limiter.limit("10/minute")
 async def get_stock(request: Request, ticker: str, _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
 
     cache_key = f"stock:{ticker}"
     cached = r.get(cache_key)
     if cached:
-        print(f"Cache hit for {ticker}")
+        logger.info("Cache hit: %s", cache_key)
         return json.loads(cached)
 
     try:
@@ -144,8 +191,8 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
                         "shares":      int(shares_val) if shares_val and not pd.isna(shares_val) else 0,
                         "value":       int(value_val)  if value_val  and not pd.isna(value_val)  else 0,
                     })
-        except Exception as ex:
-            print(f"Insider transactions error: {ex}")
+        except Exception:
+            logger.warning("Could not fetch insider transactions for %s", ticker)
 
         # Earnings history
         earnings_data = []
@@ -174,8 +221,8 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
                     if ndt.tzinfo:
                         ndt = ndt.tz_localize(None)
                     next_earnings = ndt.strftime("%b %d, %Y")
-        except Exception as ex:
-            print(f"Earnings fetch error: {ex}")
+        except Exception:
+            logger.warning("Could not fetch earnings dates for %s", ticker)
 
         price = info.get("currentPrice") or info.get("regularMarketPrice") or 0
         market_cap = info.get("marketCap", 0)
@@ -192,14 +239,10 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
             return f"${n:,.0f}"
 
         def format_percent(v):
-            if v is None:
-                return None
-            return round(v * 100, 2)
+            return round(v * 100, 2) if v is not None else None
 
         def format_ratio(v):
-            if v is None:
-                return None
-            return round(v, 2)
+            return round(v, 2) if v is not None else None
 
         def safe_price(v):
             try:
@@ -228,12 +271,9 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
             "ttmPsRatio": format_ratio(info.get("priceToSalesTrailing12Months")),
             "chartData": chart_data,
             "revenueData": revenue_data,
-            # Insider transactions
             "insiderTransactions": insiders,
-            # Earnings
             "earningsHistory": earnings_data,
             "nextEarningsDate": next_earnings,
-            # Analyst ratings
             "analystCount": info.get("numberOfAnalystOpinions"),
             "recommendationKey": info.get("recommendationKey"),
             "recommendationMean": format_ratio(info.get("recommendationMean")),
@@ -249,8 +289,7 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_stock:{ticker}")
 
 
 # ── Screener ───────────────────────────────────────────────────────────────────
@@ -263,7 +302,7 @@ async def get_screener_data(request: Request, _: None = Depends(verify_token)):
         return json.loads(cached)
     data = build_screener_data()
     if not data:
-        raise HTTPException(status_code=503, detail="Failed to build screener data.")
+        raise HTTPException(status_code=503, detail="Screener data temporarily unavailable")
     return data
 
 
@@ -273,7 +312,7 @@ async def refresh_screener(request: Request, _: None = Depends(verify_token)):
     r.delete("screener:data")
     data = build_screener_data()
     if not data:
-        raise HTTPException(status_code=503, detail="Failed to rebuild screener data.")
+        raise HTTPException(status_code=503, detail="Screener data temporarily unavailable")
     return {"status": "ok", "count": len(data)}
 
 
@@ -282,9 +321,7 @@ async def refresh_screener(request: Request, _: None = Depends(verify_token)):
 @app.get("/news/{ticker}")
 @limiter.limit("10/minute")
 async def get_news(request: Request, ticker: str, _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
 
     cache_key = f"news:{ticker}"
     cached = r.get(cache_key)
@@ -295,7 +332,6 @@ async def get_news(request: Request, ticker: str, _: None = Depends(verify_token
         raw = yf.Ticker(ticker).news or []
         news = []
         for item in raw[:8]:
-            # yfinance 1.x wraps items under a "content" key
             content = item.get("content") if isinstance(item, dict) else None
             if content:
                 title     = content.get("title", "")
@@ -322,19 +358,18 @@ async def get_news(request: Request, ticker: str, _: None = Depends(verify_token
 
         r.setex(cache_key, 1800, json.dumps(news))
         return news
+    except HTTPException:
+        raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_news:{ticker}")
 
 
-# ── Bulk Quotes (portfolio) ────────────────────────────────────────────────────
+# ── Bulk Quotes ────────────────────────────────────────────────────────────────
 
 @app.get("/quotes")
 @limiter.limit("30/minute")
 async def get_quotes(request: Request, tickers: str, _: None = Depends(verify_token)):
-    ticker_list = [t.strip().upper() for t in tickers.split(",") if t.strip()][:50]
-    if not ticker_list:
-        return {}
+    ticker_list = _validate_ticker_list(tickers, limit=50)
 
     cache_key = f"quotes:{','.join(sorted(ticker_list))}"
     cached = r.get(cache_key)
@@ -366,18 +401,15 @@ async def get_quotes(request: Request, tickers: str, _: None = Depends(verify_to
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, "get_quotes")
 
 
-# ── Price History (portfolio performance) ─────────────────────────────────────
+# ── Price History ──────────────────────────────────────────────────────────────
 
 @app.get("/history")
 @limiter.limit("20/minute")
 async def get_price_history(request: Request, tickers: str, _: None = Depends(verify_token)):
-    ticker_list = [t.strip().upper() for t in tickers.split(",") if t.strip()][:20]
-    if not ticker_list:
-        return {}
+    ticker_list = _validate_ticker_list(tickers, limit=20)
 
     all_tickers = list(set(ticker_list + ["SPY"]))
     cache_key = f"history:{','.join(sorted(all_tickers))}"
@@ -394,8 +426,8 @@ async def get_price_history(request: Request, tickers: str, _: None = Depends(ve
                     date.strftime("%Y-%m-%d"): round(float(row["Close"]), 4)
                     for date, row in hist.iterrows()
                 }
-        except Exception as ex:
-            print(f"History fetch error for {t}: {ex}")
+        except Exception:
+            logger.warning("History fetch failed for %s", t)
 
     r.setex(cache_key, 900, json.dumps(result))
     return result
@@ -406,9 +438,7 @@ async def get_price_history(request: Request, tickers: str, _: None = Depends(ve
 @app.get("/income/{ticker}")
 @limiter.limit("10/minute")
 async def get_income(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
     period = period if period in ("quarterly", "annual") else "quarterly"
 
     cache_key = f"income:data:{ticker}:{period}"
@@ -429,16 +459,13 @@ async def get_income(request: Request, ticker: str, period: str = Query(default=
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_income:{ticker}")
 
 
 @app.get("/income/{ticker}/analysis")
 @limiter.limit("5/minute")
 async def get_income_analysis(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
     period = period if period in ("quarterly", "annual") else "quarterly"
 
     cache_key = f"income:analysis:{ticker}:{period}"
@@ -448,8 +475,8 @@ async def get_income_analysis(request: Request, ticker: str, period: str = Query
 
     try:
         quarter_data, info = build_income_quarters(ticker, period)
-        sector = info.get("sector", "Unknown")
-        name   = info.get("longName", ticker)
+        sector = sanitize_for_prompt(info.get("sector", "Unknown"), 50)
+        name   = sanitize_for_prompt(info.get("longName", ticker), 100)
         period_word = "annual" if period == "annual" else "quarterly"
         period_unit = "year" if period == "annual" else "quarter"
 
@@ -457,7 +484,7 @@ async def get_income_analysis(request: Request, ticker: str, period: str = Query
         for q in quarter_data:
             yoy = q["yoy"]
             quarters_summary.append(f"""
-{q['label']}:
+{sanitize_for_prompt(q['label'], 20)}:
   Revenue: ${q['revenue']}M (YoY: {yoy['revenue']}%)
   Cost of Revenue: ${q['costOfRevenue']}M (YoY: {yoy['costOfRev']}%)
   Gross Profit: ${q['grossProfit']}M | Gross Margin: {q['grossMargin']}%
@@ -486,7 +513,7 @@ Return ONLY this JSON, no markdown, no backticks:
   "overall_grade": "A",
   "overall_summary": "2-3 sentence summary",
   "quarter_grades": [
-    {{"label": "{quarter_data[0]['label'] if quarter_data else ''}", "grade": "A", "note": "one sentence"}}
+    {{"label": "{sanitize_for_prompt(quarter_data[0]['label'], 20) if quarter_data else ''}", "grade": "A", "note": "one sentence"}}
   ],
   "flags": ["short flag, max 15 words, 0-3 total"],
   "sentiment": "bullish",
@@ -499,8 +526,7 @@ Return ONLY this JSON, no markdown, no backticks:
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_income_analysis:{ticker}")
 
 
 # ── Balance Sheet ──────────────────────────────────────────────────────────────
@@ -508,9 +534,7 @@ Return ONLY this JSON, no markdown, no backticks:
 @app.get("/balance/{ticker}")
 @limiter.limit("10/minute")
 async def get_balance(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
     period = period if period in ("quarterly", "annual") else "quarterly"
 
     cache_key = f"balance:data:{ticker}:{period}"
@@ -531,16 +555,13 @@ async def get_balance(request: Request, ticker: str, period: str = Query(default
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_balance:{ticker}")
 
 
 @app.get("/balance/{ticker}/analysis")
 @limiter.limit("5/minute")
 async def get_balance_analysis(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
     period = period if period in ("quarterly", "annual") else "quarterly"
 
     cache_key = f"balance:analysis:{ticker}:{period}"
@@ -550,13 +571,13 @@ async def get_balance_analysis(request: Request, ticker: str, period: str = Quer
 
     try:
         quarter_data, info = build_balance_quarters(ticker, period)
-        sector = info.get("sector", "Unknown")
-        name   = info.get("longName", ticker)
+        sector = sanitize_for_prompt(info.get("sector", "Unknown"), 50)
+        name   = sanitize_for_prompt(info.get("longName", ticker), 100)
         q      = quarter_data[0]
 
         prompt = f"""You are a financial analyst reviewing the balance sheet for {name} ({ticker}), sector: {sector}.
 
-Most recent quarter ({q['label']}):
+Most recent quarter ({sanitize_for_prompt(q['label'], 20)}):
   Total Assets: ${q['totalAssets']}M | Current Assets: ${q['currentAssets']}M
   Cash: ${q['cash']}M | Short Term Investments: ${q['shortTermInvestments']}M
   Accounts Receivable: ${q['accountsReceivable']}M | Inventory: ${q['inventory']}M
@@ -580,8 +601,7 @@ Return ONLY this JSON, no markdown, no backticks:
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_balance_analysis:{ticker}")
 
 
 # ── Cash Flow ──────────────────────────────────────────────────────────────────
@@ -589,9 +609,7 @@ Return ONLY this JSON, no markdown, no backticks:
 @app.get("/cashflow/{ticker}")
 @limiter.limit("10/minute")
 async def get_cashflow(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
     period = period if period in ("quarterly", "annual") else "quarterly"
 
     cache_key = f"cashflow:data:{ticker}:{period}"
@@ -612,16 +630,13 @@ async def get_cashflow(request: Request, ticker: str, period: str = Query(defaul
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_cashflow:{ticker}")
 
 
 @app.get("/cashflow/{ticker}/analysis")
 @limiter.limit("5/minute")
 async def get_cashflow_analysis(request: Request, ticker: str, period: str = Query(default="quarterly"), _: None = Depends(verify_token)):
-    ticker = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not ticker or len(ticker) > 10:
-        raise HTTPException(status_code=400, detail="Invalid ticker")
+    ticker = _validate_ticker(ticker)
     period = period if period in ("quarterly", "annual") else "quarterly"
 
     cache_key = f"cashflow:analysis:{ticker}:{period}"
@@ -631,13 +646,13 @@ async def get_cashflow_analysis(request: Request, ticker: str, period: str = Que
 
     try:
         quarter_data, info = build_cashflow_quarters(ticker, period)
-        sector = info.get("sector", "Unknown")
-        name   = info.get("longName", ticker)
+        sector = sanitize_for_prompt(info.get("sector", "Unknown"), 50)
+        name   = sanitize_for_prompt(info.get("longName", ticker), 100)
         q      = quarter_data[0]
 
         prompt = f"""You are a financial analyst reviewing cash flow statements for {name} ({ticker}), sector: {sector}.
 
-Most recent quarter ({q['label']}):
+Most recent quarter ({sanitize_for_prompt(q['label'], 20)}):
   Operating Cash Flow: ${q['operatingCashFlow']}M (YoY: {q['yoy']['operatingCashFlow']}%)
   Free Cash Flow: ${q['freeCashFlow']}M (YoY: {q['yoy']['freeCashFlow']}%)
   Net Income: ${q['netIncome']}M | D&A: ${q['da']}M
@@ -662,8 +677,7 @@ Return ONLY this JSON, no markdown, no backticks:
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"get_cashflow_analysis:{ticker}")
 
 
 # ── Analyze ────────────────────────────────────────────────────────────────────
@@ -671,7 +685,13 @@ Return ONLY this JSON, no markdown, no backticks:
 @app.post("/analyze")
 @limiter.limit("5/minute")
 async def analyze_stock(request: Request, body: AnalysisRequest, _: None = Depends(verify_token)):
-    cache_key = f"analysis:{body.ticker}"
+    # Sanitize all user-supplied string fields before interpolating into prompt
+    safe_ticker      = _validate_ticker(body.ticker)
+    safe_name        = sanitize_for_prompt(body.name, 100)
+    safe_sector      = sanitize_for_prompt(body.sector, 50)
+    safe_description = sanitize_for_prompt(body.description, 400)
+
+    cache_key = f"analysis:{safe_ticker}"
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
@@ -682,21 +702,21 @@ async def analyze_stock(request: Request, body: AnalysisRequest, _: None = Depen
     try:
         prompt = f"""You are a financial analyst. Analyze this stock and return a JSON response only, no markdown, no backticks.
 
-Stock: {body.ticker} ({body.name})
+Stock: {safe_ticker} ({safe_name})
 Price: ${body.price}
 Change: {body.change:.2f}%
-Market Cap: {body.marketCap}
+Market Cap: {sanitize_for_prompt(body.marketCap, 20)}
 P/E Ratio (TTM): {fmt(body.peRatio)}
 Forward P/E: {fmt(body.forwardPE)}
 52-week High: ${body.weekHigh52}
 52-week Low: ${body.weekLow52}
-Sector: {body.sector}
+Sector: {safe_sector}
 TTM EPS Growth: {fmt(body.ttmEpsGrowth, "%")}
 TTM Revenue Growth: {fmt(body.ttmRevenueGrowth, "%")}
 Gross Margin: {fmt(body.grossMargin, "%")}
 Net Margin: {fmt(body.netMargin, "%")}
 P/S Ratio (TTM): {fmt(body.ttmPsRatio)}
-Description: {body.description}
+Description: {safe_description}
 
 Return this exact JSON structure:
 {{
@@ -725,5 +745,4 @@ Return this exact JSON structure:
         return result
 
     except Exception as e:
-        print(f"ERROR: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise _internal_error(e, f"analyze_stock:{safe_ticker}")

@@ -1,9 +1,28 @@
 from pydantic import BaseModel
 import anthropic
 import json
+import logging
 import os
+import re
+
+logger = logging.getLogger(__name__)
 
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+
+def sanitize_for_prompt(value: str, max_length: int = 300) -> str:
+    """Sanitize a string for safe inclusion in an LLM prompt.
+
+    Strips control characters (newlines, tabs, nulls) that could be used
+    for prompt injection, collapses whitespace, and truncates.
+    """
+    if not isinstance(value, str):
+        value = str(value)
+    # Replace all control characters (including \n, \r, \t) with a space
+    value = re.sub(r"[\x00-\x1f\x7f]", " ", value)
+    # Collapse multiple spaces
+    value = re.sub(r" {2,}", " ", value).strip()
+    return value[:max_length]
 
 
 class AnalysisRequest(BaseModel):
