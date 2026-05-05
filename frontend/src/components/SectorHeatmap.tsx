@@ -76,8 +76,6 @@ export function SectorHeatmap({ apiUrl, apiToken }: Props) {
     return bc - ac
   })
 
-  const spyChange = quotes["SPY"]?.change ?? null
-
   return (
     <div className="space-y-6">
       {/* Market summary bar */}
