@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts"
 import { toast } from "@/lib/toast"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, apiErrorMessage } from "@/lib/api"
 import { RateLimitError } from "@/components/RateLimitError"
 
 type Holding = { id: string; ticker: string; shares: number; costBasis: number }
@@ -69,7 +69,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
       if (err.kind === "rate_limit") {
         setQuotesError({ kind: "rate_limit", retryAfter: err.retryAfter })
       } else {
-        setQuotesError({ kind: "message", text: err.detail ?? "Failed to fetch quotes" })
+        setQuotesError({ kind: "message", text: apiErrorMessage(err) })
       }
       return
     }

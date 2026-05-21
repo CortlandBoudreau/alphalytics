@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, apiErrorMessage } from "@/lib/api"
 import { RateLimitError } from "@/components/RateLimitError"
 
 const SECTOR_ETFS = [
@@ -59,7 +59,7 @@ export function SectorHeatmap({ apiUrl, apiToken }: Props) {
       if (err.kind === "rate_limit") {
         setError({ kind: "rate_limit", retryAfter: err.retryAfter })
       } else {
-        setError({ kind: "message", text: err.detail ?? "Failed to load market data" })
+        setError({ kind: "message", text: apiErrorMessage(err) })
       }
       return
     }
