@@ -18,7 +18,7 @@ import { Toaster } from "@/components/Toaster"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { RateLimitError } from "@/components/RateLimitError"
 import { toast } from "@/lib/toast"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, apiErrorMessage } from "@/lib/api"
 
 type StockData = {
   ticker: string
@@ -181,7 +181,7 @@ function App() {
       } else if (err.kind === "network") {
         setError({ kind: "message", text: "Cannot reach the server. Make sure the backend is running." })
       } else {
-        setError({ kind: "message", text: err.detail })
+        setError({ kind: "message", text: apiErrorMessage(err) })
       }
       return
     }
