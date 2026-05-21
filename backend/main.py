@@ -45,23 +45,15 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS ───────────────────────────────────────────────────────────────────────
-allowed_origins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-]
-extra_origins = os.getenv("ALLOWED_ORIGINS", "")
-if extra_origins:
-    allowed_origins.extend([o.strip() for o in extra_origins.split(",")])
-frontend_url = os.getenv("FRONTEND_URL")
-if frontend_url:
-    allowed_origins.append(frontend_url)
-
+# The API is protected by a bearer token (Authorization header), not cookies,
+# so allow_credentials is not needed.  With allow_credentials=False we can
+# safely use allow_origins=["*"] which avoids the Starlette bug where
+# allow_origin_regex + allow_credentials=True silently drops CORS headers
+# when the preflight origin doesn't exactly match the internal cache key.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    # Only allow *this* project's Vercel preview deployments, not any *.vercel.app
-    allow_origin_regex=r"https://alphalytics[^.]*\.vercel\.app",
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
@@ -100,10 +92,16 @@ def _validate_ticker_list(raw: str, limit: int = 50) -> list[str]:
 
 @app.on_event("startup")
 async def startup_event():
-    if not r.exists("tickers"):
-        load_tickers_into_redis()
-    else:
-        logger.info("Tickers already cached in Redis")
+    try:
+        if not r.exists("tickers"):
+            load_tickers_into_redis()
+        else:
+            logger.info("Tickers already cached in Redis")
+    except Exception as exc:
+        # Redis may be unavailable at cold-start (e.g. wrong REDIS_URL, not yet
+        # provisioned).  Log the problem but let the app come up — individual
+        # endpoints handle Redis errors gracefully at request time.
+        logger.error("startup: Redis unavailable, tickers not pre-loaded: %s", exc)
 
 
 # ── Health ─────────────────────────────────────────────────────────────────────
