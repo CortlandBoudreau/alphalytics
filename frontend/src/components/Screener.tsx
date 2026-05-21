@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { RateLimitError } from "@/components/RateLimitError"
@@ -96,7 +96,9 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
 export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatchlist }: Props) {
   const [allStocks, setAllStocks] = useState<Stock[]>([])
   const [loading, setLoading] = useState(false)
+  const [building, setBuilding] = useState(false)
   const [error, setError] = useState<{ kind: "message"; text: string } | { kind: "rate_limit"; retryAfter: number } | null>(null)
+  const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>("marketCapRaw")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
 
@@ -116,24 +118,33 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
   }
 
   const fetchData = async () => {
+    if (pollRef.current) { clearTimeout(pollRef.current); pollRef.current = null }
     setLoading(true)
     setError(null)
+    setBuilding(false)
     const result = await apiFetch<Stock[]>(`${apiUrl}/screener/data`, { headers })
     setLoading(false)
     if (!result.ok) {
       const err = result.error
-      if (err.kind === "rate_limit") {
+      if (err.kind === "building") {
+        // Server is building the dataset in the background — poll every 5s
+        setBuilding(true)
+        pollRef.current = setTimeout(fetchData, 5000)
+      } else if (err.kind === "rate_limit") {
         setError({ kind: "rate_limit", retryAfter: err.retryAfter })
       } else {
         setError({ kind: "message", text: err.kind === "network" ? err.detail : (err as { detail: string }).detail || "Failed to load screener data" })
       }
       return
     }
+    setBuilding(false)
     setAllStocks(result.data)
   }
 
+  // Start fetch on mount; clean up any pending poll on unmount
   useEffect(() => {
     fetchData()
+    return () => { if (pollRef.current) clearTimeout(pollRef.current) }
   }, [])
 
   const handleSort = (key: SortKey) => {
@@ -326,11 +337,25 @@ export function Screener({ apiUrl, apiToken, watchlist, onNavigate, onToggleWatc
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {loading && (
+          {building && (
+            <div className="text-center py-8 space-y-3">
+              <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                <p className="text-sm text-muted-foreground">Building screener dataset…</p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Fetching live data for 500+ stocks. This takes about 60 seconds on first load, then caches for 24 hours.
+              </p>
+            </div>
+          )}
+
+          {loading && !building && (
             <div className="space-y-4">
               <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">Loading screener data...</p>
-                <p className="text-xs text-muted-foreground mt-1">First load fetches live data and caches for 24 hours.</p>
               </div>
               <div className="space-y-3 animate-pulse">
                 {[...Array(8)].map((_, i) => (

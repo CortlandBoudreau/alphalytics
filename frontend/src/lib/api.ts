@@ -3,6 +3,7 @@ export type ApiError =
   | { kind: "not_found";  detail: string }
   | { kind: "server";     detail: string }
   | { kind: "network";    detail: string }
+  | { kind: "building" }   // 202 — data is being built server-side, poll again
 
 export type ApiResult<T> =
   | { ok: true;  data: T }
@@ -18,6 +19,10 @@ export async function apiFetch<T>(
     if (res.status === 429) {
       const retryAfter = parseInt(res.headers.get("Retry-After") || "60", 10)
       return { ok: false, error: { kind: "rate_limit", retryAfter: isNaN(retryAfter) ? 60 : retryAfter } }
+    }
+
+    if (res.status === 202) {
+      return { ok: false, error: { kind: "building" } }
     }
 
     let body: Record<string, string> = {}
@@ -44,5 +49,6 @@ export function apiErrorMessage(err: ApiError): string {
     case "not_found":  return err.detail
     case "server":     return err.detail
     case "network":    return err.detail
+    case "building":   return "Building screener data…"
   }
 }
