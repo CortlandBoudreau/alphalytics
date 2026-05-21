@@ -19,8 +19,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-from fastapi import FastAPI, Request, HTTPException, Depends, Query
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from fastapi import FastAPI, Request, HTTPException, Depends, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -37,6 +40,7 @@ from ai import call_claude, AnalysisRequest, client, sanitize_for_prompt, _SYSTE
 app = FastAPI()
 
 limiter = Limiter(key_func=get_remote_address)
+_screener_executor = ThreadPoolExecutor(max_workers=1)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -295,26 +299,50 @@ async def get_stock(request: Request, ticker: str, _: None = Depends(verify_toke
 
 # ── Screener ───────────────────────────────────────────────────────────────────
 
+async def _build_screener_background() -> None:
+    """Run the blocking screener build in a thread so it doesn't stall the event loop."""
+    loop = asyncio.get_event_loop()
+    try:
+        await loop.run_in_executor(_screener_executor, build_screener_data)
+    except Exception:
+        logger.exception("Background screener build failed")
+    finally:
+        r.delete("screener:building")
+
+
 @app.get("/screener/data")
-@limiter.limit("30/minute")
-async def get_screener_data(request: Request, _: None = Depends(verify_token)):
+@limiter.limit("60/minute")
+async def get_screener_data(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    _: None = Depends(verify_token),
+):
     cached = r.get("screener:data")
     if cached:
         return json.loads(cached)
-    data = build_screener_data()
-    if not data:
-        raise HTTPException(status_code=503, detail="Screener data temporarily unavailable")
-    return data
+
+    # If a build is already running, tell the client to keep polling
+    if r.get("screener:building"):
+        return JSONResponse(status_code=202, content={"status": "building"})
+
+    # Kick off the build in the background and respond immediately
+    r.setex("screener:building", 300, "1")   # 5-min TTL as safety net
+    background_tasks.add_task(_build_screener_background)
+    return JSONResponse(status_code=202, content={"status": "building"})
 
 
 @app.post("/screener/refresh")
 @limiter.limit("5/hour")
-async def refresh_screener(request: Request, _: None = Depends(verify_token)):
+async def refresh_screener(
+    request: Request,
+    background_tasks: BackgroundTasks,
+    _: None = Depends(verify_token),
+):
     r.delete("screener:data")
-    data = build_screener_data()
-    if not data:
-        raise HTTPException(status_code=503, detail="Screener data temporarily unavailable")
-    return {"status": "ok", "count": len(data)}
+    if not r.get("screener:building"):
+        r.setex("screener:building", 300, "1")
+        background_tasks.add_task(_build_screener_background)
+    return JSONResponse(status_code=202, content={"status": "building"})
 
 
 # ── News ──────────────────────────────────────────────────────────────────────
