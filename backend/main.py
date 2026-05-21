@@ -92,10 +92,16 @@ def _validate_ticker_list(raw: str, limit: int = 50) -> list[str]:
 
 @app.on_event("startup")
 async def startup_event():
-    if not r.exists("tickers"):
-        load_tickers_into_redis()
-    else:
-        logger.info("Tickers already cached in Redis")
+    try:
+        if not r.exists("tickers"):
+            load_tickers_into_redis()
+        else:
+            logger.info("Tickers already cached in Redis")
+    except Exception as exc:
+        # Redis may be unavailable at cold-start (e.g. wrong REDIS_URL, not yet
+        # provisioned).  Log the problem but let the app come up — individual
+        # endpoints handle Redis errors gracefully at request time.
+        logger.error("startup: Redis unavailable, tickers not pre-loaded: %s", exc)
 
 
 # ── Health ─────────────────────────────────────────────────────────────────────
