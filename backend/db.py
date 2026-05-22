@@ -20,4 +20,7 @@ if not _url.startswith(("redis://", "rediss://", "unix://")):
     )
     _url = "redis://localhost:6379"
 
-r = redis.from_url(_url, decode_responses=True)
+# protocol=2 forces RESP2 and disables the HELLO command negotiation that
+# redis-py 7.x sends by default — Railway's Redis proxy rejects HELLO with
+# a connection reset, so we stay on the widely-supported RESP2 wire format.
+r = redis.from_url(_url, decode_responses=True, protocol=2)
