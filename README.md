@@ -63,7 +63,8 @@
 ![Markets](screenshots/markets.png)
 
 ### 💼 Portfolio Tracker
-- Add holdings with ticker autocomplete, share count, and cost basis
+- Add holdings manually with ticker autocomplete, share count, and cost basis
+- **Broker CSV import** — upload an Edward Jones CSV export to bulk-load all positions instantly; choose to add to existing holdings or replace the portfolio entirely
 - Real-time P&L: dollar and percent return per position
 - **Allocation donut chart** — portfolio weight per holding
 - **Performance chart** — portfolio % return vs. SPY over 12 months

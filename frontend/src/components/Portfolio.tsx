@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts"
 import { toast } from "@/lib/toast"
@@ -47,6 +47,9 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   const [holdingsView, setHoldingsView] = useState<"table" | "performance">("table")
   const [historyData, setHistoryData] = useState<HistoryMap>({})
   const [historyLoading, setHistoryLoading] = useState(false)
+
+  const csvInputRef = useRef<HTMLInputElement>(null)
+  const [csvPreview, setCsvPreview] = useState<{ holdings: Holding[]; filename: string } | null>(null)
 
   const authHeaders = { "Content-Type": "application/json", Authorization: `Bearer ${apiToken}` }
 
@@ -193,6 +196,80 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     }))
   }, [historyData, holdings])
 
+  const parseCSVRow = (line: string): string[] => {
+    const result: string[] = []
+    let inQuote = false
+    let current = ""
+    for (const ch of line) {
+      if (ch === '"') { inQuote = !inQuote }
+      else if (ch === "," && !inQuote) { result.push(current.trim()); current = "" }
+      else { current += ch }
+    }
+    result.push(current.trim())
+    return result
+  }
+
+  const parseEdwardJonesCSV = (text: string): Holding[] => {
+    const lines = text.split(/\r?\n/)
+    const headerIdx = lines.findIndex(l => l.toUpperCase().includes("SYMBOL"))
+    if (headerIdx === -1) throw new Error("Could not find SYMBOL column — is this an Edward Jones export?")
+
+    const headers = parseCSVRow(lines[headerIdx]).map(h => h.replace(/"/g, "").trim().toUpperCase())
+    const col = (name: string) => headers.indexOf(name)
+    const symbolIdx = col("SYMBOL")
+    const quantityIdx = col("QUANTITY")
+    const priceIdx = col("CURRENT PRICE")
+
+    if (symbolIdx === -1 || quantityIdx === -1) throw new Error("Missing required columns (SYMBOL, QUANTITY)")
+
+    const results: Holding[] = []
+    for (let i = headerIdx + 1; i < lines.length; i++) {
+      const line = lines[i].trim()
+      if (!line) continue
+      const cols = parseCSVRow(line)
+      const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
+      if (!symbol || !/^[A-Z0-9.-]{1,10}$/.test(symbol)) continue
+      const quantity = parseFloat(cols[quantityIdx]?.replace(/[",]/g, "") ?? "")
+      if (!quantity || quantity <= 0) continue
+      const price = priceIdx !== -1 ? parseFloat(cols[priceIdx]?.replace(/["$,]/g, "") ?? "") : NaN
+      results.push({ id: crypto.randomUUID(), ticker: symbol, shares: quantity, costBasis: price > 0 ? price : 0 })
+    }
+    return results
+  }
+
+  const handleCSVFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    e.target.value = ""
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const parsed = parseEdwardJonesCSV(ev.target?.result as string)
+        if (parsed.length === 0) { toast("No valid holdings found in CSV", "error"); return }
+        setCsvPreview({ holdings: parsed, filename: file.name })
+      } catch (err) {
+        toast(err instanceof Error ? err.message : "Failed to parse CSV", "error")
+      }
+    }
+    reader.readAsText(file)
+  }
+
+  const applyCSVImport = (mode: "replace" | "add") => {
+    if (!csvPreview) return
+    const toAdd = csvPreview.holdings
+    if (mode === "replace") {
+      setHoldings(toAdd)
+      toast(`Imported ${toAdd.length} holdings — portfolio replaced`)
+    } else {
+      const existing = new Set(holdings.map(h => h.ticker))
+      const newOnes = toAdd.filter(h => !existing.has(h.ticker))
+      setHoldings(prev => [...prev, ...newOnes])
+      const skipped = toAdd.length - newOnes.length
+      toast(`Added ${newOnes.length} holding${newOnes.length !== 1 ? "s" : ""}${skipped > 0 ? ` (${skipped} already existed, skipped)` : ""}`)
+    }
+    setCsvPreview(null)
+  }
+
   const exportPortfolioCSV = () => {
     const headers = ["Ticker", "Name", "Shares", "Cost Basis/Share", "Current Price", "Current Value", "Total Cost", "P&L ($)", "P&L (%)"]
     const csvRows = rows.map(r => [
@@ -211,10 +288,20 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
 
   return (
     <div className="space-y-6">
+      <input ref={csvInputRef} type="file" accept=".csv,text/csv" className="hidden" onChange={handleCSVFile} />
+
       {/* Add Holding */}
       <Card className="overflow-visible">
         <CardHeader>
-          <CardTitle>Add Holding</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Add Holding</span>
+            <button
+              onClick={() => csvInputRef.current?.click()}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Import CSV
+            </button>
+          </CardTitle>
         </CardHeader>
         <CardContent className="overflow-visible">
           <div className="flex flex-wrap gap-3 items-end">
@@ -289,6 +376,44 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
           {formError && <p className="text-destructive text-xs mt-2">{formError}</p>}
         </CardContent>
       </Card>
+
+      {csvPreview && (
+        <Card className="border-primary/40 bg-primary/5">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <p className="text-sm font-medium">
+                  Found <span className="text-primary font-semibold">{csvPreview.holdings.length} holdings</span>{" "}
+                  in <span className="text-muted-foreground">{csvPreview.filename}</span>
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Cost basis set to import price — update manually for accurate P&L
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCsvPreview(null)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => applyCSVImport("add")}
+                  className="px-3 py-1.5 rounded-md bg-secondary border border-border text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  Add to existing
+                </button>
+                <button
+                  onClick={() => applyCSVImport("replace")}
+                  className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  Replace all
+                </button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {quotesError && quotesError.kind === "rate_limit" && (
         <RateLimitError
