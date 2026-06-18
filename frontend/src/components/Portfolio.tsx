@@ -51,6 +51,11 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   const csvInputRef = useRef<HTMLInputElement>(null)
   const [csvPreview, setCsvPreview] = useState<{ holdings: Holding[]; filename: string } | null>(null)
 
+  const [digestEmail, setDigestEmail] = useState(() => localStorage.getItem("alphalytics_digest_email") ?? "")
+  const [digestEnabled, setDigestEnabled] = useState(() => localStorage.getItem("alphalytics_digest_enabled") === "true")
+  const [digestSyncing, setDigestSyncing] = useState(false)
+  const [digestSendingNow, setDigestSendingNow] = useState(false)
+
   const authHeaders = { "Content-Type": "application/json", Authorization: `Bearer ${apiToken}` }
 
   useEffect(() => {
@@ -94,6 +99,28 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
       setHistoryLoading(false)
     }
   }
+
+  const syncDigest = async (email: string, hs: Holding[]) => {
+    if (!email.includes("@") || hs.length === 0) return
+    setDigestSyncing(true)
+    try {
+      await fetch(`${apiUrl}/portfolio/sync`, {
+        method: "POST",
+        headers: authHeaders,
+        body: JSON.stringify({ email, holdings: hs.map(h => ({ ticker: h.ticker, shares: h.shares, costBasis: h.costBasis })) }),
+      })
+    } catch {
+      toast("Failed to sync digest settings", "error")
+    } finally {
+      setDigestSyncing(false)
+    }
+  }
+
+  useEffect(() => {
+    if (digestEnabled && digestEmail && holdings.length > 0) {
+      syncDigest(digestEmail, holdings)
+    }
+  }, [digestEnabled, holdings])
 
   useEffect(() => { fetchQuotes(holdings) }, [holdings])
 
@@ -653,6 +680,80 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
           </div>
         </>
       )}
+      {/* Daily Email Digest */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Daily Email Digest</span>
+            <button
+              onClick={() => {
+                const next = !digestEnabled
+                setDigestEnabled(next)
+                localStorage.setItem("alphalytics_digest_enabled", String(next))
+                if (next && digestEmail) syncDigest(digestEmail, holdings)
+              }}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${digestEnabled ? "bg-primary" : "bg-muted"}`}
+              title={digestEnabled ? "Disable digest" : "Enable digest"}
+            >
+              <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${digestEnabled ? "translate-x-4" : "translate-x-0"}`} />
+            </button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="space-y-1 flex-1 min-w-[220px]">
+              <label className="text-xs text-muted-foreground">Email address</label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={digestEmail}
+                onChange={e => {
+                  setDigestEmail(e.target.value)
+                  localStorage.setItem("alphalytics_digest_email", e.target.value)
+                }}
+                className="w-full px-3 py-1.5 rounded-md bg-secondary border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary text-sm"
+              />
+            </div>
+            <button
+              onClick={() => {
+                if (!digestEmail.includes("@")) { toast("Enter a valid email address", "error"); return }
+                if (holdings.length === 0) { toast("Add holdings first", "error"); return }
+                syncDigest(digestEmail, holdings).then(() => toast("Digest settings saved"))
+              }}
+              disabled={digestSyncing}
+              className="px-4 py-1.5 rounded-md bg-secondary border border-border text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {digestSyncing ? "Saving..." : "Save"}
+            </button>
+            {digestEnabled && (
+              <button
+                onClick={async () => {
+                  if (!digestEmail.includes("@")) { toast("Save your email first", "error"); return }
+                  setDigestSendingNow(true)
+                  try {
+                    const res = await fetch(`${apiUrl}/portfolio/send-digest`, { method: "POST", headers: authHeaders })
+                    if (res.ok) toast("Digest email sent!")
+                    else toast("Failed to send digest", "error")
+                  } catch {
+                    toast("Failed to send digest", "error")
+                  } finally {
+                    setDigestSendingNow(false)
+                  }
+                }}
+                disabled={digestSendingNow}
+                className="px-4 py-1.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                {digestSendingNow ? "Sending..." : "Send now"}
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            {digestEnabled
+              ? "Enabled — email sent after market close Mon–Fri. Adjust timing via DIGEST_CRON in Railway."
+              : "Toggle on to receive a daily portfolio summary after market close."}
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }

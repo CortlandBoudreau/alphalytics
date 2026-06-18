@@ -27,6 +27,9 @@ from fastapi.responses import JSONResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from pydantic import BaseModel
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 import yfinance as yf
 import pandas as pd
 import json
@@ -41,6 +44,7 @@ app = FastAPI()
 
 limiter = Limiter(key_func=get_remote_address)
 _screener_executor = ThreadPoolExecutor(max_workers=1)
+_digest_scheduler = BackgroundScheduler()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -88,6 +92,43 @@ def _validate_ticker_list(raw: str, limit: int = 50) -> list[str]:
     return valid
 
 
+# ── Portfolio digest models ────────────────────────────────────────────────────
+
+class DigestHolding(BaseModel):
+    ticker: str
+    shares: float
+    costBasis: float
+
+class PortfolioSyncRequest(BaseModel):
+    email: str
+    holdings: list[DigestHolding]
+
+
+# ── Portfolio digest endpoints ─────────────────────────────────────────────────
+
+@app.post("/portfolio/sync")
+async def sync_portfolio(body: PortfolioSyncRequest, _: None = Depends(verify_token)):
+    if "@" not in body.email or len(body.email) > 254:
+        raise HTTPException(status_code=400, detail="Invalid email address")
+    cleaned = [
+        {"ticker": "".join(c for c in h.ticker.upper() if c.isalnum() or c == "-"),
+         "shares": h.shares, "costBasis": h.costBasis}
+        for h in body.holdings[:100]
+        if h.shares > 0
+    ]
+    r.set("portfolio:digest:settings", json.dumps({"email": body.email, "holdings": cleaned}))
+    logger.info("portfolio:sync stored %d holdings for %s", len(cleaned), body.email)
+    return {"status": "ok", "holdings_stored": len(cleaned)}
+
+
+@app.post("/portfolio/send-digest")
+@limiter.limit("5/hour")
+async def trigger_digest(request: Request, background_tasks: BackgroundTasks, _: None = Depends(verify_token)):
+    from email_digest import send_portfolio_digest
+    background_tasks.add_task(send_portfolio_digest)
+    return {"status": "sending"}
+
+
 # ── Startup ────────────────────────────────────────────────────────────────────
 
 @app.on_event("startup")
@@ -102,6 +143,26 @@ async def startup_event():
         # provisioned).  Log the problem but let the app come up — individual
         # endpoints handle Redis errors gracefully at request time.
         logger.error("startup: Redis unavailable, tickers not pre-loaded: %s", exc)
+
+
+@app.on_event("startup")
+async def start_digest_scheduler():
+    # DIGEST_CRON controls when the daily email fires (UTC, crontab syntax).
+    # Default: "30 21 * * 1-5" = 9:30 PM UTC = ~4:30 PM ET, weekdays only.
+    cron = os.getenv("DIGEST_CRON", "30 21 * * 1-5")
+    try:
+        from email_digest import send_portfolio_digest
+        _digest_scheduler.add_job(send_portfolio_digest, CronTrigger.from_crontab(cron))
+        _digest_scheduler.start()
+        logger.info("Digest scheduler started — cron: %s", cron)
+    except Exception:
+        logger.exception("Failed to start digest scheduler")
+
+
+@app.on_event("shutdown")
+async def stop_digest_scheduler():
+    if _digest_scheduler.running:
+        _digest_scheduler.shutdown(wait=False)
 
 
 # ── Health ─────────────────────────────────────────────────────────────────────
