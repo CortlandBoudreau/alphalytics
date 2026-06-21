@@ -141,6 +141,35 @@ function App() {
     fetchTickers()
   }, [])
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const restoreToken = params.get("restore")
+    if (!restoreToken) return
+
+    const existing = localStorage.getItem("alphalytics_portfolio")
+    const hasExisting = existing && JSON.parse(existing).length > 0
+
+    const proceed = !hasExisting || window.confirm(
+      "This link will load a saved portfolio.\n\nYour current portfolio will be replaced. Continue?"
+    )
+    if (!proceed) {
+      window.history.replaceState({}, "", window.location.pathname)
+      return
+    }
+
+    fetch(`${API_URL}/portfolio/restore/${restoreToken}`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        localStorage.setItem("alphalytics_portfolio", JSON.stringify(data.holdings))
+        localStorage.setItem("alphalytics_digest_email", data.email)
+        localStorage.setItem("alphalytics_digest_enabled", String(data.digestEnabled ?? true))
+        window.history.replaceState({}, "", window.location.pathname)
+        setShowLanding(false)
+        setActiveTab("portfolio")
+      })
+      .catch(() => toast("Failed to load portfolio from link.", "error"))
+  }, [])
+
   const handleTickerChange = (val: string) => {
     const upper = val.toUpperCase()
     setTicker(upper)

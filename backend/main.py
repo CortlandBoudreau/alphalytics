@@ -1,4 +1,5 @@
 import os
+import uuid
 import logging
 import logging.config
 from pathlib import Path
@@ -110,6 +111,7 @@ class DigestHolding(BaseModel):
 class PortfolioSyncRequest(BaseModel):
     email: str
     holdings: list[DigestHolding]
+    digestEnabled: bool = True
 
 
 # ── Portfolio digest endpoints ─────────────────────────────────────────────────
@@ -130,9 +132,35 @@ async def sync_portfolio(body: PortfolioSyncRequest, _: None = Depends(verify_to
         for h in body.holdings[:100]
         if h.shares > 0
     ]
-    r.set("portfolio:digest:settings", json.dumps({"email": body.email, "holdings": cleaned}))
-    logger.info("portfolio:sync stored %d holdings for %s", len(cleaned), body.email)
-    return {"status": "ok", "holdings_stored": len(cleaned)}
+    existing_raw = r.get("portfolio:digest:settings")
+    existing = json.loads(existing_raw) if existing_raw else {}
+    token = existing.get("token") or uuid.uuid4().hex
+    r.set("portfolio:digest:settings", json.dumps({
+        "email": body.email,
+        "holdings": cleaned,
+        "token": token,
+        "digestEnabled": body.digestEnabled,
+    }))
+    logger.info("portfolio:sync stored %d holdings for %s (enabled=%s)", len(cleaned), body.email, body.digestEnabled)
+    return {"status": "ok", "holdings_stored": len(cleaned), "token": token}
+
+
+@app.get("/portfolio/restore/{token}")
+@limiter.limit("10/minute")
+async def restore_portfolio(request: Request, token: str):
+    if not token or len(token) > 64:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    raw = r.get("portfolio:digest:settings")
+    if not raw:
+        raise HTTPException(status_code=404, detail="No portfolio found")
+    data = json.loads(raw)
+    if data.get("token") != token:
+        raise HTTPException(status_code=403, detail="Invalid token")
+    return {
+        "email": data.get("email", ""),
+        "holdings": data.get("holdings", []),
+        "digestEnabled": data.get("digestEnabled", True),
+    }
 
 
 @app.post("/portfolio/send-digest")

@@ -4,6 +4,24 @@ from screener import _yf_session_and_crumb, get_sp500_metadata
 
 logger = logging.getLogger(__name__)
 
+# ETFs Yahoo Finance won't classify via assetProfile (returns null sector)
+_ETF_SECTOR_OVERRIDES = {
+    # Bond ETFs
+    "ZAG":  "Fixed Income",
+    "XBB":  "Fixed Income",
+    "VAB":  "Fixed Income",
+    "ZDB":  "Fixed Income",
+    "XSB":  "Fixed Income",
+    "BND":  "Fixed Income",
+    "AGG":  "Fixed Income",
+    "TLT":  "Fixed Income",
+    "LQD":  "Fixed Income",
+    # Clean energy / thematic
+    "ICLN": "Energy",
+    "QCLN": "Energy",
+    "ACES": "Energy",
+}
+
 # Wikipedia GICS names → display names used in SECTOR_COLORS
 _WIKI_SECTOR_MAP = {
     "Information Technology": "Technology",
@@ -52,7 +70,15 @@ def fetch_sectors(ticker_list: list[str]) -> dict[str, str]:  # never raises
             logger.debug("sectors: %s from cache → %s", t, result[t])
             continue
 
-        # 2. S&P 500 Wikipedia metadata
+        # 2. Known ETF overrides (Yahoo assetProfile returns null for funds)
+        if t in _ETF_SECTOR_OVERRIDES:
+            sector = _ETF_SECTOR_OVERRIDES[t]
+            r.setex(f"sector:{t}", 86400, sector)
+            result[t] = sector
+            logger.info("sectors: %s from ETF override → %s", t, sector)
+            continue
+
+        # 3. S&P 500 Wikipedia metadata
         entry = sp500_meta.get(t) or sp500_meta.get(t.replace(".", "-"))
         wiki_sector = (entry or {}).get("sector", "")
         if wiki_sector and wiki_sector not in ("N/A", ""):
@@ -165,5 +191,55 @@ def fetch_quotes(ticker_list: list[str]) -> dict:
                 entry["ticker"] = orig_ticker  # restore original symbol
                 result[orig_ticker] = entry
                 logger.info("quotes: resolved %s via %s (%s)", orig_ticker, to_ticker, entry.get("currency", "?"))
+
+    return result
+
+
+def fetch_week_opens(ticker_list: list[str]) -> dict[str, float]:
+    """
+    Return the closing price from ~5 trading days ago for each ticker.
+    Uses the same authenticated Yahoo session as fetch_quotes().
+    Handles .TO suffix retry for Canadian TSX stocks.
+    """
+    session, crumb = _yf_session_and_crumb()
+
+    def _chart_fetch(ticker: str) -> float | None:
+        try:
+            resp = session.get(
+                f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}",
+                params={"range": "5d", "interval": "1d", "crumb": crumb, "formatted": "false"},
+                headers={"Accept": "application/json"},
+                timeout=15,
+            )
+            if not resp.ok:
+                return None
+            result = (resp.json().get("chart") or {}).get("result") or []
+            if not result:
+                return None
+            closes = (result[0].get("indicators") or {}).get("quote", [{}])[0].get("close") or []
+            closes = [c for c in closes if c is not None]
+            return float(closes[0]) if len(closes) >= 2 else None
+        except Exception:
+            logger.exception("week_open: fetch failed for %s", ticker)
+            return None
+
+    result: dict[str, float] = {}
+    missing: list[str] = []
+
+    for t in ticker_list:
+        price = _chart_fetch(t)
+        if price is not None:
+            result[t] = price
+        else:
+            missing.append(t)
+
+    for t in missing:
+        to_ticker = t.replace(".", "-") + ".TO"
+        price = _chart_fetch(to_ticker)
+        if price is not None:
+            result[t] = price
+            logger.info("week_open: resolved %s via %s", t, to_ticker)
+        else:
+            logger.warning("week_open: no history for %s", t)
 
     return result

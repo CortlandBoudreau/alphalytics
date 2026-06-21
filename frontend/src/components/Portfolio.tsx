@@ -238,15 +238,21 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     }
   }
 
-  const syncDigest = async (email: string, hs: Holding[]) => {
+  const syncDigest = async (email: string, hs: Holding[], enabled: boolean = digestEnabled) => {
     if (!email.includes("@") || hs.length === 0) return
     setDigestSyncing(true)
     try {
-      await fetch(`${apiUrl}/portfolio/sync`, {
+      const res = await fetch(`${apiUrl}/portfolio/sync`, {
         method: "POST",
         headers: authHeaders,
-        body: JSON.stringify({ email, holdings: hs.map(h => ({ ticker: h.ticker, shares: h.shares, costBasis: h.costBasis, costBasisCurrency: h.costBasisCurrency, staticValue: h.staticValue ?? false, holdingType: h.holdingType ?? null })) }),
+        body: JSON.stringify({
+          email,
+          digestEnabled: enabled,
+          holdings: hs.map(h => ({ ticker: h.ticker, shares: h.shares, costBasis: h.costBasis, costBasisCurrency: h.costBasisCurrency, staticValue: h.staticValue ?? false, holdingType: h.holdingType ?? null })),
+        }),
       })
+      const data = await res.json()
+      if (data.token) localStorage.setItem("alphalytics_restore_token", data.token)
     } catch {
       toast("Failed to sync digest settings", "error")
     } finally {
@@ -255,7 +261,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   }
 
   useEffect(() => {
-    if (digestEnabled && digestEmail && holdings.length > 0) {
+    if (digestEmail && holdings.length > 0) {
       syncDigest(digestEmail, holdings)
     }
   }, [digestEnabled, holdings])
@@ -921,7 +927,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
                 const next = !digestEnabled
                 setDigestEnabled(next)
                 localStorage.setItem("alphalytics_digest_enabled", String(next))
-                if (next && digestEmail) syncDigest(digestEmail, holdings)
+                if (digestEmail) syncDigest(digestEmail, holdings, next)
               }}
               className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${digestEnabled ? "bg-primary" : "bg-muted"}`}
               title={digestEnabled ? "Disable digest" : "Enable digest"}
