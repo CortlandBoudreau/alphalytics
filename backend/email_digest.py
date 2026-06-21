@@ -1,13 +1,10 @@
 import os
 import json
 import logging
-import urllib.parse
-from concurrent.futures import ThreadPoolExecutor
-
-import yfinance as yf
+from datetime import datetime
 
 from db import r
-from quotes import fetch_quotes, fetch_sectors
+from quotes import fetch_quotes, fetch_sectors, fetch_week_opens
 
 logger = logging.getLogger(__name__)
 
@@ -38,17 +35,6 @@ SECTOR_COLORS = {
 }
 
 
-def _get_week_open(ticker: str) -> float | None:
-    """Return the closing price from ~5 trading days ago for weekly P&L."""
-    for t in [ticker, ticker.replace(".", "-") + ".TO"]:
-        try:
-            hist = yf.Ticker(t).history(period="5d", interval="1d")
-            if len(hist) >= 2:
-                return float(hist["Close"].iloc[0])
-        except Exception:
-            pass
-    return None
-
 
 def send_portfolio_digest() -> None:
     raw = r.get("portfolio:digest:settings")
@@ -57,8 +43,13 @@ def send_portfolio_digest() -> None:
         return
 
     data = json.loads(raw)
+    if not data.get("digestEnabled", True):
+        logger.info("digest: disabled by user, skipping")
+        return
+
     email    = data.get("email", "").strip()
     holdings = data.get("holdings", [])
+    token    = data.get("token", "")
     if not email or not holdings:
         logger.info("digest: email or holdings missing, skipping")
         return
@@ -79,17 +70,8 @@ def send_portfolio_digest() -> None:
         logger.info("digest: no quotes returned, skipping")
         return
 
-    # ── 2. Weekly open prices (parallel) ─────────────────────────────────────
-    weekly_open: dict[str, float] = {}
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        futures = {pool.submit(_get_week_open, t): t for t in equity_tickers}
-        for future, ticker in futures.items():
-            try:
-                result = future.result()
-                if result:
-                    weekly_open[ticker] = result
-            except Exception:
-                pass
+    # ── 2. Weekly open prices (authenticated session, same as fetch_quotes) ──
+    weekly_open = fetch_week_opens(equity_tickers)
 
     # ── 3. Sector info (uses same authenticated Yahoo session as quotes) ─────────
     sectors = fetch_sectors(equity_tickers)
@@ -167,32 +149,27 @@ def send_portfolio_digest() -> None:
     top_gainers = movers[:3]
     top_losers  = sorted(movers, key=lambda x: x[1])[:3]
 
-    # ── 5. Sector allocation chart (QuickChart.io) ───────────────────────────
+    # ── 5. Sector allocation (inline HTML bars — no external image dependency) ──
     sorted_sectors = sorted(sector_values.items(), key=lambda x: -x[1])
-    chart_config = {
-        "type": "doughnut",
-        "data": {
-            "labels": [s for s, _ in sorted_sectors],
-            "datasets": [{
-                "data":            [round(v / total_value * 100, 1) for _, v in sorted_sectors],
-                "backgroundColor": [SECTOR_COLORS.get(s, "#6b7280") for s, _ in sorted_sectors],
-                "borderWidth": 2,
-                "borderColor": "#1a1a1a",
-            }]
-        },
-        "options": {
-            "cutoutPercentage": 58,
-            "legend": {
-                "position": "right",
-                "labels": {"fontColor": "#cccccc", "fontSize": 11, "boxWidth": 12, "padding": 10}
-            },
-            "plugins": {"datalabels": {"display": False}},
-        }
-    }
-    chart_url = (
-        "https://quickchart.io/chart?backgroundColor=%231a1a1a&width=520&height=250&c="
-        + urllib.parse.quote(json.dumps(chart_config))
-    )
+
+    def sector_bars() -> str:
+        if not sorted_sectors:
+            return ""
+        max_pct = sorted_sectors[0][1] / total_value * 100
+        rows = ""
+        for sector, value in sorted_sectors:
+            pct = value / total_value * 100
+            bar_w = max(4, int(pct / max_pct * 100))
+            color = SECTOR_COLORS.get(sector, "#6b7280")
+            rows += f"""
+            <tr>
+              <td style="padding:4px 10px 4px 0;font-size:12px;color:#bbb;white-space:nowrap;width:160px">{sector}</td>
+              <td style="padding:4px 6px 4px 0">
+                <div style="background:{color};height:10px;width:{bar_w}%;border-radius:2px"></div>
+              </td>
+              <td style="padding:4px 0;font-size:12px;color:#777;text-align:right;white-space:nowrap;width:40px">{pct:.1f}%</td>
+            </tr>"""
+        return rows
 
     # ── 6. HTML helpers ───────────────────────────────────────────────────────
     def clr(n: float) -> str:
@@ -203,7 +180,7 @@ def send_portfolio_digest() -> None:
 
     def fmt_cad(n: float) -> str:
         sign = "+" if n >= 0 else "-"
-        return f"{sign}CA${abs(n):,.2f}"
+        return f"{sign}${abs(n):,.2f}"
 
     def fmt_pct(n: float) -> str:
         return f"{'+'if n>=0 else ''}{n:.2f}%"
@@ -226,13 +203,17 @@ def send_portfolio_digest() -> None:
         return f"""
         <td width="33%" style="background:#1e1e1e;border-radius:8px;padding:16px;vertical-align:top">
           <p style="margin:0 0 6px;font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px">{label}</p>
-          <p style="margin:0;font-size:22px;font-weight:700;color:{clr(dollar)}">{arrow(dollar)} CA${abs(dollar):,.2f}</p>
+          <p style="margin:0;font-size:22px;font-weight:700;color:{clr(dollar)}">{arrow(dollar)} ${abs(dollar):,.2f}</p>
           <p style="margin:4px 0 0;font-size:13px;color:{clr(pct)}">{fmt_pct(pct)}</p>
         </td>"""
 
     # ── 7. Assemble and send ──────────────────────────────────────────────────
+    today = datetime.now()
+    date_long  = today.strftime(f"%A, %B {today.day}, %Y")  # Friday, June 21, 2026
+    date_short = today.strftime(f"%b {today.day}")           # Jun 21
+
     subject = (
-        f"Portfolio CA${total_value:,.2f} | "
+        f"{date_short} | Portfolio ${total_value:,.2f} | "
         f"Daily {fmt_pct(day_pct)} | "
         f"Week {fmt_pct(weekly_pct)}"
     )
@@ -241,13 +222,15 @@ def send_portfolio_digest() -> None:
 <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#111;color:#f1f1f1;border-radius:10px">
 
   <h2 style="margin:0 0 2px;font-size:20px;color:#fff">Alphalytics Portfolio Digest</h2>
-  <p style="margin:0 0 20px;font-size:12px;color:#555">Market close summary &middot; All values in CAD</p>
+  <p style="margin:0 0 20px;font-size:12px;color:#555">{date_long} &middot; All values in CAD</p>
 
   <!-- Value bar -->
-  <div style="background:#1e1e1e;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
-    <span style="font-size:12px;color:#777;text-transform:uppercase;letter-spacing:1px">Portfolio Value</span>
-    <span style="font-size:18px;font-weight:700">CA${total_value:,.2f}</span>
-  </div>
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#1e1e1e;border-radius:8px;margin-bottom:16px">
+    <tr>
+      <td style="padding:12px 16px;font-size:12px;color:#777;text-transform:uppercase;letter-spacing:1px">Portfolio Value</td>
+      <td style="padding:12px 16px;font-size:18px;font-weight:700;text-align:right">${total_value:,.2f}</td>
+    </tr>
+  </table>
 
   <!-- Stat boxes -->
   <table width="100%" cellpadding="6" cellspacing="0" style="margin-bottom:20px;border-collapse:separate;border-spacing:8px">
@@ -260,8 +243,10 @@ def send_portfolio_digest() -> None:
 
   <!-- Sector chart -->
   <p style="margin:0 0 8px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">Sector Allocation</p>
-  <div style="background:#1e1e1e;border-radius:8px;padding:12px;margin-bottom:20px;text-align:center">
-    <img src="{chart_url}" alt="Sector allocation" width="520" style="max-width:100%;border-radius:4px" />
+  <div style="background:#1e1e1e;border-radius:8px;padding:14px 16px;margin-bottom:20px">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      {sector_bars()}
+    </table>
   </div>
 
   <!-- Movers -->
@@ -282,7 +267,7 @@ def send_portfolio_digest() -> None:
     </tr>
   </table>
 
-  <a href="https://alphalytics-theta.vercel.app"
+  <a href="https://alphalytics-theta.vercel.app{f'/?restore={token}' if token else ''}"
      style="display:inline-block;padding:10px 22px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">
     View Portfolio &rarr;
   </a>
