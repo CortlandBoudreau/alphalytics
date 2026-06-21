@@ -98,14 +98,14 @@ function AllocationCard({
       <CardContent>
         {data.length > 0 ? (
           <>
-            <ResponsiveContainer width="100%" height={180}>
+            <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
                   data={data}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
+                  innerRadius={60}
+                  outerRadius={95}
                   paddingAngle={2}
                   dataKey="value"
                 >
@@ -119,7 +119,7 @@ function AllocationCard({
                 />
               </PieChart>
             </ResponsiveContainer>
-            <div className="space-y-1.5 mt-2 max-h-48 overflow-y-auto pr-1">
+            <div className="space-y-1.5 mt-2">
               {data.map((d, i) => (
                 <div key={d.name} className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
@@ -221,13 +221,20 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   const fetchSectors = async (hs: Holding[]) => {
     const equityTickers = [...new Set(hs.filter(h => !h.staticValue).map(h => h.ticker))]
     if (equityTickers.length === 0) return
+    const url = `${apiUrl}/sectors?tickers=${encodeURIComponent(equityTickers.join(","))}`
+    console.log("[sectors] fetching", url)
     try {
-      const res = await fetch(`${apiUrl}/sectors?tickers=${encodeURIComponent(equityTickers.join(","))}`, {
-        headers: authHeaders
-      })
-      if (res.ok) setSectors(await res.json())
+      const res = await fetch(url, { headers: authHeaders })
+      if (res.ok) {
+        const data = await res.json()
+        console.log("[sectors] response:", data)
+        setSectors(data)
+      } else {
+        const body = await res.text()
+        console.error("[sectors] error", res.status, body)
+      }
     } catch (e) {
-      console.error("Failed to fetch sectors", e)
+      console.error("[sectors] network error", e)
     }
   }
 

@@ -147,26 +147,44 @@ async def trigger_digest(request: Request, background_tasks: BackgroundTasks, _:
 @limiter.limit("30/minute")
 async def get_sectors(request: Request, tickers: str = Query(...), _: None = Depends(verify_token)):
     ticker_list = _validate_ticker_list(tickers, limit=100)
+    try:
+        loop = asyncio.get_running_loop()
+        result = await loop.run_in_executor(None, lambda: _resolve_sectors(ticker_list))
+        return result
+    except Exception:
+        logger.exception("sectors endpoint failed")
+        return {}
 
-    # Serve from Redis cache where available (skip stale "Other"/"N/A" entries)
-    result: dict[str, str] = {}
-    missing: list[str] = []
-    for t in ticker_list:
-        cached = r.get(f"sector:{t}")
-        if cached and cached.decode() not in ("Other", "N/A"):
-            result[t] = cached.decode()
-        else:
+
+def _resolve_sectors(ticker_list: list[str]) -> dict[str, str]:
+    """Sync helper: cache-first sector lookup, delegates misses to fetch_sectors."""
+    try:
+        result: dict[str, str] = {}
+        missing: list[str] = []
+        for t in ticker_list:
+            try:
+                cached = r.get(f"sector:{t}")
+                if cached and (cached.decode() if isinstance(cached, bytes) else cached) not in ("Other", "N/A"):
+                    result[t] = (cached.decode() if isinstance(cached, bytes) else cached)
+                    continue
+            except Exception:
+                pass
             missing.append(t)
 
-    if missing:
-        fetched = await asyncio.get_event_loop().run_in_executor(
-            None, lambda: fetch_sectors(missing)
-        )
-        for t, sector in fetched.items():
-            r.setex(f"sector:{t}", 86400, sector)
-            result[t] = sector
+        if missing:
+            fetched = fetch_sectors(missing)
+            for t, sector in fetched.items():
+                try:
+                    r.setex(f"sector:{t}", 86400, sector)
+                except Exception:
+                    pass
+                result[t] = sector
 
-    return result
+        logger.info("sectors: returning %d entries for %d requested", len(result), len(ticker_list))
+        return result
+    except Exception:
+        logger.exception("_resolve_sectors failed")
+        return {}
 
 
 # ── Startup ────────────────────────────────────────────────────────────────────

@@ -20,7 +20,7 @@ _WIKI_SECTOR_MAP = {
 }
 
 
-def fetch_sectors(ticker_list: list[str]) -> dict[str, str]:
+def fetch_sectors(ticker_list: list[str]) -> dict[str, str]:  # never raises
     """
     Resolve sector for each ticker.  Priority:
 
@@ -34,8 +34,11 @@ def fetch_sectors(ticker_list: list[str]) -> dict[str, str]:
     """
     from db import r
 
-    # Fetch S&P 500 metadata (populates sp500:metadata in Redis if missing)
-    sp500_meta: dict = get_sp500_metadata()
+    try:
+        sp500_meta: dict = get_sp500_metadata()
+    except Exception:
+        logger.exception("fetch_sectors: get_sp500_metadata failed")
+        sp500_meta = {}
     logger.info("sectors: sp500_meta has %d entries", len(sp500_meta))
 
     result: dict[str, str] = {}
@@ -44,8 +47,8 @@ def fetch_sectors(ticker_list: list[str]) -> dict[str, str]:
     for t in ticker_list:
         # 1. Per-ticker cache (skip stale "Other" entries)
         cached = r.get(f"sector:{t}")
-        if cached and cached.decode() not in ("Other", "N/A"):
-            result[t] = cached.decode()
+        if cached and (cached.decode() if isinstance(cached, bytes) else cached) not in ("Other", "N/A"):
+            result[t] = (cached.decode() if isinstance(cached, bytes) else cached)
             logger.debug("sectors: %s from cache → %s", t, result[t])
             continue
 
