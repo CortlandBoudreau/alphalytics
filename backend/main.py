@@ -37,6 +37,7 @@ import json
 from db import r
 from auth import security, verify_token
 from screener import build_screener_data, load_tickers_into_redis, _yf_session_and_crumb
+from quotes import fetch_quotes, fetch_sectors
 from financials import build_income_quarters, build_balance_quarters, build_cashflow_quarters
 from ai import call_claude, AnalysisRequest, client, sanitize_for_prompt, _SYSTEM_PROMPT
 
@@ -73,20 +74,24 @@ def _internal_error(exc: Exception, context: str = "") -> HTTPException:
 
 def _validate_ticker(ticker: str) -> str:
     """Sanitize and validate a single ticker symbol."""
-    clean = "".join(c for c in ticker.upper() if c.isalnum() or c == "-")
-    if not clean or len(clean) > 10:
+    clean = "".join(c for c in ticker.upper() if c.isalnum() or c in "-.")
+    if not clean or len(clean) > 12:
         raise HTTPException(status_code=400, detail="Invalid ticker symbol")
     return clean
 
 
 def _validate_ticker_list(raw: str, limit: int = 50) -> list[str]:
-    """Sanitize and validate a comma-separated list of ticker symbols."""
+    """Sanitize and validate a comma-separated list of ticker symbols.
+
+    Allows '.' for class-share tickers (CCL.B, REI.UN) and '=' for FX pairs
+    (USDCAD=X).
+    """
     tickers = [
-        "".join(c for c in t.strip().upper() if c.isalnum() or c == "-")
+        "".join(c for c in t.strip().upper() if c.isalnum() or c in "-.=")
         for t in raw.split(",")
         if t.strip()
     ]
-    valid = [t for t in tickers if t and len(t) <= 10][:limit]
+    valid = [t for t in tickers if t and len(t) <= 12][:limit]
     if not valid:
         raise HTTPException(status_code=400, detail="No valid ticker symbols provided")
     return valid
@@ -98,6 +103,9 @@ class DigestHolding(BaseModel):
     ticker: str
     shares: float
     costBasis: float
+    costBasisCurrency: str | None = None
+    staticValue: bool = False
+    holdingType: str | None = None
 
 class PortfolioSyncRequest(BaseModel):
     email: str
@@ -111,8 +119,14 @@ async def sync_portfolio(body: PortfolioSyncRequest, _: None = Depends(verify_to
     if "@" not in body.email or len(body.email) > 254:
         raise HTTPException(status_code=400, detail="Invalid email address")
     cleaned = [
-        {"ticker": "".join(c for c in h.ticker.upper() if c.isalnum() or c == "-"),
-         "shares": h.shares, "costBasis": h.costBasis}
+        {
+            "ticker": "".join(c for c in h.ticker.upper() if c.isalnum() or c in "-."),
+            "shares": h.shares,
+            "costBasis": h.costBasis,
+            "costBasisCurrency": h.costBasisCurrency,
+            "staticValue": h.staticValue,
+            "holdingType": h.holdingType,
+        }
         for h in body.holdings[:100]
         if h.shares > 0
     ]
@@ -127,6 +141,50 @@ async def trigger_digest(request: Request, background_tasks: BackgroundTasks, _:
     from email_digest import send_portfolio_digest
     background_tasks.add_task(send_portfolio_digest)
     return {"status": "sending"}
+
+
+@app.get("/sectors")
+@limiter.limit("30/minute")
+async def get_sectors(request: Request, tickers: str = Query(...), _: None = Depends(verify_token)):
+    ticker_list = _validate_ticker_list(tickers, limit=100)
+    try:
+        loop = asyncio.get_running_loop()
+        result = await loop.run_in_executor(None, lambda: _resolve_sectors(ticker_list))
+        return result
+    except Exception:
+        logger.exception("sectors endpoint failed")
+        return {}
+
+
+def _resolve_sectors(ticker_list: list[str]) -> dict[str, str]:
+    """Sync helper: cache-first sector lookup, delegates misses to fetch_sectors."""
+    try:
+        result: dict[str, str] = {}
+        missing: list[str] = []
+        for t in ticker_list:
+            try:
+                cached = r.get(f"sector:{t}")
+                if cached and (cached.decode() if isinstance(cached, bytes) else cached) not in ("Other", "N/A"):
+                    result[t] = (cached.decode() if isinstance(cached, bytes) else cached)
+                    continue
+            except Exception:
+                pass
+            missing.append(t)
+
+        if missing:
+            fetched = fetch_sectors(missing)
+            for t, sector in fetched.items():
+                try:
+                    r.setex(f"sector:{t}", 86400, sector)
+                except Exception:
+                    pass
+                result[t] = sector
+
+        logger.info("sectors: returning %d entries for %d requested", len(result), len(ticker_list))
+        return result
+    except Exception:
+        logger.exception("_resolve_sectors failed")
+        return {}
 
 
 # ── Startup ────────────────────────────────────────────────────────────────────
@@ -465,29 +523,9 @@ async def get_quotes(request: Request, tickers: str, _: None = Depends(verify_to
         return json.loads(cached)
 
     try:
-        session, crumb = _yf_session_and_crumb()
-        resp = session.get(
-            "https://query2.finance.yahoo.com/v7/finance/quote",
-            params={"symbols": ",".join(ticker_list), "crumb": crumb, "formatted": "false"},
-            headers={"Accept": "application/json"},
-            timeout=30,
-        )
-        if not resp.ok:
-            raise HTTPException(status_code=502, detail="Failed to fetch quotes")
-
-        result = {}
-        for q in (resp.json().get("quoteResponse") or {}).get("result") or []:
-            result[q["symbol"]] = {
-                "ticker": q["symbol"],
-                "name":   q.get("shortName") or q["symbol"],
-                "price":  round(float(q["regularMarketPrice"]), 2),
-                "change": round(float(q.get("regularMarketChangePercent", 0)), 2),
-            }
-
+        result = fetch_quotes(ticker_list)
         r.setex(cache_key, 300, json.dumps(result))
         return result
-    except HTTPException:
-        raise
     except Exception as e:
         raise _internal_error(e, "get_quotes")
 

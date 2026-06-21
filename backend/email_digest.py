@@ -1,109 +1,293 @@
 import os
 import json
 import logging
+import urllib.parse
+from concurrent.futures import ThreadPoolExecutor
+
+import yfinance as yf
 
 from db import r
-from screener import _yf_session_and_crumb
+from quotes import fetch_quotes, fetch_sectors
 
 logger = logging.getLogger(__name__)
 
+SECTOR_COLORS = {
+    # yfinance / quoteSummary names
+    "Technology":             "#3b82f6",
+    "Healthcare":             "#10b981",
+    "Financial Services":     "#f59e0b",
+    "Consumer Cyclical":      "#ec4899",
+    "Consumer Defensive":     "#8b5cf6",
+    "Energy":                 "#f97316",
+    "Industrials":            "#06b6d4",
+    "Basic Materials":        "#a3e635",
+    "Real Estate":            "#e879f9",
+    "Utilities":              "#64748b",
+    "Communication Services": "#ef4444",
+    # Wikipedia / GICS names (used by sp500:metadata)
+    "Financials":             "#f59e0b",
+    "Consumer Discretionary": "#ec4899",
+    "Consumer Staples":       "#8b5cf6",
+    "Materials":              "#a3e635",
+    "Information Technology": "#3b82f6",
+    "Health Care":            "#10b981",
+    # Portfolio-specific
+    "Fixed Income":           "#fbbf24",
+    "Cash & Equivalents":     "#22c55e",
+    "Other":                  "#6b7280",
+}
+
+
+def _get_week_open(ticker: str) -> float | None:
+    """Return the closing price from ~5 trading days ago for weekly P&L."""
+    for t in [ticker, ticker.replace(".", "-") + ".TO"]:
+        try:
+            hist = yf.Ticker(t).history(period="5d", interval="1d")
+            if len(hist) >= 2:
+                return float(hist["Close"].iloc[0])
+        except Exception:
+            pass
+    return None
+
 
 def send_portfolio_digest() -> None:
-    """Fetch live quotes for stored holdings and email a brief P&L summary via SendGrid."""
     raw = r.get("portfolio:digest:settings")
     if not raw:
         logger.info("digest: no settings stored, skipping")
         return
 
     data = json.loads(raw)
-    email = data.get("email", "").strip()
+    email    = data.get("email", "").strip()
     holdings = data.get("holdings", [])
-
     if not email or not holdings:
         logger.info("digest: email or holdings missing, skipping")
         return
 
-    api_key = os.getenv("SENDGRID_API_KEY", "")
+    api_key    = os.getenv("SENDGRID_API_KEY", "")
     from_email = os.getenv("DIGEST_FROM_EMAIL", "")
     if not api_key or not from_email:
         logger.warning("digest: SENDGRID_API_KEY or DIGEST_FROM_EMAIL not configured")
         return
 
-    # Fetch live quotes
-    tickers = list({h["ticker"] for h in holdings})
-    quotes: dict = {}
-    try:
-        session, crumb = _yf_session_and_crumb()
-        resp = session.get(
-            "https://query2.finance.yahoo.com/v7/finance/quote",
-            params={"symbols": ",".join(tickers), "crumb": crumb, "formatted": "false"},
-            headers={"Accept": "application/json"},
-            timeout=30,
-        )
-        if resp.ok:
-            for q in (resp.json().get("quoteResponse") or {}).get("result") or []:
-                quotes[q["symbol"]] = {
-                    "price": float(q.get("regularMarketPrice", 0)),
-                    "change_pct": float(q.get("regularMarketChangePercent", 0)),
-                }
-    except Exception:
-        logger.exception("digest: failed to fetch quotes")
+    # ── 1. Live quotes ────────────────────────────────────────────────────────
+    equity_holdings = [h for h in holdings if not h.get("staticValue")]
+    equity_tickers  = list({h["ticker"] for h in equity_holdings})
+    raw_quotes = fetch_quotes(equity_tickers + ["USDCAD=X"])
+    usdcad = raw_quotes.get("USDCAD=X", {}).get("price", 1.36)
+
+    if not raw_quotes:
+        logger.info("digest: no quotes returned, skipping")
         return
 
-    if not quotes:
-        logger.info("digest: no quotes returned (market may be closed), skipping send")
-        return
+    # ── 2. Weekly open prices (parallel) ─────────────────────────────────────
+    weekly_open: dict[str, float] = {}
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {pool.submit(_get_week_open, t): t for t in equity_tickers}
+        for future, ticker in futures.items():
+            try:
+                result = future.result()
+                if result:
+                    weekly_open[ticker] = result
+            except Exception:
+                pass
 
-    # Compute portfolio value and today's dollar change
-    total_value = 0.0
-    total_day_change = 0.0
+    # ── 3. Sector info (uses same authenticated Yahoo session as quotes) ─────────
+    sectors = fetch_sectors(equity_tickers)
+    for t, s in sectors.items():
+        r.setex(f"sector:{t}", 86400, s)
+
+    # ── 4. Portfolio metrics ──────────────────────────────────────────────────
+    total_value = total_cost = total_day_change = total_weekly_change = 0.0
+    sector_values: dict[str, float] = {}
+    movers: list[tuple[str, float, float]] = []
+
+    def to_cad(amount: float, currency: str) -> float:
+        return amount * usdcad if currency == "USD" else amount
+
     for h in holdings:
-        q = quotes.get(h["ticker"])
-        if not q or q["price"] <= 0:
+        cb_currency  = h.get("costBasisCurrency") or "USD"
+        holding_type = h.get("holdingType")
+
+        if h.get("staticValue"):
+            value_cad = h["costBasis"] if cb_currency == "CAD" else h["costBasis"] * usdcad
+            total_value += value_cad
+            total_cost  += value_cad
+            sector = "Fixed Income" if holding_type == "bond" else "Cash & Equivalents"
+            sector_values[sector] = sector_values.get(sector, 0) + value_cad
             continue
-        value = q["price"] * h["shares"]
-        day_change = (q["change_pct"] / 100.0) * value
-        total_value += value
-        total_day_change += day_change
+
+        q = raw_quotes.get(h["ticker"])
+        if not q:
+            continue
+
+        stock_currency = q.get("currency", "USD")
+        price          = q["price"]
+        change_pct     = q.get("change", 0.0)
+
+        # Normalise cost basis into stock currency
+        cb_native = h["costBasis"]
+        if cb_currency == "CAD" and stock_currency == "USD":
+            cb_native = h["costBasis"] / usdcad
+        elif cb_currency == "USD" and stock_currency == "CAD":
+            cb_native = h["costBasis"] * usdcad
+
+        value_cad      = to_cad(price, stock_currency)     * h["shares"]
+        cost_cad       = to_cad(cb_native, stock_currency) * h["shares"]
+        day_change_cad = (change_pct / 100.0) * value_cad
+
+        week_price = weekly_open.get(h["ticker"])
+        weekly_change_cad = (
+            (to_cad(price, stock_currency) - to_cad(week_price, stock_currency)) * h["shares"]
+            if week_price else 0.0
+        )
+
+        total_value         += value_cad
+        total_cost          += cost_cad
+        total_day_change    += day_change_cad
+        total_weekly_change += weekly_change_cad
+
+        if abs(change_pct) > 0.01:
+            movers.append((h["ticker"], change_pct, day_change_cad))
+
+        sector = sectors.get(h["ticker"], "Other")
+        sector_values[sector] = sector_values.get(sector, 0) + value_cad
 
     if total_value == 0:
-        logger.info("digest: total_value is 0, skipping send")
+        logger.info("digest: total_value is 0, skipping")
         return
 
-    prev_value = total_value - total_day_change
-    day_pct = (total_day_change / prev_value * 100) if prev_value else 0.0
+    total_pnl     = total_value - total_cost
+    total_pnl_pct = (total_pnl / total_cost * 100) if total_cost else 0
+    prev_value    = total_value - total_day_change
+    day_pct       = (total_day_change / prev_value * 100) if prev_value else 0
+    weekly_prev   = total_value - total_weekly_change
+    weekly_pct    = (total_weekly_change / weekly_prev * 100) if weekly_prev else 0
 
-    direction = "UP" if total_day_change >= 0 else "DOWN"
-    sign = "+" if total_day_change >= 0 else ""
-    color = "#16a34a" if total_day_change >= 0 else "#dc2626"
-    arrow = "↑" if total_day_change >= 0 else "↓"
+    movers.sort(key=lambda x: x[1], reverse=True)
+    top_gainers = movers[:3]
+    top_losers  = sorted(movers, key=lambda x: x[1])[:3]
 
-    subject = f"Portfolio {direction} {sign}${abs(total_day_change):,.2f} ({sign}{day_pct:.2f}%) today"
+    # ── 5. Sector allocation chart (QuickChart.io) ───────────────────────────
+    sorted_sectors = sorted(sector_values.items(), key=lambda x: -x[1])
+    chart_config = {
+        "type": "doughnut",
+        "data": {
+            "labels": [s for s, _ in sorted_sectors],
+            "datasets": [{
+                "data":            [round(v / total_value * 100, 1) for _, v in sorted_sectors],
+                "backgroundColor": [SECTOR_COLORS.get(s, "#6b7280") for s, _ in sorted_sectors],
+                "borderWidth": 2,
+                "borderColor": "#1a1a1a",
+            }]
+        },
+        "options": {
+            "cutoutPercentage": 58,
+            "legend": {
+                "position": "right",
+                "labels": {"fontColor": "#cccccc", "fontSize": 11, "boxWidth": 12, "padding": 10}
+            },
+            "plugins": {"datalabels": {"display": False}},
+        }
+    }
+    chart_url = (
+        "https://quickchart.io/chart?backgroundColor=%231a1a1a&width=520&height=250&c="
+        + urllib.parse.quote(json.dumps(chart_config))
+    )
+
+    # ── 6. HTML helpers ───────────────────────────────────────────────────────
+    def clr(n: float) -> str:
+        return "#16a34a" if n >= 0 else "#dc2626"
+
+    def arrow(n: float) -> str:
+        return "↑" if n >= 0 else "↓"
+
+    def fmt_cad(n: float) -> str:
+        sign = "+" if n >= 0 else "-"
+        return f"{sign}CA${abs(n):,.2f}"
+
+    def fmt_pct(n: float) -> str:
+        return f"{'+'if n>=0 else ''}{n:.2f}%"
+
+    def mover_rows(items: list) -> str:
+        if not items:
+            return '<tr><td colspan="3" style="padding:8px;color:#555;font-size:12px;text-align:center">—</td></tr>'
+        rows = ""
+        for ticker, pct, chg_cad in items:
+            c = clr(pct)
+            rows += f"""
+            <tr style="border-bottom:1px solid #222">
+              <td style="padding:6px 10px;color:#ddd;font-size:13px;font-weight:600">{ticker}</td>
+              <td style="padding:6px 10px;color:{c};font-size:13px;text-align:right">{fmt_pct(pct)}</td>
+              <td style="padding:6px 10px;color:{c};font-size:13px;text-align:right">{fmt_cad(chg_cad)}</td>
+            </tr>"""
+        return rows
+
+    def stat_box(label: str, dollar: float, pct: float) -> str:
+        return f"""
+        <td width="33%" style="background:#1e1e1e;border-radius:8px;padding:16px;vertical-align:top">
+          <p style="margin:0 0 6px;font-size:10px;color:#666;text-transform:uppercase;letter-spacing:1px">{label}</p>
+          <p style="margin:0;font-size:22px;font-weight:700;color:{clr(dollar)}">{arrow(dollar)} CA${abs(dollar):,.2f}</p>
+          <p style="margin:4px 0 0;font-size:13px;color:{clr(pct)}">{fmt_pct(pct)}</p>
+        </td>"""
+
+    # ── 7. Assemble and send ──────────────────────────────────────────────────
+    subject = (
+        f"Portfolio CA${total_value:,.2f} | "
+        f"Daily {fmt_pct(day_pct)} | "
+        f"Week {fmt_pct(weekly_pct)}"
+    )
 
     html_body = f"""
-<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#0a0a0a;color:#f1f1f1;border-radius:8px">
-  <h2 style="margin:0 0 4px;font-size:18px;color:#f1f1f1">Alphalytics Portfolio Digest</h2>
-  <p style="margin:0 0 20px;font-size:12px;color:#888">Market close summary</p>
+<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#111;color:#f1f1f1;border-radius:10px">
 
-  <div style="background:#111;border-radius:6px;padding:16px 20px;margin-bottom:16px">
-    <p style="margin:0 0 6px;font-size:13px;color:#aaa">Today&apos;s change</p>
-    <p style="margin:0;font-size:28px;font-weight:700;color:{color}">
-      {arrow} {sign}${abs(total_day_change):,.2f}
-      <span style="font-size:18px">({sign}{day_pct:.2f}%)</span>
-    </p>
+  <h2 style="margin:0 0 2px;font-size:20px;color:#fff">Alphalytics Portfolio Digest</h2>
+  <p style="margin:0 0 20px;font-size:12px;color:#555">Market close summary &middot; All values in CAD</p>
+
+  <!-- Value bar -->
+  <div style="background:#1e1e1e;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:12px;color:#777;text-transform:uppercase;letter-spacing:1px">Portfolio Value</span>
+    <span style="font-size:18px;font-weight:700">CA${total_value:,.2f}</span>
   </div>
 
-  <div style="background:#111;border-radius:6px;padding:16px 20px;margin-bottom:24px">
-    <p style="margin:0 0 4px;font-size:13px;color:#aaa">Total portfolio value</p>
-    <p style="margin:0;font-size:22px;font-weight:600;color:#f1f1f1">${total_value:,.2f}</p>
+  <!-- Stat boxes -->
+  <table width="100%" cellpadding="6" cellspacing="0" style="margin-bottom:20px;border-collapse:separate;border-spacing:8px">
+    <tr>
+      {stat_box("Total P&amp;L", total_pnl, total_pnl_pct)}
+      {stat_box("Today", total_day_change, day_pct)}
+      {stat_box("This Week", total_weekly_change, weekly_pct)}
+    </tr>
+  </table>
+
+  <!-- Sector chart -->
+  <p style="margin:0 0 8px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">Sector Allocation</p>
+  <div style="background:#1e1e1e;border-radius:8px;padding:12px;margin-bottom:20px;text-align:center">
+    <img src="{chart_url}" alt="Sector allocation" width="520" style="max-width:100%;border-radius:4px" />
   </div>
+
+  <!-- Movers -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="border-spacing:8px;border-collapse:separate;margin-bottom:24px">
+    <tr>
+      <td width="50%" valign="top" style="padding-right:6px">
+        <p style="margin:0 0 6px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">Top Gainers</p>
+        <table width="100%" style="background:#1e1e1e;border-radius:8px;border-collapse:collapse">
+          {mover_rows(top_gainers)}
+        </table>
+      </td>
+      <td width="50%" valign="top" style="padding-left:6px">
+        <p style="margin:0 0 6px;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">Top Losers</p>
+        <table width="100%" style="background:#1e1e1e;border-radius:8px;border-collapse:collapse">
+          {mover_rows(top_losers)}
+        </table>
+      </td>
+    </tr>
+  </table>
 
   <a href="https://alphalytics-theta.vercel.app"
-     style="display:inline-block;padding:10px 20px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">
+     style="display:inline-block;padding:10px 22px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600">
     View Portfolio &rarr;
   </a>
 
-  <p style="margin:24px 0 0;font-size:11px;color:#555">
+  <p style="margin:24px 0 0;font-size:11px;color:#333">
     Alphalytics &middot; prices from Yahoo Finance &middot; not financial advice
   </p>
 </div>
@@ -112,7 +296,6 @@ def send_portfolio_digest() -> None:
     try:
         from sendgrid import SendGridAPIClient
         from sendgrid.helpers.mail import Mail
-
         msg = Mail(from_email=from_email, to_emails=email, subject=subject, html_content=html_body)
         SendGridAPIClient(api_key).send(msg)
         logger.info("digest: sent to %s — %s", email, subject)
