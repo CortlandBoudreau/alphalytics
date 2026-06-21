@@ -5,13 +5,44 @@ import { toast } from "@/lib/toast"
 import { apiFetch, apiErrorMessage } from "@/lib/api"
 import { RateLimitError } from "@/components/RateLimitError"
 
-type Holding = { id: string; ticker: string; shares: number; costBasis: number }
-type QuoteMap = Record<string, { ticker: string; name: string; price: number; change: number }>
+// costBasisCurrency: the currency the costBasis number was recorded in.
+// undefined = same as the stock's native currency (standard for manual entry).
+// "CAD" = recorded in CAD (e.g. imported from a CAD-denominated EJ account).
+// name: optional display label (used for bonds/cash that have no live quote).
+// staticValue: true = skip live quote fetch (bonds, cash — value is fixed at import).
+// holdingType: visual badge shown in the holdings table ("bond" | "cash" | undefined = equity).
+type Holding = { id: string; ticker: string; name?: string; shares: number; costBasis: number; costBasisCurrency?: string; staticValue?: boolean; holdingType?: "bond" | "cash" }
+type QuoteMap = Record<string, { ticker: string; name: string; price: number; change: number; currency: string }>
 type HistoryMap = Record<string, Record<string, number>>
 
 const COLORS = ["#3b82f6","#f59e0b","#10b981","#ef4444","#8b5cf6","#ec4899","#06b6d4","#f97316","#a3e635","#e879f9"]
 
-const fmt$ = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 })
+const SECTOR_COLORS: Record<string, string> = {
+  // yfinance / quoteSummary names
+  "Technology":             "#3b82f6",
+  "Healthcare":             "#10b981",
+  "Financial Services":     "#f59e0b",
+  "Consumer Cyclical":      "#ec4899",
+  "Consumer Defensive":     "#8b5cf6",
+  "Energy":                 "#f97316",
+  "Industrials":            "#06b6d4",
+  "Basic Materials":        "#a3e635",
+  "Real Estate":            "#e879f9",
+  "Utilities":              "#64748b",
+  "Communication Services": "#ef4444",
+  // Wikipedia / GICS names (used by sp500:metadata)
+  "Financials":             "#f59e0b",
+  "Consumer Discretionary": "#ec4899",
+  "Consumer Staples":       "#8b5cf6",
+  "Materials":              "#a3e635",
+  "Information Technology": "#3b82f6",
+  "Health Care":            "#10b981",
+  // Portfolio-specific
+  "Fixed Income":           "#fbbf24",
+  "Cash & Equivalents":     "#22c55e",
+  "Other":                  "#6b7280",
+}
+
 const fmtPct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`
 
 function downloadCSV(filename: string, headers: string[], rows: (string | number)[][]) {
@@ -24,6 +55,88 @@ function downloadCSV(filename: string, headers: string[], rows: (string | number
   a.download = filename
   a.click()
   URL.revokeObjectURL(url)
+}
+
+function AllocationCard({
+  pieData,
+  sectorData,
+  colors,
+  sectorColors,
+}: {
+  pieData: { name: string; value: number }[]
+  sectorData: { name: string; value: number }[]
+  colors: string[]
+  sectorColors: Record<string, string>
+}) {
+  const [view, setView] = useState<"sector" | "holding">("sector")
+  const data = view === "sector" ? sectorData : pieData
+  const getColor = (name: string, i: number) =>
+    view === "sector" ? (sectorColors[name] ?? "#6b7280") : colors[i % colors.length]
+
+  return (
+    <Card className="md:col-span-2">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <span>Allocation</span>
+          <div className="flex gap-1">
+            {(["sector", "holding"] as const).map(v => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`px-2.5 py-0.5 rounded text-xs font-medium capitalize transition-colors ${
+                  view === v
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {data.length > 0 ? (
+          <>
+            <ResponsiveContainer width="100%" height={180}>
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {data.map((d, i) => (
+                    <Cell key={d.name} fill={getColor(d.name, i)} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{ backgroundColor: "#111", border: "1px solid #333" }}
+                  formatter={(v) => [`${Number(v).toFixed(1)}%`, "Allocation"]}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="space-y-1.5 mt-2 max-h-48 overflow-y-auto pr-1">
+              {data.map((d, i) => (
+                <div key={d.name} className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ background: getColor(d.name, i) }} />
+                    <span className="text-muted-foreground">{d.name}</span>
+                  </div>
+                  <span className="font-medium">{d.value.toFixed(1)}%</span>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-muted-foreground text-sm text-center py-8">Loading prices...</p>
+        )}
+      </CardContent>
+    </Card>
+  )
 }
 
 type Props = {
@@ -47,9 +160,14 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   const [holdingsView, setHoldingsView] = useState<"table" | "performance">("table")
   const [historyData, setHistoryData] = useState<HistoryMap>({})
   const [historyLoading, setHistoryLoading] = useState(false)
+  const [sectors, setSectors] = useState<Record<string, string>>({})
 
   const csvInputRef = useRef<HTMLInputElement>(null)
   const [csvPreview, setCsvPreview] = useState<{ holdings: Holding[]; filename: string } | null>(null)
+
+  const [displayCurrency, setDisplayCurrency] = useState<"USD" | "CAD">(() =>
+    (localStorage.getItem("alphalytics_currency") as "USD" | "CAD") ?? "USD"
+  )
 
   const [digestEmail, setDigestEmail] = useState(() => localStorage.getItem("alphalytics_digest_email") ?? "")
   const [digestEnabled, setDigestEnabled] = useState(() => localStorage.getItem("alphalytics_digest_enabled") === "true")
@@ -63,8 +181,8 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   }, [holdings])
 
   const fetchQuotes = async (hs: Holding[]) => {
-    const tickers = [...new Set(hs.map(h => h.ticker))]
-    if (tickers.length === 0) { setQuotes({}); return }
+    const tickers = [...new Set(hs.filter(h => !h.staticValue).map(h => h.ticker)), "USDCAD=X"]
+    if (hs.length === 0) { setQuotes({}); return }
     setQuotesLoading(true)
     setQuotesError(null)
     const result = await apiFetch<QuoteMap>(
@@ -100,6 +218,19 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     }
   }
 
+  const fetchSectors = async (hs: Holding[]) => {
+    const equityTickers = [...new Set(hs.filter(h => !h.staticValue).map(h => h.ticker))]
+    if (equityTickers.length === 0) return
+    try {
+      const res = await fetch(`${apiUrl}/sectors?tickers=${encodeURIComponent(equityTickers.join(","))}`, {
+        headers: authHeaders
+      })
+      if (res.ok) setSectors(await res.json())
+    } catch (e) {
+      console.error("Failed to fetch sectors", e)
+    }
+  }
+
   const syncDigest = async (email: string, hs: Holding[]) => {
     if (!email.includes("@") || hs.length === 0) return
     setDigestSyncing(true)
@@ -107,7 +238,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
       await fetch(`${apiUrl}/portfolio/sync`, {
         method: "POST",
         headers: authHeaders,
-        body: JSON.stringify({ email, holdings: hs.map(h => ({ ticker: h.ticker, shares: h.shares, costBasis: h.costBasis })) }),
+        body: JSON.stringify({ email, holdings: hs.map(h => ({ ticker: h.ticker, shares: h.shares, costBasis: h.costBasis, costBasisCurrency: h.costBasisCurrency, staticValue: h.staticValue ?? false, holdingType: h.holdingType ?? null })) }),
       })
     } catch {
       toast("Failed to sync digest settings", "error")
@@ -123,6 +254,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   }, [digestEnabled, holdings])
 
   useEffect(() => { fetchQuotes(holdings) }, [holdings])
+  useEffect(() => { fetchSectors(holdings) }, [holdings.length])
 
   useEffect(() => {
     if (holdingsView === "performance" && holdings.length > 0) {
@@ -168,15 +300,42 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     setShowSuggestions(false)
   }
 
+  // USDCAD=X: how many CAD per 1 USD (e.g. 1.36). Used to convert between currencies.
+  const usdcad = quotes["USDCAD=X"]?.price ?? 1.36
+
+  const fmt$ = (n: number) =>
+    n.toLocaleString("en-US", { style: "currency", currency: displayCurrency, minimumFractionDigits: 2 })
+
   const rows = useMemo(() => holdings.map(h => {
     const q = quotes[h.ticker]
-    const price        = q?.price ?? null
-    const currentValue = price != null ? price * h.shares : null
-    const totalCost    = h.costBasis * h.shares
-    const pnlDollar    = currentValue != null ? currentValue - totalCost : null
-    const pnlPct       = pnlDollar != null && totalCost > 0 ? (pnlDollar / totalCost) * 100 : null
-    return { ...h, name: q?.name ?? h.ticker, price, currentValue, totalCost, pnlDollar, pnlPct }
-  }), [holdings, quotes])
+    // For holdings with no live quote (bonds, cash), fall back to costBasisCurrency
+    // so we still convert totals correctly.
+    const stockCurrency = q?.currency ?? h.costBasisCurrency ?? "USD"
+    const cbCurrency    = h.costBasisCurrency ?? stockCurrency
+
+    // Step 1 — normalise costBasis into stockCurrency
+    let cbInStockCurrency = h.costBasis
+    if (cbCurrency === "CAD" && stockCurrency === "USD") cbInStockCurrency = h.costBasis / usdcad
+    else if (cbCurrency === "USD" && stockCurrency === "CAD") cbInStockCurrency = h.costBasis * usdcad
+
+    // Step 2 — convert to displayCurrency
+    const toDisplay = (amount: number) => {
+      if (displayCurrency === "CAD" && stockCurrency === "USD") return amount * usdcad
+      if (displayCurrency === "USD" && stockCurrency === "CAD") return amount / usdcad
+      return amount
+    }
+
+    const livePrice  = q?.price != null ? toDisplay(q.price) : null
+    const costBasis  = toDisplay(cbInStockCurrency)
+    // Bonds/cash have no live price — use their import value so they contribute to the total
+    const effectivePrice = livePrice ?? costBasis
+    const currentValue   = effectivePrice * h.shares
+    const totalCost      = costBasis * h.shares
+    // Only show P&L for holdings with a live price; bonds/cash show "—"
+    const pnlDollar = livePrice != null ? currentValue - totalCost : null
+    const pnlPct    = pnlDollar != null && totalCost > 0 ? (pnlDollar / totalCost) * 100 : null
+    return { ...h, name: q?.name ?? h.name ?? h.ticker, price: livePrice, currentValue, totalCost, pnlDollar, pnlPct }
+  }), [holdings, quotes, displayCurrency, usdcad])
 
   const totalValue = rows.reduce((s, r) => s + (r.currentValue ?? 0), 0)
   const totalCost  = rows.reduce((s, r) => s + r.totalCost, 0)
@@ -186,6 +345,21 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   const pieData = rows
     .filter(r => r.currentValue != null && r.currentValue > 0)
     .map(r => ({ name: r.ticker, value: totalValue > 0 ? (r.currentValue! / totalValue) * 100 : 0 }))
+
+  const sectorData = useMemo(() => {
+    const map: Record<string, number> = {}
+    for (const row of rows) {
+      const sector =
+        row.holdingType === "bond"  ? "Fixed Income" :
+        row.holdingType === "cash"  ? "Cash & Equivalents" :
+        sectors[row.ticker] ?? "Other"
+      map[sector] = (map[sector] ?? 0) + (row.currentValue ?? 0)
+    }
+    return Object.entries(map)
+      .filter(([, v]) => v > 0)
+      .sort(([, a], [, b]) => b - a)
+      .map(([name, value]) => ({ name, value: totalValue > 0 ? (value / totalValue) * 100 : 0 }))
+  }, [rows, sectors, totalValue])
 
   const summaryMetrics = [
     { label: "Total Value", value: fmt$(totalValue),       color: "" },
@@ -243,23 +417,84 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
 
     const headers = parseCSVRow(lines[headerIdx]).map(h => h.replace(/"/g, "").trim().toUpperCase())
     const col = (name: string) => headers.indexOf(name)
-    const symbolIdx = col("SYMBOL")
-    const quantityIdx = col("QUANTITY")
-    const priceIdx = col("CURRENT PRICE")
+    const symbolIdx      = col("SYMBOL")
+    const quantityIdx    = col("QUANTITY")
+    const priceIdx       = col("CURRENT PRICE")
+    const typeIdx        = col("TYPE")
+    const currencyIdx    = col("CURRENCY")
+    const descIdx        = col("DESCRIPTION")
+    const marketValueIdx = col("MARKET VALUE")
 
-    if (symbolIdx === -1 || quantityIdx === -1) throw new Error("Missing required columns (SYMBOL, QUANTITY)")
+    if (symbolIdx === -1) throw new Error("Missing required column (SYMBOL)")
+
+    const parseAmount = (s: string | undefined) =>
+      parseFloat((s ?? "").replace(/["$, ]/g, ""))
 
     const results: Holding[] = []
     for (let i = headerIdx + 1; i < lines.length; i++) {
       const line = lines[i].trim()
       if (!line) continue
       const cols = parseCSVRow(line)
+
+      const type = typeIdx !== -1 ? cols[typeIdx]?.replace(/"/g, "").trim() ?? "" : ""
+      const accountCurrency = currencyIdx !== -1 ? cols[currencyIdx]?.replace(/"/g, "").trim().toUpperCase() : undefined
+      const marketValue = marketValueIdx !== -1 ? parseAmount(cols[marketValueIdx]) : NaN
+      const description = descIdx !== -1 ? cols[descIdx]?.replace(/"/g, "").trim() ?? "" : ""
+
+      // ── Bonds ────────────────────────────────────────────────────────────
+      // Price is % of par, quantity is face value in dollars.
+      // Use the pre-computed MARKET VALUE as the position value (shares=1).
+      if (/bond/i.test(type)) {
+        if (!marketValue || marketValue <= 0) continue
+        const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
+        const ticker = symbol || `BOND${results.length + 1}`
+        // Shorten description: take text before the first date/rate clause
+        const shortName = description.split(/\s+(EXT|SR\s+UNSEC|MTN|DUE)\s+/i)[0].trim().slice(0, 32)
+        results.push({
+          id: crypto.randomUUID(),
+          ticker,
+          name: shortName || ticker,
+          shares: 1,
+          costBasis: marketValue,
+          costBasisCurrency: accountCurrency,
+          staticValue: true,
+          holdingType: "bond",
+        })
+        continue
+      }
+
+      // ── Cash ─────────────────────────────────────────────────────────────
+      if (/cash/i.test(type)) {
+        if (!marketValue || marketValue <= 0) continue
+        results.push({
+          id: crypto.randomUUID(),
+          ticker: "CASH",
+          name: "Cash",
+          shares: 1,
+          costBasis: marketValue,
+          costBasisCurrency: accountCurrency,
+          staticValue: true,
+          holdingType: "cash",
+        })
+        continue
+      }
+
+      // ── Skip other non-equity types ────────────────────────────────────
+      if (/mutual.fund|annuit/i.test(type)) continue
+
+      // ── Equities & ETFs ───────────────────────────────────────────────
       const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
-      if (!symbol || !/^[A-Z0-9.-]{1,10}$/.test(symbol)) continue
+      if (!symbol || !/^[A-Z]{1,5}(\.[A-Z0-9]{1,2})?$/.test(symbol)) continue
       const quantity = parseFloat(cols[quantityIdx]?.replace(/[",]/g, "") ?? "")
       if (!quantity || quantity <= 0) continue
-      const price = priceIdx !== -1 ? parseFloat(cols[priceIdx]?.replace(/["$,]/g, "") ?? "") : NaN
-      results.push({ id: crypto.randomUUID(), ticker: symbol, shares: quantity, costBasis: price > 0 ? price : 0 })
+      const price = priceIdx !== -1 ? parseAmount(cols[priceIdx]) : NaN
+      results.push({
+        id: crypto.randomUUID(),
+        ticker: symbol,
+        shares: quantity,
+        costBasis: price > 0 ? price : 0,
+        costBasisCurrency: accountCurrency,
+      })
     }
     return results
   }
@@ -482,16 +717,33 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
 
       {holdings.length > 0 && (
         <>
-          {/* Summary */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {summaryMetrics.map(m => (
-              <Card key={m.label}>
-                <CardContent className="pt-4 pb-4">
-                  <p className="text-xs text-muted-foreground">{m.label}</p>
-                  <p className={`text-xl font-bold mt-1 ${m.color}`}>{m.value}</p>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Currency toggle + Summary */}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
+              {summaryMetrics.map(m => (
+                <Card key={m.label}>
+                  <CardContent className="pt-4 pb-4">
+                    <p className="text-xs text-muted-foreground">{m.label}</p>
+                    <p className={`text-xl font-bold mt-1 ${m.color}`}>{m.value}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="flex gap-1 self-start mt-1">
+              {(["USD", "CAD"] as const).map(c => (
+                <button
+                  key={c}
+                  onClick={() => { setDisplayCurrency(c); localStorage.setItem("alphalytics_currency", c) }}
+                  className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                    displayCurrency === c
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Holdings table + Allocation */}
@@ -557,7 +809,18 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
                               <div className="flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
                                 <div>
-                                  <p className="font-medium text-primary">{row.ticker}</p>
+                                  <div className="flex items-center gap-1.5">
+                                    <p className="font-medium text-primary">{row.ticker}</p>
+                                    {!row.holdingType && (
+                                      <span className="text-[10px] font-medium px-1 py-0.5 rounded bg-blue-500/15 text-blue-400 leading-none">STOCK</span>
+                                    )}
+                                    {row.holdingType === "bond" && (
+                                      <span className="text-[10px] font-medium px-1 py-0.5 rounded bg-amber-500/15 text-amber-400 leading-none">BOND</span>
+                                    )}
+                                    {row.holdingType === "cash" && (
+                                      <span className="text-[10px] font-medium px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-400 leading-none">CASH</span>
+                                    )}
+                                  </div>
                                   <p className="text-xs text-muted-foreground truncate max-w-[100px]">{row.name}</p>
                                 </div>
                               </div>
@@ -632,51 +895,12 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
             </Card>
 
             {/* Allocation donut */}
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Allocation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {pieData.length > 0 ? (
-                  <>
-                    <ResponsiveContainer width="100%" height={180}>
-                      <PieChart>
-                        <Pie
-                          data={pieData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={80}
-                          paddingAngle={2}
-                          dataKey="value"
-                        >
-                          {pieData.map((_, i) => (
-                            <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{ backgroundColor: "#111", border: "1px solid #333" }}
-                          formatter={(v) => [`${Number(v).toFixed(1)}%`, "Allocation"]}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="space-y-1.5 mt-2">
-                      {pieData.map((d, i) => (
-                        <div key={d.name} className="flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
-                            <span className="text-muted-foreground">{d.name}</span>
-                          </div>
-                          <span className="font-medium">{d.value.toFixed(1)}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-sm text-center py-8">Loading prices...</p>
-                )}
-              </CardContent>
-            </Card>
+            <AllocationCard
+              pieData={pieData}
+              sectorData={sectorData}
+              colors={COLORS}
+              sectorColors={SECTOR_COLORS}
+            />
           </div>
         </>
       )}
