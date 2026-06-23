@@ -234,13 +234,18 @@ async def startup_event():
 @app.on_event("startup")
 async def start_digest_scheduler():
     # DIGEST_CRON controls when the daily email fires (UTC, crontab syntax).
-    # Default: "30 21 * * 1-5" = 9:30 PM UTC = ~4:30 PM ET, weekdays only.
+    # Default: "30 21 * * 1-5" = 9:30 PM UTC = ~5:30 PM EDT, weekdays only.
+    import pytz
     cron = os.getenv("DIGEST_CRON", "30 21 * * 1-5")
     try:
         from email_digest import send_portfolio_digest
-        _digest_scheduler.add_job(send_portfolio_digest, CronTrigger.from_crontab(cron))
+        _digest_scheduler.add_job(
+            send_portfolio_digest,
+            CronTrigger.from_crontab(cron, timezone=pytz.UTC),
+            misfire_grace_time=900,  # run if we're up to 15 min late (e.g. container restart)
+        )
         _digest_scheduler.start()
-        logger.info("Digest scheduler started — cron: %s", cron)
+        logger.info("Digest scheduler started — cron: %s (UTC)", cron)
     except Exception:
         logger.exception("Failed to start digest scheduler")
 

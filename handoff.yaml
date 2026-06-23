@@ -1,0 +1,34 @@
+session: 2026-06-22
+branch: fix/digest-scheduler
+
+accomplished:
+  - New branch fix/digest-scheduler created from feat/portfolio-email-digest
+  - Three scheduler bugs fixed:
+      1. APScheduler misfire_grace_time added (900s = 15 min). Without this, if Railway
+         is even 1 second late delivering the job, APScheduler silently drops the email
+         for that day. This is the most likely reason scheduled emails never arrived.
+      2. CronTrigger timezone made explicit (pytz.UTC). Without this, APScheduler uses
+         the container's local timezone — undefined behaviour if Railway ever changes it.
+      3. digestEnabled frontend default changed from false → true. Previously, opening
+         the app on a fresh browser/device set digestEnabled=false in localStorage, and
+         the mount-time useEffect auto-synced that false to Redis, silently disabling
+         the scheduled digest even if the user had enabled it elsewhere.
+  - Removed debug console.log lines from Portfolio.tsx fetchSectors (noted in prior handoff)
+
+tested_verified:
+  - Not run yet — changes are backend scheduler config + frontend init state only.
+    Should be tested by verifying Railway logs show "Digest scheduler started" on next deploy,
+    and that an email arrives after next weekday at 9:30 PM UTC.
+
+still_open:
+  - PR to merge these fixes (branch fix/digest-scheduler). Should be merged to main
+    so Railway picks it up.
+  - IMPORTANT scheduling note for user: the digest fires Mon–Fri at 9:30 PM UTC
+    (5:30 PM EDT). If setup happened on a weekend, no email until the next weekday.
+    This is correct behaviour, not a bug.
+  - FMP screener migration — still pending from older session
+  - debug console.log lines are now removed from Portfolio.tsx fetchSectors
+
+pending_decisions:
+  - Merge fix/digest-scheduler to main?
+  - After merge, verify Railway logs show scheduler start and job firing

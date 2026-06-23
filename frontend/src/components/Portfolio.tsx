@@ -170,7 +170,10 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   )
 
   const [digestEmail, setDigestEmail] = useState(() => localStorage.getItem("alphalytics_digest_email") ?? "")
-  const [digestEnabled, setDigestEnabled] = useState(() => localStorage.getItem("alphalytics_digest_enabled") === "true")
+  const [digestEnabled, setDigestEnabled] = useState(() => {
+    const stored = localStorage.getItem("alphalytics_digest_enabled")
+    return stored === null ? true : stored === "true"  // default ON; user must explicitly disable
+  })
   const [digestSyncing, setDigestSyncing] = useState(false)
   const [digestSendingNow, setDigestSendingNow] = useState(false)
 
@@ -222,19 +225,13 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     const equityTickers = [...new Set(hs.filter(h => !h.staticValue).map(h => h.ticker))]
     if (equityTickers.length === 0) return
     const url = `${apiUrl}/sectors?tickers=${encodeURIComponent(equityTickers.join(","))}`
-    console.log("[sectors] fetching", url)
     try {
       const res = await fetch(url, { headers: authHeaders })
       if (res.ok) {
-        const data = await res.json()
-        console.log("[sectors] response:", data)
-        setSectors(data)
-      } else {
-        const body = await res.text()
-        console.error("[sectors] error", res.status, body)
+        setSectors(await res.json())
       }
-    } catch (e) {
-      console.error("[sectors] network error", e)
+    } catch {
+      // sector colours are best-effort, fail silently
     }
   }
 
