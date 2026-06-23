@@ -116,7 +116,7 @@ function AllocationCard({
                 </Pie>
                 <Tooltip
                   contentStyle={{ backgroundColor: "#111", border: "1px solid #333" }}
-                  formatter={(v) => [`${Number(v).toFixed(1)}%`, "Allocation"]}
+                  formatter={(v, name) => [`${Number(v).toFixed(1)}%`, name]}
                 />
               </PieChart>
             </ResponsiveContainer>
