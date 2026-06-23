@@ -11,7 +11,7 @@ import { RateLimitError } from "@/components/RateLimitError"
 // name: optional display label (used for bonds/cash that have no live quote).
 // staticValue: true = skip live quote fetch (bonds, cash — value is fixed at import).
 // holdingType: visual badge shown in the holdings table ("bond" | "cash" | undefined = equity).
-type Holding = { id: string; ticker: string; name?: string; shares: number; costBasis: number; costBasisCurrency?: string; staticValue?: boolean; holdingType?: "bond" | "cash" }
+type Holding = { id: string; ticker: string; name?: string; shares: number; costBasis: number; costBasisCurrency?: string; staticValue?: boolean; holdingType?: "bond" | "cash" | "fund" }
 type QuoteMap = Record<string, { ticker: string; name: string; price: number; change: number; currency: string }>
 type HistoryMap = Record<string, Record<string, number>>
 
@@ -40,6 +40,7 @@ const SECTOR_COLORS: Record<string, string> = {
   // Portfolio-specific
   "Fixed Income":           "#fbbf24",
   "Cash & Equivalents":     "#22c55e",
+  "Mutual Funds":           "#a78bfa",
   "Other":                  "#6b7280",
 }
 
@@ -170,7 +171,10 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
   )
 
   const [digestEmail, setDigestEmail] = useState(() => localStorage.getItem("alphalytics_digest_email") ?? "")
-  const [digestEnabled, setDigestEnabled] = useState(() => localStorage.getItem("alphalytics_digest_enabled") === "true")
+  const [digestEnabled, setDigestEnabled] = useState(() => {
+    const stored = localStorage.getItem("alphalytics_digest_enabled")
+    return stored === null ? true : stored === "true"  // default ON; user must explicitly disable
+  })
   const [digestSyncing, setDigestSyncing] = useState(false)
   const [digestSendingNow, setDigestSendingNow] = useState(false)
 
@@ -222,19 +226,13 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
     const equityTickers = [...new Set(hs.filter(h => !h.staticValue).map(h => h.ticker))]
     if (equityTickers.length === 0) return
     const url = `${apiUrl}/sectors?tickers=${encodeURIComponent(equityTickers.join(","))}`
-    console.log("[sectors] fetching", url)
     try {
       const res = await fetch(url, { headers: authHeaders })
       if (res.ok) {
-        const data = await res.json()
-        console.log("[sectors] response:", data)
-        setSectors(data)
-      } else {
-        const body = await res.text()
-        console.error("[sectors] error", res.status, body)
+        setSectors(await res.json())
       }
-    } catch (e) {
-      console.error("[sectors] network error", e)
+    } catch {
+      // sector colours are best-effort, fail silently
     }
   }
 
@@ -365,6 +363,7 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
       const sector =
         row.holdingType === "bond"  ? "Fixed Income" :
         row.holdingType === "cash"  ? "Cash & Equivalents" :
+        row.holdingType === "fund"  ? "Mutual Funds" :
         sectors[row.ticker] ?? "Other"
       map[sector] = (map[sector] ?? 0) + (row.currentValue ?? 0)
     }
@@ -454,6 +453,44 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
       const marketValue = marketValueIdx !== -1 ? parseAmount(cols[marketValueIdx]) : NaN
       const description = descIdx !== -1 ? cols[descIdx]?.replace(/"/g, "").trim() ?? "" : ""
 
+      // ── Mutual Funds ──────────────────────────────────────────────────────
+      if (/mutual[\s.]fund/i.test(type)) {
+        if (!marketValue || marketValue <= 0) continue
+        const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
+        const ticker = symbol || `FUND${results.length + 1}`
+        const shortName = description.split(/\s+(CLASS|FONDS|SERIES|SR)\s+/i)[0].trim().slice(0, 32)
+        results.push({
+          id: crypto.randomUUID(),
+          ticker,
+          name: shortName || ticker,
+          shares: 1,
+          costBasis: marketValue,
+          costBasisCurrency: accountCurrency,
+          staticValue: true,
+          holdingType: "fund",
+        })
+        continue
+      }
+
+      // ── GICs / Term Deposits ─────────────────────────────────────────────
+      if (/guaranteed.investment|term.deposit/i.test(type)) {
+        if (!marketValue || marketValue <= 0) continue
+        const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
+        const ticker = symbol || `GIC${results.length + 1}`
+        const shortName = description.split(/\s+DUE\s+/i)[0].trim().slice(0, 32)
+        results.push({
+          id: crypto.randomUUID(),
+          ticker,
+          name: shortName || ticker,
+          shares: 1,
+          costBasis: marketValue,
+          costBasisCurrency: accountCurrency,
+          staticValue: true,
+          holdingType: "bond",
+        })
+        continue
+      }
+
       // ── Bonds ────────────────────────────────────────────────────────────
       // Price is % of par, quantity is face value in dollars.
       // Use the pre-computed MARKET VALUE as the position value (shares=1).
@@ -461,7 +498,6 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
         if (!marketValue || marketValue <= 0) continue
         const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
         const ticker = symbol || `BOND${results.length + 1}`
-        // Shorten description: take text before the first date/rate clause
         const shortName = description.split(/\s+(EXT|SR\s+UNSEC|MTN|DUE)\s+/i)[0].trim().slice(0, 32)
         results.push({
           id: crypto.randomUUID(),
@@ -492,10 +528,10 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
         continue
       }
 
-      // ── Skip other non-equity types ────────────────────────────────────
-      if (/mutual.fund|annuit/i.test(type)) continue
+      // ── Skip remaining non-equity types ───────────────────────────────────
+      if (/annuit|option/i.test(type)) continue
 
-      // ── Equities & ETFs ───────────────────────────────────────────────
+      // ── Equities & ETFs ───────────────────────────────────────────────────
       const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
       if (!symbol || !/^[A-Z]{1,5}(\.[A-Z0-9]{1,2})?$/.test(symbol)) continue
       const quantity = parseFloat(cols[quantityIdx]?.replace(/[",]/g, "") ?? "")
@@ -509,7 +545,21 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
         costBasisCurrency: accountCurrency,
       })
     }
-    return results
+
+    // Combine duplicate tickers across accounts (e.g. GOOGL in Individual + TFSA)
+    const combined = new Map<string, Holding>()
+    for (const h of results) {
+      const existing = combined.get(h.ticker)
+      if (!existing) { combined.set(h.ticker, { ...h }); continue }
+      if (h.staticValue && existing.staticValue) {
+        existing.costBasis += h.costBasis          // sum market values for static positions
+      } else if (!h.staticValue && !existing.staticValue) {
+        const total = existing.shares + h.shares
+        existing.costBasis = (existing.costBasis * existing.shares + h.costBasis * h.shares) / total
+        existing.shares = total
+      }
+    }
+    return Array.from(combined.values())
   }
 
   const handleCSVFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -832,6 +882,9 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
                                     )}
                                     {row.holdingType === "cash" && (
                                       <span className="text-[10px] font-medium px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-400 leading-none">CASH</span>
+                                    )}
+                                    {row.holdingType === "fund" && (
+                                      <span className="text-[10px] font-medium px-1 py-0.5 rounded bg-violet-500/15 text-violet-400 leading-none">FUND</span>
                                     )}
                                   </div>
                                   <p className="text-xs text-muted-foreground truncate max-w-[100px]">{row.name}</p>

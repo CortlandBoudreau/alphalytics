@@ -31,6 +31,7 @@ SECTOR_COLORS = {
     # Portfolio-specific
     "Fixed Income":           "#fbbf24",
     "Cash & Equivalents":     "#22c55e",
+    "Mutual Funds":           "#a78bfa",
     "Other":                  "#6b7280",
 }
 
@@ -94,7 +95,9 @@ def send_portfolio_digest() -> None:
             value_cad = h["costBasis"] if cb_currency == "CAD" else h["costBasis"] * usdcad
             total_value += value_cad
             total_cost  += value_cad
-            sector = "Fixed Income" if holding_type == "bond" else "Cash & Equivalents"
+            sector = ("Fixed Income"    if holding_type == "bond"
+                      else "Mutual Funds" if holding_type == "fund"
+                      else "Cash & Equivalents")
             sector_values[sector] = sector_values.get(sector, 0) + value_cad
             continue
 
