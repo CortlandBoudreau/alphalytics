@@ -203,7 +203,37 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
       }
       return
     }
-    setQuotes(result.data)
+    const quoteMap = { ...result.data }
+
+    // Estimate NAV for mutual fund holdings that have a holdings file on the backend
+    const fundTickers = [...new Set(hs.filter(h => h.holdingType === "fund").map(h => h.ticker))]
+    if (fundTickers.length > 0) {
+      try {
+        const navRes = await fetch(`${apiUrl}/portfolio/fund-nav`, {
+          method: "POST",
+          headers: { ...authHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify({ fund_codes: fundTickers }),
+        })
+        if (navRes.ok) {
+          const navData: Record<string, number | null> = await navRes.json()
+          for (const [ticker, navPerUnit] of Object.entries(navData)) {
+            if (navPerUnit != null) {
+              quoteMap[ticker] = {
+                ticker,
+                name: ticker,
+                price: navPerUnit,
+                change: 0,
+                currency: "CAD",
+              }
+            }
+          }
+        }
+      } catch {
+        // fund NAV is best-effort; fall back to disclosed value
+      }
+    }
+
+    setQuotes(quoteMap)
   }
 
   const fetchHistory = async (hs: Holding[]) => {
@@ -459,12 +489,14 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
         const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
         const ticker = symbol || `FUND${results.length + 1}`
         const shortName = description.split(/\s+(CLASS|FONDS|SERIES|SR)\s+/i)[0].trim().slice(0, 32)
+        const qty = parseFloat(cols[quantityIdx]?.replace(/[",]/g, "") ?? "")
+        const navPrice = priceIdx !== -1 ? parseAmount(cols[priceIdx]) : NaN
         results.push({
           id: crypto.randomUUID(),
           ticker,
           name: shortName || ticker,
-          shares: 1,
-          costBasis: marketValue,
+          shares: qty > 0 ? qty : 1,
+          costBasis: navPrice > 0 ? navPrice : (qty > 0 ? marketValue / qty : marketValue),
           costBasisCurrency: accountCurrency,
           staticValue: true,
           holdingType: "fund",
@@ -533,10 +565,29 @@ export function Portfolio({ apiUrl, apiToken, allTickers }: Props) {
 
       // ── Equities & ETFs ───────────────────────────────────────────────────
       const symbol = cols[symbolIdx]?.replace(/"/g, "").trim().toUpperCase()
-      if (!symbol || !/^[A-Z]{1,5}(\.[A-Z0-9]{1,2})?$/.test(symbol)) continue
+      if (!symbol) continue
       const quantity = parseFloat(cols[quantityIdx]?.replace(/[",]/g, "") ?? "")
       if (!quantity || quantity <= 0) continue
       const price = priceIdx !== -1 ? parseAmount(cols[priceIdx]) : NaN
+
+      // Some brokers export equities with a CUSIP/numeric ID instead of a ticker.
+      // Preserve the position as a static value so it isn't silently dropped.
+      if (!/^[A-Z]{1,5}(\.[A-Z0-9]{1,2})?$/.test(symbol)) {
+        const mv = marketValueIdx !== -1 ? parseAmount(cols[marketValueIdx]) : NaN
+        if (!mv || mv <= 0) continue
+        const shortName = description.split(/\s{2,}/)[0].trim().slice(0, 32) || symbol
+        results.push({
+          id: crypto.randomUUID(),
+          ticker: symbol,
+          name: shortName,
+          shares: quantity,
+          costBasis: mv / quantity,
+          costBasisCurrency: accountCurrency,
+          staticValue: true,
+        })
+        continue
+      }
+
       results.push({
         id: crypto.randomUUID(),
         ticker: symbol,

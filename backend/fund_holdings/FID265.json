@@ -1,0 +1,1661 @@
+{
+  "fund_code": "FID265",
+  "fund_name": "FID265",
+  "disclosure_date": "2026-03-31",
+  "disclosed_nav_per_unit": 147.152,
+  "user_units": 377.777,
+  "total_disclosed_nav": 16068673515.62,
+  "equity_coverage_pct": 90.0,
+  "holdings": [
+    {
+      "name": "Fidelity Canadian Money Market Investment Trust",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 54784976.44,
+      "pct_of_net": 0.34
+    },
+    {
+      "name": "USD SPOT CC",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 47327245.59,
+      "pct_of_net": 0.29
+    },
+    {
+      "name": "JPY SPOT CC",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 14849069.18,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "U.S. dollar",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 728600.78,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Euro",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 201.49,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "GBP SPOT CC",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": -15154078.86,
+      "pct_of_net": -0.09
+    },
+    {
+      "name": "CAD SPOT CC",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": -16689577.41,
+      "pct_of_net": -0.1
+    },
+    {
+      "name": "CHF SPOT CC",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": -30385864.03,
+      "pct_of_net": -0.19
+    },
+    {
+      "name": "Korean Currency",
+      "asset_type": "Cash",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": -46272028.36,
+      "pct_of_net": -0.29
+    },
+    {
+      "name": "Canadian Natural Resources",
+      "asset_type": "Equity",
+      "ticker": "CNQ",
+      "shares": null,
+      "disclosed_market_value": 1190652016.32,
+      "pct_of_net": 7.48,
+      "disclosed_price": 48.2146
+    },
+    {
+      "name": "Agnico Eagle Mines",
+      "asset_type": "Equity",
+      "ticker": "AEM",
+      "shares": null,
+      "disclosed_market_value": 908831281.71,
+      "pct_of_net": 5.71,
+      "disclosed_price": 202.4813
+    },
+    {
+      "name": "Royal Bank of Canada",
+      "asset_type": "Equity",
+      "ticker": "RY",
+      "shares": null,
+      "disclosed_market_value": 854813856.0,
+      "pct_of_net": 5.37,
+      "disclosed_price": 160.6794
+    },
+    {
+      "name": "Shopify",
+      "asset_type": "Equity",
+      "ticker": "SHOP",
+      "shares": null,
+      "disclosed_market_value": 716674014.0,
+      "pct_of_net": 4.5,
+      "disclosed_price": 118.62
+    },
+    {
+      "name": "Canadian Pacific Kansas City Limited",
+      "asset_type": "Equity",
+      "ticker": "CP",
+      "shares": null,
+      "disclosed_market_value": 558963672.3,
+      "pct_of_net": 3.51,
+      "disclosed_price": 78.4892
+    },
+    {
+      "name": "Suncor Energy",
+      "asset_type": "Equity",
+      "ticker": "SU",
+      "shares": null,
+      "disclosed_market_value": 413814975.0,
+      "pct_of_net": 2.6,
+      "disclosed_price": 65.6742
+    },
+    {
+      "name": "Dollarama",
+      "asset_type": "Equity",
+      "ticker": "DOL.TO",
+      "shares": null,
+      "disclosed_market_value": 396737081.37,
+      "pct_of_net": 2.49,
+      "disclosed_price": 170.6118
+    },
+    {
+      "name": "Bank of Montreal",
+      "asset_type": "Equity",
+      "ticker": "BMO",
+      "shares": null,
+      "disclosed_market_value": 348087108.0,
+      "pct_of_net": 2.18,
+      "disclosed_price": 134.2489
+    },
+    {
+      "name": "BOMBARDIER INC CL B SUB VTG",
+      "asset_type": "Equity",
+      "ticker": "BBD-B.TO",
+      "shares": null,
+      "disclosed_market_value": 238885420.0,
+      "pct_of_net": 1.5,
+      "disclosed_price": 246.02
+    },
+    {
+      "name": "Alimentation Couche-Tard",
+      "asset_type": "Equity",
+      "ticker": "ATD.TO",
+      "shares": null,
+      "disclosed_market_value": 218690475.0,
+      "pct_of_net": 1.37,
+      "disclosed_price": 78.85
+    },
+    {
+      "name": "TFI International",
+      "asset_type": "Equity",
+      "ticker": "TFII",
+      "shares": null,
+      "disclosed_market_value": 215894636.0,
+      "pct_of_net": 1.35,
+      "disclosed_price": 108.2763
+    },
+    {
+      "name": "Teck Resources, Cl. B, Sub Vtg",
+      "asset_type": "Equity",
+      "ticker": "TECK",
+      "shares": null,
+      "disclosed_market_value": 197791930.0,
+      "pct_of_net": 1.24,
+      "disclosed_price": 51.679
+    },
+    {
+      "name": "ARC Resources",
+      "asset_type": "Equity",
+      "ticker": "ARX.TO",
+      "shares": null,
+      "disclosed_market_value": 166060095.0,
+      "pct_of_net": 1.04,
+      "disclosed_price": 28.7453
+    },
+    {
+      "name": "Cameco",
+      "asset_type": "Equity",
+      "ticker": "CCJ",
+      "shares": null,
+      "disclosed_market_value": 160281160.0,
+      "pct_of_net": 1.0,
+      "disclosed_price": 108.61
+    },
+    {
+      "name": "Imperial Oil",
+      "asset_type": "Equity",
+      "ticker": "IMO.TO",
+      "shares": null,
+      "disclosed_market_value": 160271916.0,
+      "pct_of_net": 1.0,
+      "disclosed_price": 181.3077
+    },
+    {
+      "name": "Ero Copper",
+      "asset_type": "Equity",
+      "ticker": "ERO.TO",
+      "shares": null,
+      "disclosed_market_value": 151721393.45,
+      "pct_of_net": 0.95,
+      "disclosed_price": 37.07
+    },
+    {
+      "name": "Stantec",
+      "asset_type": "Equity",
+      "ticker": "STN.TO",
+      "shares": null,
+      "disclosed_market_value": 146873538.0,
+      "pct_of_net": 0.92,
+      "disclosed_price": 119.9594
+    },
+    {
+      "name": "Lundin Mining",
+      "asset_type": "Equity",
+      "ticker": "LUN.TO",
+      "shares": null,
+      "disclosed_market_value": 143235010.0,
+      "pct_of_net": 0.9,
+      "disclosed_price": 34.6672
+    },
+    {
+      "name": "G MINING VENTURES CORP",
+      "asset_type": "Equity",
+      "ticker": "GMIN.TO",
+      "shares": null,
+      "disclosed_market_value": 141318814.62,
+      "pct_of_net": 0.88,
+      "disclosed_price": 48.82
+    },
+    {
+      "name": "LUNDIN GOLD INC",
+      "asset_type": "Equity",
+      "ticker": "LUG.TO",
+      "shares": null,
+      "disclosed_market_value": 118195458.0,
+      "pct_of_net": 0.74,
+      "disclosed_price": 98.59
+    },
+    {
+      "name": "Wheaton Precious Metals",
+      "asset_type": "Equity",
+      "ticker": "WPM",
+      "shares": null,
+      "disclosed_market_value": 114914745.0,
+      "pct_of_net": 0.72,
+      "disclosed_price": 130.8139
+    },
+    {
+      "name": "Pembina Pipeline",
+      "asset_type": "Equity",
+      "ticker": "PBA",
+      "shares": null,
+      "disclosed_market_value": 104489060.0,
+      "pct_of_net": 0.65,
+      "disclosed_price": 44.274
+    },
+    {
+      "name": "MDA SPACE LTD",
+      "asset_type": "Equity",
+      "ticker": "MDA.TO",
+      "shares": null,
+      "disclosed_market_value": 95303056.0,
+      "pct_of_net": 0.59,
+      "disclosed_price": 35.24
+    },
+    {
+      "name": "Intact Financial",
+      "asset_type": "Equity",
+      "ticker": "IFC.TO",
+      "shares": null,
+      "disclosed_market_value": 93370432.0,
+      "pct_of_net": 0.58,
+      "disclosed_price": 250.7234
+    },
+    {
+      "name": "Hudbay Minerals Inc.",
+      "asset_type": "Equity",
+      "ticker": "HBM.TO",
+      "shares": null,
+      "disclosed_market_value": 92857701.0,
+      "pct_of_net": 0.58,
+      "disclosed_price": 29.122
+    },
+    {
+      "name": "Finning International",
+      "asset_type": "Equity",
+      "ticker": "FTT.TO",
+      "shares": null,
+      "disclosed_market_value": 90564768.0,
+      "pct_of_net": 0.56,
+      "disclosed_price": 85.8116
+    },
+    {
+      "name": "Loblaw",
+      "asset_type": "Equity",
+      "ticker": "L.TO",
+      "shares": null,
+      "disclosed_market_value": 79078398.0,
+      "pct_of_net": 0.49,
+      "disclosed_price": 63.2688
+    },
+    {
+      "name": "Tourmaline Oil",
+      "asset_type": "Equity",
+      "ticker": "TOU.TO",
+      "shares": null,
+      "disclosed_market_value": 72618806.0,
+      "pct_of_net": 0.45,
+      "disclosed_price": 66.0533
+    },
+    {
+      "name": "Toromont Industries",
+      "asset_type": "Equity",
+      "ticker": "TIH.TO",
+      "shares": null,
+      "disclosed_market_value": 71652204.0,
+      "pct_of_net": 0.45,
+      "disclosed_price": 194.2809
+    },
+    {
+      "name": "GROUPE DYNAMITE INC",
+      "asset_type": "Equity",
+      "ticker": "GRGD.TO",
+      "shares": null,
+      "disclosed_market_value": 63694235.34,
+      "pct_of_net": 0.4,
+      "disclosed_price": 76.59
+    },
+    {
+      "name": "Metro",
+      "asset_type": "Equity",
+      "ticker": "MRU.TO",
+      "shares": null,
+      "disclosed_market_value": 59620752.0,
+      "pct_of_net": 0.37,
+      "disclosed_price": 94.7397
+    },
+    {
+      "name": "RICHELIEU HARDWARE LTD",
+      "asset_type": "Equity",
+      "ticker": "RCH.TO",
+      "shares": null,
+      "disclosed_market_value": 54315443.88,
+      "pct_of_net": 0.34,
+      "disclosed_price": 40.6793
+    },
+    {
+      "name": "IAMGOLD Corporation",
+      "asset_type": "Equity",
+      "ticker": "IAG",
+      "shares": null,
+      "disclosed_market_value": 46826400.0,
+      "pct_of_net": 0.29,
+      "disclosed_price": 18.82
+    },
+    {
+      "name": "SOUTH BOW CORP",
+      "asset_type": "Equity",
+      "ticker": "SOBO.TO",
+      "shares": null,
+      "disclosed_market_value": 45261840.0,
+      "pct_of_net": 0.28,
+      "disclosed_price": 45.6348
+    },
+    {
+      "name": "Aritzia",
+      "asset_type": "Equity",
+      "ticker": "ATZ.TO",
+      "shares": null,
+      "disclosed_market_value": 44577147.12,
+      "pct_of_net": 0.28,
+      "disclosed_price": 113.52
+    },
+    {
+      "name": "ALAMOS GOLD INC A",
+      "asset_type": "Equity",
+      "ticker": "AGI",
+      "shares": null,
+      "disclosed_market_value": 44177082.0,
+      "pct_of_net": 0.27,
+      "disclosed_price": 44.3762
+    },
+    {
+      "name": "RB Global",
+      "asset_type": "Equity",
+      "ticker": "RBA",
+      "shares": null,
+      "disclosed_market_value": 42971361.0,
+      "pct_of_net": 0.27,
+      "disclosed_price": 95.5675
+    },
+    {
+      "name": "Major Drilling Group International",
+      "asset_type": "Equity",
+      "ticker": "MDI.TO",
+      "shares": null,
+      "disclosed_market_value": 40718034.0,
+      "pct_of_net": 0.25,
+      "disclosed_price": 16.02
+    },
+    {
+      "name": "TRIPLE FLAG PRECIOUS METALS",
+      "asset_type": "Equity",
+      "ticker": "TFPM.TO",
+      "shares": null,
+      "disclosed_market_value": 40127640.0,
+      "pct_of_net": 0.25,
+      "disclosed_price": 48.3
+    },
+    {
+      "name": "WEST FRASER TIMBER LTD",
+      "asset_type": "Equity",
+      "ticker": "WFG",
+      "shares": null,
+      "disclosed_market_value": 39481032.36,
+      "pct_of_net": 0.24,
+      "disclosed_price": 64.9888
+    },
+    {
+      "name": "TMX Group",
+      "asset_type": "Equity",
+      "ticker": "X.TO",
+      "shares": null,
+      "disclosed_market_value": 31798118.0,
+      "pct_of_net": 0.19,
+      "disclosed_price": 49.111
+    },
+    {
+      "name": "NOVAGOLD RESOURCES INC",
+      "asset_type": "Equity",
+      "ticker": "NG",
+      "shares": null,
+      "disclosed_market_value": 28139874.0,
+      "pct_of_net": 0.17,
+      "disclosed_price": 8.98
+    },
+    {
+      "name": "Canadian National Railway",
+      "asset_type": "Equity",
+      "ticker": "CNR.TO",
+      "shares": null,
+      "disclosed_market_value": 18484538.0,
+      "pct_of_net": 0.11,
+      "disclosed_price": 142.4034
+    },
+    {
+      "name": "Agnico Eagle Mines",
+      "asset_type": "Equity",
+      "ticker": "AEM",
+      "shares": null,
+      "disclosed_market_value": 16772509.39,
+      "pct_of_net": 0.1,
+      "disclosed_price": 202.4813
+    },
+    {
+      "name": "VOLATUS AEROSPACE INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 15132786.64,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "ARTEMIS GOLD INC",
+      "asset_type": "Equity",
+      "ticker": "ARTG.TO",
+      "shares": null,
+      "disclosed_market_value": 14643225.0,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "Kinross Gold",
+      "asset_type": "Equity",
+      "ticker": "KGC",
+      "shares": null,
+      "disclosed_market_value": 7276883.0,
+      "pct_of_net": 0.04,
+      "disclosed_price": 30.4773
+    },
+    {
+      "name": "HASHTAG PAID INC CLS A PFD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 6884635.05,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "HOOTSUITE MEDIA INC PREF P/P",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 5946952.49,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "SNOWLINE GOLD CORP",
+      "asset_type": "Equity",
+      "ticker": "SGD.V",
+      "shares": null,
+      "disclosed_market_value": 5742156.0,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "WONDERFI TECHNOLOGIES INC",
+      "asset_type": "Equity",
+      "ticker": "WNDR.NE",
+      "shares": null,
+      "disclosed_market_value": 4592028.35,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "NGEX MINERALS LTD",
+      "asset_type": "Equity",
+      "ticker": "NGEX.TO",
+      "shares": null,
+      "disclosed_market_value": 4222570.0,
+      "pct_of_net": 0.02,
+      "disclosed_price": 25.3
+    },
+    {
+      "name": "APPLYBOARD INC SER D PFD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 2500618.53,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "NXT HYDRGN SOL INC PIPE 4M HLD",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1305536.65,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "APPLYBOARD INC SER C PREF PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1299009.17,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "LUNR ROYALTIES CORP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1268857.25,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "NIX SENSOR LTD",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1181029.66,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "HASHTAG PAID INC CLS B4 PFD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 764131.17,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "NEXT HYDROGEN SOLUTIONS INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 655545.0,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "INUVIKA INC SER A PREF",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 559544.79,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "APPLYBOARD INC SER A-1 PFD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 538642.65,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "APPLYBOARD INC VOT COM SHRS PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 433811.19,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "APPLYBOARD INC SER A-2 PFD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 422678.5,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "APPLYBOARD INC SER SEED PFD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 159865.21,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "APPLYBOARD NON VOT COM SH PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 106911.39,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "APPLYBOARD INC SER A-3 PFD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 24181.61,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "CLEARPATH ROBOTICS SELLERS REP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 6594.16,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "ORION DIGITAL CORP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 241.2,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "SHOP.CA NETWORK INC P/P",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 54.57,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "SHUFL INC PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 18.57,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "FRESHLOCAL SOLUTIONS INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 17.01,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "ANTHROPIC PBC SERIES D PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 104029126.1,
+      "pct_of_net": 0.65
+    },
+    {
+      "name": "ANTHROPIC PBC SER B PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 92970281.75,
+      "pct_of_net": 0.58
+    },
+    {
+      "name": "ANTHROPIC PBC SERIES F PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 84931362.47,
+      "pct_of_net": 0.53
+    },
+    {
+      "name": "DATABRICKS INC SER H PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 51678643.29,
+      "pct_of_net": 0.32
+    },
+    {
+      "name": "BYTEDANCE LTD SER E-1 PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 34386655.09,
+      "pct_of_net": 0.21
+    },
+    {
+      "name": "WAYMO LLC SER C-2 PC PERP PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 24446767.61,
+      "pct_of_net": 0.15
+    },
+    {
+      "name": "CEREBRAS SYSTEMS INC",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 22488567.11,
+      "pct_of_net": 0.14
+    },
+    {
+      "name": "NEUTRON CONV PIK STEP 10/25 PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 17141135.85,
+      "pct_of_net": 0.1
+    },
+    {
+      "name": "DATABRICKS INC SER G PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 16605185.1,
+      "pct_of_net": 0.1
+    },
+    {
+      "name": "THOUGHTSPOT INC SER E PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 11448451.21,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "VAST DATA LTD SER A-2 PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 10291356.79,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "PHYSICAL INTELLIGE SER B PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 9309200.85,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "VAST DATA LTD SER A-1 PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 8946487.91,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "VAST DATA LTD SER B PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 8188912.77,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "VAST DATA LTD SER E PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 7825036.15,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "RUNWAY AI INC SER D PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 7511236.24,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "SUNDAY ROBOTICS IN SER B PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 7267736.56,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "LIGHTMATTER INC SERIES D PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 6920981.24,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "ANDURIL INDUSTRIES SER G PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 6898425.94,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "DATABRICKS INC",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 5420226.39,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "TENSTORRENT HOLDINGS INC SER C",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 3965792.25,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "VAST DATA LTD SER A PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 3634811.92,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "FARMERS BUS CV 15% 9/28/25 P/P",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 3201180.35,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "GOBRANDS INC SER H PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 3030304.07,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "THOUGHTSPOT INC SER F PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1486140.42,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "GOBRANDS INC SER G PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1321149.92,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "TENSTORRENT HOLD SER D-1 PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1134052.54,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "AKEANA SER C PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 872041.63,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "NEXT HYDROGEN S CONV 10% 11/29",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 775404.0,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "DATABRICKS INC",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 741376.72,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "TENSTORRENT HOLD SER D-2 PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 559753.04,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "RUNWAY AI, INC SER E PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 472772.15,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "ADEPTMIND INC 0% PERP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 414893.21,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "DISCORD INC SER I PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 278943.37,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "VAST DATA LTD SER C PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 238739.96,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "FARMERS BUSINESS NETWORK INC S",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 67888.82,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "ABL SPACE SYSTEM SER A-8 PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 29015.89,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "RAD POWER BIKES CONV 8% 12/31",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 2474.66,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "KENOTA INC SER A-1 PC PP",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 13.59,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "RAD POWER BIKES INC SER D PC P",
+      "asset_type": "Convertible",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1.83,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Amazon.com",
+      "asset_type": "Equity",
+      "ticker": "AMZN",
+      "shares": null,
+      "disclosed_market_value": 619604595.34,
+      "pct_of_net": 3.89,
+      "disclosed_price": 208.27
+    },
+    {
+      "name": "SPACE EXPLORATION TECH CORP PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 359706854.42,
+      "pct_of_net": 2.26
+    },
+    {
+      "name": "Taiwan Semiconductor Manufacturing",
+      "asset_type": "Equity",
+      "ticker": "TSM",
+      "shares": null,
+      "disclosed_market_value": 339193199.72,
+      "pct_of_net": 2.13,
+      "disclosed_price": 337.1604
+    },
+    {
+      "name": "Taiwan Semiconductor Manufacturing",
+      "asset_type": "Equity",
+      "ticker": "TSM",
+      "shares": null,
+      "disclosed_market_value": 305600245.99,
+      "pct_of_net": 1.92,
+      "disclosed_price": 337.1604
+    },
+    {
+      "name": "Nvidia",
+      "asset_type": "Equity",
+      "ticker": "NVDA",
+      "shares": null,
+      "disclosed_market_value": 296830692.2,
+      "pct_of_net": 1.86,
+      "disclosed_price": 174.197
+    },
+    {
+      "name": "Alphabet, Cl. C",
+      "asset_type": "Equity",
+      "ticker": "GOOG",
+      "shares": null,
+      "disclosed_market_value": 276622115.73,
+      "pct_of_net": 1.73,
+      "disclosed_price": 286.6874
+    },
+    {
+      "name": "SK Hynix",
+      "asset_type": "Equity",
+      "ticker": "HXSCL",
+      "shares": null,
+      "disclosed_market_value": 273478510.93,
+      "pct_of_net": 1.71
+    },
+    {
+      "name": "Micron Technology",
+      "asset_type": "Equity",
+      "ticker": "MU",
+      "shares": null,
+      "disclosed_market_value": 252937436.32,
+      "pct_of_net": 1.58,
+      "disclosed_price": 337.84
+    },
+    {
+      "name": "Alphabet, Cl. A",
+      "asset_type": "Equity",
+      "ticker": "GOOGL",
+      "shares": null,
+      "disclosed_market_value": 247575296.7,
+      "pct_of_net": 1.55,
+      "disclosed_price": 287.3883
+    },
+    {
+      "name": "Roblox Corporation",
+      "asset_type": "Equity",
+      "ticker": "RBLX",
+      "shares": null,
+      "disclosed_market_value": 244840465.21,
+      "pct_of_net": 1.53,
+      "disclosed_price": 56.56
+    },
+    {
+      "name": "Intel",
+      "asset_type": "Equity",
+      "ticker": "INTC",
+      "shares": null,
+      "disclosed_market_value": 210639016.11,
+      "pct_of_net": 1.32,
+      "disclosed_price": 44.13
+    },
+    {
+      "name": "AppLovin Corporation",
+      "asset_type": "Equity",
+      "ticker": "APP",
+      "shares": null,
+      "disclosed_market_value": 209664672.25,
+      "pct_of_net": 1.31,
+      "disclosed_price": 398.0
+    },
+    {
+      "name": "First Quantum Minerals",
+      "asset_type": "Equity",
+      "ticker": "FM.TO",
+      "shares": null,
+      "disclosed_market_value": 203892780.2,
+      "pct_of_net": 1.28,
+      "disclosed_price": 33.26
+    },
+    {
+      "name": "Seagate Technology Holdings",
+      "asset_type": "Equity",
+      "ticker": "STX",
+      "shares": null,
+      "disclosed_market_value": 190306085.7,
+      "pct_of_net": 1.19,
+      "disclosed_price": 391.4809
+    },
+    {
+      "name": "NOKIA CORP SPON ADR",
+      "asset_type": "Equity",
+      "ticker": "NOK",
+      "shares": null,
+      "disclosed_market_value": 186223229.46,
+      "pct_of_net": 1.17,
+      "disclosed_price": 8.04
+    },
+    {
+      "name": "Arista Networks",
+      "asset_type": "Equity",
+      "ticker": "ANET",
+      "shares": null,
+      "disclosed_market_value": 167777989.9,
+      "pct_of_net": 1.05,
+      "disclosed_price": 122.78
+    },
+    {
+      "name": "Western Digital",
+      "asset_type": "Equity",
+      "ticker": "WDC",
+      "shares": null,
+      "disclosed_market_value": 163116789.98,
+      "pct_of_net": 1.02,
+      "disclosed_price": 270.4195
+    },
+    {
+      "name": "Roche Holding",
+      "asset_type": "Equity",
+      "ticker": "RHHBY",
+      "shares": null,
+      "disclosed_market_value": 159801650.31,
+      "pct_of_net": 1.0,
+      "disclosed_price": 49.71
+    },
+    {
+      "name": "Samsung Electronics",
+      "asset_type": "Equity",
+      "ticker": "SSNLF",
+      "shares": null,
+      "disclosed_market_value": 153023211.64,
+      "pct_of_net": 0.96,
+      "disclosed_price": 65.21
+    },
+    {
+      "name": "SanDisk",
+      "asset_type": "Equity",
+      "ticker": "SNDK",
+      "shares": null,
+      "disclosed_market_value": 125591031.44,
+      "pct_of_net": 0.78,
+      "disclosed_price": 635.34
+    },
+    {
+      "name": "NEXT VISION STABILIZED SYST",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 124318363.76,
+      "pct_of_net": 0.78
+    },
+    {
+      "name": "British American Tobacco",
+      "asset_type": "Equity",
+      "ticker": "BTI",
+      "shares": null,
+      "disclosed_market_value": 115353117.16,
+      "pct_of_net": 0.72,
+      "disclosed_price": 58.47
+    },
+    {
+      "name": "Eli Lilly and Company",
+      "asset_type": "Equity",
+      "ticker": "LLY",
+      "shares": null,
+      "disclosed_market_value": 107221433.52,
+      "pct_of_net": 0.67,
+      "disclosed_price": 918.1895
+    },
+    {
+      "name": "LOTTOMATICA GROUP SPA",
+      "asset_type": "Equity",
+      "ticker": "LOTM.MI",
+      "shares": null,
+      "disclosed_market_value": 85031877.93,
+      "pct_of_net": 0.53
+    },
+    {
+      "name": "FIGURE TECHNOLOGY SOLUTI INC A",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 80279024.38,
+      "pct_of_net": 0.5
+    },
+    {
+      "name": "LUMENTUM HOLDINGS INC",
+      "asset_type": "Equity",
+      "ticker": "LITE",
+      "shares": null,
+      "disclosed_market_value": 70485640.32,
+      "pct_of_net": 0.44,
+      "disclosed_price": 702.76
+    },
+    {
+      "name": "Galaxy Digital",
+      "asset_type": "Equity",
+      "ticker": "GLXY.TO",
+      "shares": null,
+      "disclosed_market_value": 67838212.39,
+      "pct_of_net": 0.42
+    },
+    {
+      "name": "FUTU HOLDINGS LTD ADR",
+      "asset_type": "Equity",
+      "ticker": "FUTU",
+      "shares": null,
+      "disclosed_market_value": 64113183.72,
+      "pct_of_net": 0.4,
+      "disclosed_price": 134.6013
+    },
+    {
+      "name": "COHERENT CORP",
+      "asset_type": "Equity",
+      "ticker": "COHR",
+      "shares": null,
+      "disclosed_market_value": 61524209.51,
+      "pct_of_net": 0.38,
+      "disclosed_price": 238.21
+    },
+    {
+      "name": "INSMED INC",
+      "asset_type": "Equity",
+      "ticker": "INSM",
+      "shares": null,
+      "disclosed_market_value": 52546187.22,
+      "pct_of_net": 0.33,
+      "disclosed_price": 163.52
+    },
+    {
+      "name": "ZIJIN GOLD INTERNATIONAL CO LT",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 51323700.77,
+      "pct_of_net": 0.32
+    },
+    {
+      "name": "Gilead Sciences",
+      "asset_type": "Equity",
+      "ticker": "GILD",
+      "shares": null,
+      "disclosed_market_value": 47422462.66,
+      "pct_of_net": 0.29,
+      "disclosed_price": 138.46
+    },
+    {
+      "name": "BURBERRY GROUP PLC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 40448901.68,
+      "pct_of_net": 0.25
+    },
+    {
+      "name": "FUJIKURA LTD",
+      "asset_type": "Equity",
+      "ticker": "FJKLF",
+      "shares": null,
+      "disclosed_market_value": 34019083.21,
+      "pct_of_net": 0.21
+    },
+    {
+      "name": "IHI CORPORATION",
+      "asset_type": "Equity",
+      "ticker": "IHICF",
+      "shares": null,
+      "disclosed_market_value": 33960887.87,
+      "pct_of_net": 0.21,
+      "disclosed_price": 26.69
+    },
+    {
+      "name": "SPACE EXP TECH CORP CLASS C PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 31073586.64,
+      "pct_of_net": 0.19
+    },
+    {
+      "name": "Komatsu",
+      "asset_type": "Equity",
+      "ticker": "KMTUY",
+      "shares": null,
+      "disclosed_market_value": 27159877.72,
+      "pct_of_net": 0.17,
+      "disclosed_price": 39.26
+    },
+    {
+      "name": "10x Genomics",
+      "asset_type": "Equity",
+      "ticker": "TXG",
+      "shares": null,
+      "disclosed_market_value": 25398425.57,
+      "pct_of_net": 0.15,
+      "disclosed_price": 21.23
+    },
+    {
+      "name": "CANVA INC CL A PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 24434442.21,
+      "pct_of_net": 0.15
+    },
+    {
+      "name": "SharkNinja",
+      "asset_type": "Equity",
+      "ticker": "SN",
+      "shares": null,
+      "disclosed_market_value": 24351581.09,
+      "pct_of_net": 0.15,
+      "disclosed_price": 105.9
+    },
+    {
+      "name": "LENSKART SOLUTION LTD/FDI ONLY",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 21282805.69,
+      "pct_of_net": 0.13
+    },
+    {
+      "name": "GIGACLOUD TECHNOLOGY INC",
+      "asset_type": "Equity",
+      "ticker": "GCT",
+      "shares": null,
+      "disclosed_market_value": 21281056.72,
+      "pct_of_net": 0.13,
+      "disclosed_price": 45.38
+    },
+    {
+      "name": "STARLING BANK LTD",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 20905341.55,
+      "pct_of_net": 0.13
+    },
+    {
+      "name": "MONOLITHIC POWER SYS INC",
+      "asset_type": "Equity",
+      "ticker": "MPWR",
+      "shares": null,
+      "disclosed_market_value": 13582165.52,
+      "pct_of_net": 0.08,
+      "disclosed_price": 1091.6842
+    },
+    {
+      "name": "PULTEGROUP INC",
+      "asset_type": "Equity",
+      "ticker": "PHM",
+      "shares": null,
+      "disclosed_market_value": 12200194.19,
+      "pct_of_net": 0.07,
+      "disclosed_price": 117.3611
+    },
+    {
+      "name": "MACOM TECHNOLOGY SOLN HLDS INC",
+      "asset_type": "Equity",
+      "ticker": "MTSI",
+      "shares": null,
+      "disclosed_market_value": 10318598.51,
+      "pct_of_net": 0.06,
+      "disclosed_price": 222.07
+    },
+    {
+      "name": "MILLROSE PROPERTIES INC",
+      "asset_type": "Equity",
+      "ticker": "MRP",
+      "shares": null,
+      "disclosed_market_value": 9996722.81,
+      "pct_of_net": 0.06,
+      "disclosed_price": 27.2536
+    },
+    {
+      "name": "REVOLUT GROUP HOLDINGS LTD PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 9880237.66,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "BRAZE INC",
+      "asset_type": "Equity",
+      "ticker": "BRZE",
+      "shares": null,
+      "disclosed_market_value": 8431021.68,
+      "pct_of_net": 0.05,
+      "disclosed_price": 23.61
+    },
+    {
+      "name": "MEESHO LIMITED / FDI ONLY (6 M",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 8196489.09,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "IBIDEN",
+      "asset_type": "Equity",
+      "ticker": "IIJIY",
+      "shares": null,
+      "disclosed_market_value": 7935693.83,
+      "pct_of_net": 0.04,
+      "disclosed_price": 29.72
+    },
+    {
+      "name": "DISCO Corporation",
+      "asset_type": "Equity",
+      "ticker": "DISCY",
+      "shares": null,
+      "disclosed_market_value": 7824450.18,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "CHECKR INC SER E PREF",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 3838643.07,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "FARMERS BUSINESS WT 9/27/23 PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 3128424.34,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "IONQ INC PIPE",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 2586799.13,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "KB Home",
+      "asset_type": "Equity",
+      "ticker": "KBH",
+      "shares": null,
+      "disclosed_market_value": 2413373.48,
+      "pct_of_net": 0.01,
+      "disclosed_price": 51.4895
+    },
+    {
+      "name": "CELESTIAL AI CVR MIL 1 2/29 PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1205120.61,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "ALLBIRDS INC A",
+      "asset_type": "Equity",
+      "ticker": "BIRD",
+      "shares": null,
+      "disclosed_market_value": 1204501.49,
+      "pct_of_net": 0.0,
+      "disclosed_price": 3.01
+    },
+    {
+      "name": "LENNAR CORP CL A",
+      "asset_type": "Equity",
+      "ticker": "LEN",
+      "shares": null,
+      "disclosed_market_value": 1163575.69,
+      "pct_of_net": 0.0,
+      "disclosed_price": 86.382
+    },
+    {
+      "name": "RAD INTELLIGENCE PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1158115.17,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "CELESTIAL AI CVR MIL 2 2/29 PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 922908.82,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "ANDURIL INDUSTRIES INC CL B PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 735595.65,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "MASIMO CORP",
+      "asset_type": "Equity",
+      "ticker": "MASI",
+      "shares": null,
+      "disclosed_market_value": 442661.13,
+      "pct_of_net": 0.0,
+      "disclosed_price": 177.87
+    },
+    {
+      "name": "ONESTREAM INC",
+      "asset_type": "Equity",
+      "ticker": "OS",
+      "shares": null,
+      "disclosed_market_value": 353895.83,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "CELESTIAL AI CVR MIL 3 2/29 PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 270770.77,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "FARMERS BUSINESS NETWORK INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 126621.01,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "EVERWRITE INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 126049.85,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "RELATIVITY SPACE INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 18089.97,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "CELESTIAL AI INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 11441.01,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "ANDURIL INDUSTRIES INC CL C PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 354.67,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "CELESTIAL AI INC SHAREHOLDE PP",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 3.81,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "VERSACI INTERACTIVE GAMING INC",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 1.15,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "RAD POWER BIKES INC WT 10/06/2",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 0.75,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "VERSACI INTERACTIVE GAMING P/P",
+      "asset_type": "Equity",
+      "ticker": null,
+      "shares": null,
+      "disclosed_market_value": 0.34,
+      "pct_of_net": 0.0
+    }
+  ],
+  "benchmark_blend": [
+    {
+      "ticker": "XIC.TO",
+      "weight": 0.7,
+      "base_price": 50.6736
+    },
+    {
+      "ticker": "SPY",
+      "weight": 0.3,
+      "base_price": 630.3461
+    }
+  ]
+}

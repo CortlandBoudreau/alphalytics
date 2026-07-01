@@ -1,0 +1,14 @@
+{
+  "fund_code": "FID2206",
+  "fund_name": "Fidelity Global Growth Portfolio B",
+  "disclosure_date": "2026-05-31",
+  "disclosed_nav_per_unit": 30.042,
+  "user_units": 647.1156,
+  "total_disclosed_nav": 19440.65,
+  "pricing_method": "proxy",
+  "proxy_ticker": "XGRO.TO",
+  "proxy_price_on_disclosure": 37.8253,
+  "holdings": [],
+  "equity_coverage_pct": 0,
+  "notes": "Fund of funds: top 10 holdings are all Fidelity Series O sub-funds (no individual equities published). NAV estimated via XGRO.TO proxy (iShares Core Growth ETF Portfolio, 80/20). Fund is 85% equities / 15% fixed income."
+}

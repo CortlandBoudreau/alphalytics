@@ -1,0 +1,5189 @@
+{
+  "fund_code": "CIF840",
+  "fund_name": "Capital Group Global Balanced Fund (Canada) Series A",
+  "disclosure_date": "2026-03-31",
+  "disclosed_nav_per_unit": 18.608,
+  "user_units": 787.465,
+  "total_disclosed_nav": 2099192678.04,
+  "equity_coverage_pct": 60.5,
+  "holdings": [
+    {
+      "name": "200 Park Funding Trust 5.74% 2/15/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 205000.0,
+      "disclosed_market_value": 274172.93,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "522 Funding CLO, Ltd., Series 2019-5A, Class AR2, (3-month USD CME Term SOFR + 1.02%) 4.68% 4/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 294000.0,
+      "disclosed_market_value": 408603.05,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "AbbVie, Inc. 5.05% 3/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 270000.0,
+      "disclosed_market_value": 381334.73,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "AbbVie, Inc. 4.75% 3/15/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 401000.0,
+      "disclosed_market_value": 547512.88,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Agnico Eagle Mines, Ltd.",
+      "asset_type": "Equity",
+      "ticker": "AEM",
+      "shares": 73986.0,
+      "disclosed_market_value": 20891426.82,
+      "pct_of_net": 0.99,
+      "disclosed_price": 282.37
+    },
+    {
+      "name": "Agricultural Development Bank of China 3.75% Jan 25/29",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2170000.0,
+      "disclosed_market_value": 463420.42,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "AIA Group, Ltd.",
+      "asset_type": "Equity",
+      "ticker": "AAGIY",
+      "shares": 600000.0,
+      "disclosed_market_value": 9376444.43,
+      "pct_of_net": 0.45,
+      "disclosed_price": 15.6274,
+      "price_scale": 0.5
+    },
+    {
+      "name": "AIA Group Limited 0.88% Sep 09/33",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 830000.0,
+      "disclosed_market_value": 1255206.42,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Airbus SE, non-registered shares",
+      "asset_type": "Equity",
+      "ticker": "EADSY",
+      "shares": 30891.0,
+      "disclosed_market_value": 8071320.87,
+      "pct_of_net": 0.38,
+      "disclosed_price": 261.2839
+    },
+    {
+      "name": "Alfa Desarrollo SpA 4.55% Sep 27/51",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 392346.0,
+      "disclosed_market_value": 415398.85,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Alphabet, Inc., Class C",
+      "asset_type": "Equity",
+      "ticker": "GOOG",
+      "shares": 99000.0,
+      "disclosed_market_value": 39506043.65,
+      "pct_of_net": 1.88,
+      "disclosed_price": 399.0509
+    },
+    {
+      "name": "Altria Group, Inc. 2.20% Jun 15/27",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 235000.0,
+      "disclosed_market_value": 374476.63,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Altria Group, Inc.",
+      "asset_type": "Equity",
+      "ticker": "MO",
+      "shares": 72500.0,
+      "disclosed_market_value": 6655404.95,
+      "pct_of_net": 0.32,
+      "disclosed_price": 91.7987
+    },
+    {
+      "name": "Amazon.com, Inc. 2.50% 6/3/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 162565.43,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "AMAZON.COM INC SR UNSEC 4.82811% 03-13-33",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 231000.0,
+      "disclosed_market_value": 318345.07,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "America Movil SAB de CV 10.30% Jan 30/34",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4620000.0,
+      "disclosed_market_value": 370057.15,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "America Movil SAB de CV 10.13% Jan 22/29",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 24470000.0,
+      "disclosed_market_value": 1948331.14,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "America Movil, SAB de CV, 9.50% 1/27/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4880000.0,
+      "disclosed_market_value": 379197.34,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "American Tower Corp. REIT",
+      "asset_type": "Equity",
+      "ticker": "AMT",
+      "shares": 62455.0,
+      "disclosed_market_value": 14993948.95,
+      "pct_of_net": 0.71,
+      "disclosed_price": 240.076
+    },
+    {
+      "name": "American Tower Corp. 0.45% 1/15/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 210000.0,
+      "disclosed_market_value": 331674.2,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Amgen, Inc. 2.20% 2/21/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 68000.0,
+      "disclosed_market_value": 92891.33,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Amgen, Inc. 5.25% 3/2/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 800000.0,
+      "disclosed_market_value": 1142451.91,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Amgen, Inc. 5.65% 3/2/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 850000.0,
+      "disclosed_market_value": 1146013.82,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Amgen, Inc.",
+      "asset_type": "Equity",
+      "ticker": "AMGN",
+      "shares": 17000.0,
+      "disclosed_market_value": 8320795.09,
+      "pct_of_net": 0.4,
+      "disclosed_price": 489.4585
+    },
+    {
+      "name": "Amgen, Inc. 4.85% 2/19/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 420000.0,
+      "disclosed_market_value": 574277.88,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Amphenol Corp. 3.125% 6/16/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 125000.0,
+      "disclosed_market_value": 195339.79,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Amprion Gmbh 3.971% 9/22/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 325566.78,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Amprion gmbh 2.75% 9/30/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 157098.66,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Aon Corp. 2.85% 5/28/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 273499.71,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Aon North America, Inc. 5.75% 3/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 268285.63,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Aon PLC, Class A",
+      "asset_type": "Equity",
+      "ticker": "AON",
+      "shares": 36200.0,
+      "disclosed_market_value": 16254497.14,
+      "pct_of_net": 0.77,
+      "disclosed_price": 449.0193
+    },
+    {
+      "name": "APL Finance, LLC, Series 2025-1A, Class A, 4.81% 3/20/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 201271.0,
+      "disclosed_market_value": 280072.26,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Apollo Aviation Securitization Equity Trust, Series 2025-1A, Class A, 5.943% 2/16/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 229774.0,
+      "disclosed_market_value": 322190.18,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Apollo Aviation Securitization Equity Trust, Series 2025-3A, Class A, 5.243% 2/16/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 895256.0,
+      "disclosed_market_value": 1230926.74,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Asian Development Bank 6.72% 2/8/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 35100000.0,
+      "disclosed_market_value": 504357.03,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "AstraZeneca Finance, LLC 5.00% 2/26/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 282398.53,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "AstraZeneca PLC",
+      "asset_type": "Equity",
+      "ticker": "AZN",
+      "shares": 112000.0,
+      "disclosed_market_value": 30431184.11,
+      "pct_of_net": 1.45,
+      "disclosed_price": 271.707
+    },
+    {
+      "name": "AT&T, Inc. 2.75% 6/1/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 700000.0,
+      "disclosed_market_value": 890768.56,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "AT&T, Inc. 5.20% 11/18/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 490000.0,
+      "disclosed_market_value": 880653.86,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Australia (Commonwealth of), Series 163, 1.00% 11/21/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1710000.0,
+      "disclosed_market_value": 1341681.2,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Australia (Commonwealth of), Series 167, 3.75% 5/21/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3425000.0,
+      "disclosed_market_value": 3038465.53,
+      "pct_of_net": 0.14
+    },
+    {
+      "name": "AUSTRALIA (COMMONWEALTH OF) AUD REG S 4.25% 03-21-36",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1530000.0,
+      "disclosed_market_value": 1385846.98,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "Avis Budget Rental Car Funding (AESOP), LLC, Series 2023-2, Class A, 5.20% 10/20/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 249000.0,
+      "disclosed_market_value": 347543.03,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Avis Budget Rental Car Funding (AESOP), LLC, Series 2023-6, Class A, 5.81% 12/20/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 221000.0,
+      "disclosed_market_value": 317209.42,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "BAE Systems PLC",
+      "asset_type": "Equity",
+      "ticker": "BAESY",
+      "shares": 1501589.0,
+      "disclosed_market_value": 60804616.57,
+      "pct_of_net": 2.89,
+      "disclosed_price": 40.4935
+    },
+    {
+      "name": "Baker Hughes Co., Class A",
+      "asset_type": "Equity",
+      "ticker": "BKR",
+      "shares": 205000.0,
+      "disclosed_market_value": 17409964.27,
+      "pct_of_net": 0.83,
+      "disclosed_price": 84.9267
+    },
+    {
+      "name": "Banco de Sabadell SA 5.25% 2/7/2029 (1-year EUR Mid-Swap + 2.40% on 2/7/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 498226.51,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Banco de Sabadell SA 5.13% Nov 10/28",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 330603.75,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Banco de Sabadell, SA 5.125% 6/27/2034 (5-year EUR Mid-Swap + 2.40% on 6/7/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 330079.65,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Bangkok Bank PCL 3.73% Sep 25/34",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 500000.0,
+      "disclosed_market_value": 656798.25,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Bank Gospodarstwa Krajowego 5.75% 7/9/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 287471.84,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "PT Bank Negara Indonesia (Persero) Tbk 5.28% 4/5/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 660000.0,
+      "disclosed_market_value": 930860.16,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Bank of America Corp. 1.922% 10/24/2031 (USD-SOFR + 1.37% on 10/24/2030)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 493300.22,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Bank of America Corporation 1.10% May 24/32",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 610000.0,
+      "disclosed_market_value": 864100.31,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Barclays PLC 7.09% 11/6/2029 (1-year GBP-OIS SONIO/N + 2.553% on 11/6/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 150000.0,
+      "disclosed_market_value": 287199.42,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Barclays PLC 4.616% 3/26/2037 (5-year EUR Mid-Swap + 2.05% on 3/26/2032)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 595000.0,
+      "disclosed_market_value": 960342.83,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "BAT Capital Corp. 3.557% 8/15/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 412885.37,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "BAT Capital Corp. 3.215% 9/6/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 125000.0,
+      "disclosed_market_value": 172998.41,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "BAT Capital Corp. 3.462% 9/6/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 150000.0,
+      "disclosed_market_value": 201450.23,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "BAT Capital Corp. 5.625% 8/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 750000.0,
+      "disclosed_market_value": 1073400.36,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "BAWAG Group AG",
+      "asset_type": "Equity",
+      "ticker": "BWAGF",
+      "shares": 120225.0,
+      "disclosed_market_value": 25526279.14,
+      "pct_of_net": 1.21,
+      "disclosed_price": 212.3209
+    },
+    {
+      "name": "Baxter International, Inc. 5.65% 12/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 410000.0,
+      "disclosed_market_value": 557299.14,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "BBVA Bancomer, SA 5.13% Jan 18/33",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 205000.0,
+      "disclosed_market_value": 277351.72,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "BBVA Bancomer, SA 8.45% Jun 29/38",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1006000.0,
+      "disclosed_market_value": 1505734.57,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "Becton, Dickinson and Co. 4.298% 8/22/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 650000.0,
+      "disclosed_market_value": 876843.9,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Belgium (Kingdom of), Series 97, 3.00% 6/22/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 520000.0,
+      "disclosed_market_value": 821785.45,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Belgium (Kingdom of), Series 106, 3.40% 6/22/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 500000.0,
+      "disclosed_market_value": 789110.83,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Berkshire Hathaway Energy Co. 2.85% 5/15/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 63000.0,
+      "disclosed_market_value": 52828.18,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "BMO Mortgage Trust, Series 2024-5C8, Class AS, 5.94% 12/15/2057",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 120000.0,
+      "disclosed_market_value": 171872.3,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "BMW International Investment BV 4.75% 9/4/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 363224.98,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Boeing Co. (The) 5.805% 5/1/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 134566.68,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Boeing Co. (The) 5.15% 5/1/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 141488.73,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Boeing Co. (The)",
+      "asset_type": "Equity",
+      "ticker": "BA",
+      "shares": 41500.0,
+      "disclosed_market_value": 11490131.27,
+      "pct_of_net": 0.55,
+      "disclosed_price": 276.8706
+    },
+    {
+      "name": "Boeing Co. (The) 6.298% 5/1/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 220000.0,
+      "disclosed_market_value": 321380.05,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Peru (Republic of) 7.60% 8/12/2039",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 11830000.0,
+      "disclosed_market_value": 4893057.47,
+      "pct_of_net": 0.23
+    },
+    {
+      "name": "Chile (Republic of) 4.70% 9/1/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 75000000.0,
+      "disclosed_market_value": 109885.35,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Spain (Kingdom of) 2.70% 10/31/2048",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 240000.0,
+      "disclosed_market_value": 310718.49,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Spain (Kingdom of) 3.15% 4/30/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 530000.0,
+      "disclosed_market_value": 849179.64,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Spain (Kingdom of) 0.50% 10/31/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 490000.0,
+      "disclosed_market_value": 687275.05,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Spain (Kingdom of) 0% 1/31/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 700000.0,
+      "disclosed_market_value": 1102222.5,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Spain (Kingdom of) 3.55% 10/31/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1890000.0,
+      "disclosed_market_value": 3095180.26,
+      "pct_of_net": 0.15
+    },
+    {
+      "name": "Spain (Kingdom of) 3.45% 10/31/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 560000.0,
+      "disclosed_market_value": 905676.42,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Spain (Kingdom of) 3.30% 4/30/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 245000.0,
+      "disclosed_market_value": 386974.99,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "BPCE SA 4.50% 1/13/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 492937.36,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "BPCE SA 5.417% 1/13/2037 (USD-SOFR + 1.568% on 1/13/2036)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 750000.0,
+      "disclosed_market_value": 1017646.37,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "BPCE SA 6.027% 5/28/2036 (USD-SOFR + 1.956% on 5/28/2035)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 569268.08,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Braskem Netherlands Finance BV 7.25% 2/13/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 470000.0,
+      "disclosed_market_value": 303926.83,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Braskem Netherlands Finance BV 8.50% 1/12/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1274000.0,
+      "disclosed_market_value": 841824.16,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Bristol-Myers Squibb Co. 5.20% 2/22/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 570660.31,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "British American Tobacco 4.20% subordinated perpetual bonds (5-year EUR-ICE Swap EURIBOR + 2.961% on 1/30/2051)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1700000.0,
+      "disclosed_market_value": 2676245.2,
+      "pct_of_net": 0.13
+    },
+    {
+      "name": "Broadcom, Inc.",
+      "asset_type": "Equity",
+      "ticker": "AVGO",
+      "shares": 95739.0,
+      "disclosed_market_value": 41221322.66,
+      "pct_of_net": 1.96,
+      "disclosed_price": 430.5594
+    },
+    {
+      "name": "Broadcom, Inc. 4.00% 4/15/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 147000.0,
+      "disclosed_market_value": 202525.81,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Broadcom, Inc. 5.20% 7/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 237000.0,
+      "disclosed_market_value": 332380.59,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Broadcom, Inc. 5.70% 1/15/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 350000.0,
+      "disclosed_market_value": 484704.46,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Broadcom, Inc. 3.469% 4/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 330000.0,
+      "disclosed_market_value": 413592.95,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Brookfield Corp., Class A",
+      "asset_type": "Equity",
+      "ticker": "BN",
+      "shares": 375754.0,
+      "disclosed_market_value": 21181252.98,
+      "pct_of_net": 1.01,
+      "disclosed_price": 56.37
+    },
+    {
+      "name": "Brookfield Infrastructure Partners, LP",
+      "asset_type": "Equity",
+      "ticker": "BIP",
+      "shares": 146000.0,
+      "disclosed_market_value": 7326280.0,
+      "pct_of_net": 0.35,
+      "disclosed_price": 50.18
+    },
+    {
+      "name": "Brown & Brown, Inc. 5.55% 6/23/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 25000.0,
+      "disclosed_market_value": 34749.93,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Bulgaria (Republic of) 4.50% 1/27/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 250000.0,
+      "disclosed_market_value": 423415.78,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Germany (Federal Republic of) 2.20% 10/10/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2735000.0,
+      "disclosed_market_value": 4303119.53,
+      "pct_of_net": 0.2
+    },
+    {
+      "name": "Germany (Federal Republic of) 0% 8/15/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 360000.0,
+      "disclosed_market_value": 254008.11,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Germany (Federal Republic of) 0% 2/15/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 12640000.0,
+      "disclosed_market_value": 18356512.64,
+      "pct_of_net": 0.87
+    },
+    {
+      "name": "Germany (Federal Republic of) 1.00% 5/15/2038",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1503966.0,
+      "disclosed_market_value": 1890531.31,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "Germany (Federal Republic of) 2.20% 2/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 120000.0,
+      "disclosed_market_value": 183420.98,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Germany (Federal Republic of), Series TWIN, 2.50% 2/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1905000.0,
+      "disclosed_market_value": 2954095.13,
+      "pct_of_net": 0.14
+    },
+    {
+      "name": "Germany (Federal Republic of) 2.60% 8/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 7375000.0,
+      "disclosed_market_value": 11485120.95,
+      "pct_of_net": 0.55
+    },
+    {
+      "name": "Italy (Republic of) 1.35% 4/1/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 800000.0,
+      "disclosed_market_value": 1202518.68,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Italy (Republic of) 4.50% 10/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 480000.0,
+      "disclosed_market_value": 767045.1,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Italy (Republic of) 4.40% 5/1/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1936000.0,
+      "disclosed_market_value": 3277589.46,
+      "pct_of_net": 0.16
+    },
+    {
+      "name": "Italy (Republic of) 4.20% 3/1/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2535000.0,
+      "disclosed_market_value": 4223475.08,
+      "pct_of_net": 0.2
+    },
+    {
+      "name": "Italy (Republic of) 4.30% 10/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1470000.0,
+      "disclosed_market_value": 2269963.54,
+      "pct_of_net": 0.11
+    },
+    {
+      "name": "Italy (Republic of) 3.65% 8/1/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1005000.0,
+      "disclosed_market_value": 1593805.97,
+      "pct_of_net": 0.08
+    },
+    {
+      "name": "BX Trust, Series 2025-BIO3, Class A, 6.138% 2/10/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 307000.0,
+      "disclosed_market_value": 432716.01,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "BX Trust, Series 2025-VOLT, Class A, (1-month USD CME Term SOFR + 1.70%) 5.37% 12/15/2044",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 863000.0,
+      "disclosed_market_value": 1198954.55,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "BX Trust, Series 2025-ARIA, Class A, 5.12% 12/13/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 965000.0,
+      "disclosed_market_value": 1350948.03,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "CaixaBank SA 6.208% 1/18/2029 (USD-SOFR + 2.70% on 1/18/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 800000.0,
+      "disclosed_market_value": 1143318.52,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "CaixaBank SA 4.375% 8/8/2036 (5-year EUR-ICE Swap EURIBOR + 1.95% on 8/8/2031)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 647932.65,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Campbell's Co. (The) 4.75% 3/23/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 104000.0,
+      "disclosed_market_value": 133260.17,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Canada (Government) 2.75% 12/1/2048",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 380000.0,
+      "disclosed_market_value": 318087.85,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Canada (Government of) 3.50% 3/1/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3000000.0,
+      "disclosed_market_value": 3037144.95,
+      "pct_of_net": 0.14
+    },
+    {
+      "name": "Canadian Natural Resources, Ltd.",
+      "asset_type": "Equity",
+      "ticker": "CNQ",
+      "shares": 554545.0,
+      "disclosed_market_value": 37631423.7,
+      "pct_of_net": 1.79,
+      "disclosed_price": 67.86
+    },
+    {
+      "name": "Canadian Pacific Railway Co. 3.00% 12/2/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 204665.31,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Canadian Pacific Railway Co. 3.10% 12/2/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 401000.0,
+      "disclosed_market_value": 365407.57,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Canadian Pacific Railway Co. 5.20% 3/30/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 141689.99,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Carlyle Group, Inc. (The)",
+      "asset_type": "Equity",
+      "ticker": "CG",
+      "shares": 200000.0,
+      "disclosed_market_value": 13463065.8,
+      "pct_of_net": 0.64,
+      "disclosed_price": 67.3153
+    },
+    {
+      "name": "Carrier Global Corp. 2.493% 2/15/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 15000.0,
+      "disclosed_market_value": 20537.94,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Cascade Funding Mortgage Trust, Series 2024-HB15, Class A, 4.00% 8/25/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 145695.0,
+      "disclosed_market_value": 202183.03,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Castlelake Aircraft Securitization Trust, Series 2025-1A, Class A, 5.783% 2/15/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 138784.0,
+      "disclosed_market_value": 194677.16,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Charter Communications Operating, LLC 6.384% 10/23/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 565435.81,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Charter Communications Operating, LLC 4.80% 3/1/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 144000.0,
+      "disclosed_market_value": 148207.07,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Charter Communications Operating, LLC 5.25% 4/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 177000.0,
+      "disclosed_market_value": 193282.65,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Charter Communications Operating, LLC 6.55% 6/1/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 77000.0,
+      "disclosed_market_value": 111265.21,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Charter Communications Operating, LLC 6.70% 12/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 129000.0,
+      "disclosed_market_value": 171623.61,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Charter Communications Operating, LLC 5.85% 12/1/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 894000.0,
+      "disclosed_market_value": 1223912.72,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Chevron Corp. 2.236% 5/11/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 128484.21,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "China Development Bank Corp., Series 1805, 4.88% 2/9/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 16930000.0,
+      "disclosed_market_value": 3619533.43,
+      "pct_of_net": 0.17
+    },
+    {
+      "name": "China Development Bank Corp., Series 2004, 3.43% 1/14/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4330000.0,
+      "disclosed_market_value": 885844.57,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "China (People's Republic of), Series INBK, 3.29% 5/23/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 22190000.0,
+      "disclosed_market_value": 4764581.58,
+      "pct_of_net": 0.23
+    },
+    {
+      "name": "China (People's Republic of), Series INBK, 3.19% 4/15/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1200000.0,
+      "disclosed_market_value": 281632.52,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "China (People's Republic of), Series INBK, 2.62% 6/25/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 6050000.0,
+      "disclosed_market_value": 1277951.32,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "China (People's Republic of), Series INBK, 1.92% 1/15/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 5060000.0,
+      "disclosed_market_value": 928982.84,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "China (People's Republic of), Series INBK, 2.27% 5/25/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4840000.0,
+      "disclosed_market_value": 1015229.44,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Chubb INA Holdings, LLC 3.35% 5/3/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 20000.0,
+      "disclosed_market_value": 27796.1,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Chubb INA Holdings, LLC 5.00% 3/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 139938.55,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Citigroup Commercial Mortgage Trust, Series 2023-SMRT, Class A, 6.01% 10/12/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 270000.0,
+      "disclosed_market_value": 383068.42,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Citigroup Commercial Mortgage Trust, Series 2023-PRM3, Class A, 6.36% 7/10/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 175000.0,
+      "disclosed_market_value": 251024.72,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Cloudflare, Inc., Class A",
+      "asset_type": "Equity",
+      "ticker": "NET",
+      "shares": 91468.0,
+      "disclosed_market_value": 26254935.75,
+      "pct_of_net": 1.25,
+      "disclosed_price": 287.0396
+    },
+    {
+      "name": "CMS Energy Corp. 3.00% 5/15/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 380000.0,
+      "disclosed_market_value": 527851.78,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Coca-Cola Company 1.25% Mar 08/31",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 435822.14,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Coca-Cola Co. 4.65% 8/14/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 280188.84,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Comcast Corp. 0.25% 9/14/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 750000.0,
+      "disclosed_market_value": 1083818.61,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Consumers Energy Co. 4.625% 5/15/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 138019.0,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Consumers Energy Co. 5.05% 5/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 360000.0,
+      "disclosed_market_value": 503082.06,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Corebridge Financial, Inc. 3.90% 4/5/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 205000.0,
+      "disclosed_market_value": 267645.3,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Costco Wholesale Corp.",
+      "asset_type": "Equity",
+      "ticker": "COST",
+      "shares": 17126.0,
+      "disclosed_market_value": 23738926.99,
+      "pct_of_net": 1.13,
+      "disclosed_price": 1386.1338
+    },
+    {
+      "name": "CSX Corp. 5.05% 6/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 279352.91,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "CVS Health Corp. 1.75% 8/21/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 600000.0,
+      "disclosed_market_value": 736466.4,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "CVS Health Corp. 5.00% 9/15/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 557112.88,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Czech Republic 4.50% 11/11/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 108600000.0,
+      "disclosed_market_value": 7047114.9,
+      "pct_of_net": 0.34
+    },
+    {
+      "name": "Darden Restaurants, Inc.",
+      "asset_type": "Equity",
+      "ticker": "DRI",
+      "shares": 57500.0,
+      "disclosed_market_value": 15680896.53,
+      "pct_of_net": 0.75,
+      "disclosed_price": 272.7112
+    },
+    {
+      "name": "Deutsche Bank AG 1.75% 11/19/2030 (3-month EUR-EURIBOR + 2.05% on 11/19/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 597555.69,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Deutsche Bank AG 3.547% 9/18/2031 (USD-SOFR + 3.043% on 9/18/2030)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 600000.0,
+      "disclosed_market_value": 784935.73,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Deutsche Telekom International Finance BV 9.25% 6/1/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 341397.25,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Germany (Federal Republic of) 0.10% 4/15/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1417845.0,
+      "disclosed_market_value": 2284676.15,
+      "pct_of_net": 0.11
+    },
+    {
+      "name": "Diamondback Energy, Inc. 5.15% 1/30/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 84000.0,
+      "disclosed_market_value": 119328.38,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "DNB Bank ASA 4.00% 8/17/2027 (1-year GBP-GILT + 2.15% on 8/17/2026)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 555000.0,
+      "disclosed_market_value": 1019683.29,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Duke Energy Corporation 3.75% Apr 01/31",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 250000.0,
+      "disclosed_market_value": 400695.44,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Eaton Capital Unlimited Co. 3.802% 5/21/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 225000.0,
+      "disclosed_market_value": 356191.38,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Eaton Capital Unlimited Co. 3.55% 3/10/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 180000.0,
+      "disclosed_market_value": 284019.45,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Ecopetrol SA 8.625% 1/19/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 441362.02,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "European Financial Stability Facility 0.95% 2/14/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 590000.0,
+      "disclosed_market_value": 917105.64,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Electricite de France SA 4.25% 1/25/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 331270.73,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Electricite de France SA 2.625% junior subordinated perpetual bonds (5-year EUR Mid-Swap + 2.86% on 6/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 600000.0,
+      "disclosed_market_value": 939940.57,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Electricite de France SA 7.50% junior subordinated perpetual bonds (5-year EUR Mid-Swap + 4.86% on 12/6/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 343933.24,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Electricite de France SA 4.00% 5/7/2037",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 314487.4,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Ellington Financial Mortgage Trust, Series 2026-NQM1, Class A1, 4.771% 2/25/2071",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 532096.0,
+      "disclosed_market_value": 733551.01,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Empresa Nacional del Petroleo 5.95% 7/30/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 210000.0,
+      "disclosed_market_value": 295229.93,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Enel Finance International NV 2.125% 7/12/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 450000.0,
+      "disclosed_market_value": 594381.36,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Enfragen Energia Sur SA 5.375% 12/30/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 310000.0,
+      "disclosed_market_value": 393105.57,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Engie SA",
+      "asset_type": "Equity",
+      "ticker": "ENGIY",
+      "shares": 147424.0,
+      "disclosed_market_value": 6611867.44,
+      "pct_of_net": 0.31,
+      "disclosed_price": 44.8493
+    },
+    {
+      "name": "Engie SA 7.00% 10/30/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 192983.17,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Enterprise Products Operating, LLC 4.95% 2/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 60000.0,
+      "disclosed_market_value": 83250.5,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Equatorial SA",
+      "asset_type": "Equity",
+      "ticker": "EQTLY",
+      "shares": 1408595.0,
+      "disclosed_market_value": 15422970.26,
+      "pct_of_net": 0.73,
+      "disclosed_price": 10.9492
+    },
+    {
+      "name": "Equinor ASA 1.375% 5/22/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 720000.0,
+      "disclosed_market_value": 1022516.16,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "European Stability Mechanism 0% 12/15/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 220000.0,
+      "disclosed_market_value": 347811.43,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "European Bank for Reconstruction and Development 6.30% 10/26/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 8200000.0,
+      "disclosed_market_value": 117199.34,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "European Bank for Reconstruction and Development 5.25% 1/12/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 19800000.0,
+      "disclosed_market_value": 285579.97,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "European Investment Bank 0.375% 9/15/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 360000.0,
+      "disclosed_market_value": 560140.41,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "European Investment Bank 6.95% 3/1/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 7500000.0,
+      "disclosed_market_value": 107067.16,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "European Investment Bank 7.40% 10/23/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 107700000.0,
+      "disclosed_market_value": 1527662.52,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "European Investment Bank 2.875% 1/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 105000.0,
+      "disclosed_market_value": 164889.38,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "European Investment Bank 2.625% 16 Jun 2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1310000.0,
+      "disclosed_market_value": 2073669.83,
+      "pct_of_net": 0.1
+    },
+    {
+      "name": "European Union 2.875% 10/5/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 335000.0,
+      "disclosed_market_value": 538618.23,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "European Union 2.75% 12/13/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 160000.0,
+      "disclosed_market_value": 251354.12,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "European Union 4.00% 10/12/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 880000.0,
+      "disclosed_market_value": 1391740.68,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "European Union 3.375% 10/4/2039",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 140000.0,
+      "disclosed_market_value": 216358.21,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "European Union 3.625% 12/12/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4200000.0,
+      "disclosed_market_value": 6604289.07,
+      "pct_of_net": 0.31
+    },
+    {
+      "name": "Exelon Corp. 3.40% 4/15/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 150000.0,
+      "disclosed_market_value": 208562.91,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Export Development Canada 0.50% 2/25/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 525000.0,
+      "disclosed_market_value": 828142.07,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Export-Import Bank of Korea 7.25% 7/25/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 41800000.0,
+      "disclosed_market_value": 599228.19,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Export-Import Bank of Thailand 5.354% 5/16/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 284925.55,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Extended Stay America Trust, Series 2025-ESH, Class A, (1-month USD CME Term SOFR + 1.30%) 4.97% 10/15/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 315000.0,
+      "disclosed_market_value": 438771.94,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2024-R01, Class 1M2, (30-day Average USD-SOFR + 1.80%) 5.46% 1/25/2044",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 85000.0,
+      "disclosed_market_value": 119309.65,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2023-R04, Class 1M1, (30-day Average USD-SOFR + 2.30%) 5.96% 5/25/2043",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 206385.0,
+      "disclosed_market_value": 292577.85,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2023-R05, Class 1M1, (30-day Average USD-SOFR + 1.90%) 5.56% 6/25/2043",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 97478.0,
+      "disclosed_market_value": 136228.35,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2023-R06, Class 1M1, (30-day Average USD-SOFR + 1.70%) 5.36% 7/25/2043",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 393757.0,
+      "disclosed_market_value": 548744.98,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2024-R04, Class 1M2, (30-day Average USD-SOFR + 1.65%) 5.31% 5/25/2044",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 284000.0,
+      "disclosed_market_value": 395063.87,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2024-R04, Class 1M1, (30-day Average USD-SOFR + 1.10%) 4.76% 5/25/2044",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 41800.0,
+      "disclosed_market_value": 58120.21,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2025-R02, Class 1M1, (30-day Average USD-SOFR + 1.15%) 4.81% 2/25/2045",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 61255.0,
+      "disclosed_market_value": 85193.11,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2025-R02, Class 1A1, (30-day Average USD-SOFR + 1.00%) 4.66% 2/25/2045",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 43463.0,
+      "disclosed_market_value": 60392.49,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2026-R02, Class 1M1, (30-day Average USD-SOFR + 1.05%) 4.71% 2/25/2046",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 808552.0,
+      "disclosed_market_value": 1128162.75,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Connecticut Avenue Securities Trust, Series 2026-R02, Class 1A1, (30-day Average USD-SOFR + 0.95%) 4.61% 2/25/2046",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1069960.0,
+      "disclosed_market_value": 1496798.91,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "Freddie Mac Pool #QC5000 2.00% 7/1/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 347932.0,
+      "disclosed_market_value": 390459.62,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Freddie Mac Pool #QD8711 2.00% 3/1/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 904082.0,
+      "disclosed_market_value": 1014588.13,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Freddie Mac Pool #QI3333 6.00% 4/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 23806.0,
+      "disclosed_market_value": 34210.7,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #QX4421 7.00% 1/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 61068.0,
+      "disclosed_market_value": 89524.07,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #RA5155 2.00% 5/1/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 62645.0,
+      "disclosed_market_value": 70302.38,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #RJ1768 5.50% 6/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 95991.0,
+      "disclosed_market_value": 135964.22,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #RJ1964 6.00% 7/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 127873.0,
+      "disclosed_market_value": 184767.61,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #RJ1975 6.00% 7/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 230198.0,
+      "disclosed_market_value": 329578.27,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Freddie Mac Pool #RJ2298 5.50% 9/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 258729.0,
+      "disclosed_market_value": 362778.49,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Freddie Mac Pool #RJ6300 6.50% 1/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 41933.0,
+      "disclosed_market_value": 60428.62,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #RQ0012 5.00% 6/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 969798.0,
+      "disclosed_market_value": 1332198.28,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Freddie Mac Pool #RQ0017 3.50% 6/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 482048.0,
+      "disclosed_market_value": 615689.54,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Freddie Mac Pool #RQ0030 7.00% 7/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 369028.0,
+      "disclosed_market_value": 539760.78,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Freddie Mac Pool #RQ0052 7.00% 9/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 290139.0,
+      "disclosed_market_value": 424914.64,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Freddie Mac Pool #SD3432 6.00% 7/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 38289.0,
+      "disclosed_market_value": 55251.88,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #SD5692 6.00% 5/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 31088.0,
+      "disclosed_market_value": 44700.19,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #SD5846 2.00% 8/1/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 800268.0,
+      "disclosed_market_value": 901534.17,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Freddie Mac Pool #SD5896 6.00% 7/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 38141.0,
+      "disclosed_market_value": 54334.43,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #SD8331 5.50% 6/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 117785.0,
+      "disclosed_market_value": 165263.92,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #SD8341 5.00% 7/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 8950.0,
+      "disclosed_market_value": 12329.15,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #SD8453 5.50% 8/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1233702.0,
+      "disclosed_market_value": 1726322.85,
+      "pct_of_net": 0.08
+    },
+    {
+      "name": "Freddie Mac Pool #SD8475 5.50% 11/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 133381.0,
+      "disclosed_market_value": 186602.4,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool 4.00% Nov 01/54",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 0.0,
+      "disclosed_market_value": 0.01,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #SD8494 5.50% 1/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3791188.0,
+      "disclosed_market_value": 5303382.41,
+      "pct_of_net": 0.25
+    },
+    {
+      "name": "Freddie Mac Pool #SD8498 7.00% 12/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 190017.0,
+      "disclosed_market_value": 277940.08,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #SD8501 7.00% 1/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 192487.0,
+      "disclosed_market_value": 281623.33,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #SD8525 6.00% 4/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 75505.0,
+      "disclosed_market_value": 107126.4,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #SD8532 5.00% 5/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 164707.0,
+      "disclosed_market_value": 226256.28,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #SD8536 7.00% 5/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 65292.0,
+      "disclosed_market_value": 95499.96,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Pool #SL1094 5.00% 4/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100452.0,
+      "disclosed_market_value": 137991.85,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Freddie Mac Pool #Z40273 4.50% 10/1/2048",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 76996.0,
+      "disclosed_market_value": 105536.04,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "FED HM LN BK BD 4/1/2026",
+      "asset_type": "Cash Equivalent",
+      "ticker": null,
+      "shares": 10800000.0,
+      "disclosed_market_value": 15023880.0,
+      "pct_of_net": 0.71
+    },
+    {
+      "name": "Fifth Third Bancorp",
+      "asset_type": "Equity",
+      "ticker": "FITB",
+      "shares": 100000.0,
+      "disclosed_market_value": 6463050.6,
+      "pct_of_net": 0.31,
+      "disclosed_price": 64.6305
+    },
+    {
+      "name": "Fannie Mae Pool #190445 6.50% 3/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 51264.0,
+      "disclosed_market_value": 73776.28,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #BV6163 3.50% 8/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 214360.0,
+      "disclosed_market_value": 273718.94,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #CB2927 2.00% 2/1/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 30689.0,
+      "disclosed_market_value": 34532.89,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #CB8089 7.00% 12/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 245643.0,
+      "disclosed_market_value": 359652.84,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Fannie Mae Pool #CB8842 5.50% 7/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 309839.0,
+      "disclosed_market_value": 436238.21,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Fannie Mae Pool #CB8858 6.00% 7/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 35335.0,
+      "disclosed_market_value": 50567.86,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #CC1176 7.00% 10/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 809588.0,
+      "disclosed_market_value": 1185836.03,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Fannie Mae Pool #DB7692 6.00% 8/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 49785.0,
+      "disclosed_market_value": 70792.27,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #DB7783 5.50% 8/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 203291.0,
+      "disclosed_market_value": 284912.12,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #DC1873 6.00% 9/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2838479.0,
+      "disclosed_market_value": 4043533.67,
+      "pct_of_net": 0.19
+    },
+    {
+      "name": "Fannie Mae Pool #DE1088 7.00% 6/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1652188.0,
+      "disclosed_market_value": 2421630.73,
+      "pct_of_net": 0.12
+    },
+    {
+      "name": "Fannie Mae Pool #DE6383 7.00% 8/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 22492.0,
+      "disclosed_market_value": 32950.36,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool 4.00% Nov 01/55",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 0.0,
+      "disclosed_market_value": 0.01,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #FA1000 7.00% 2/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 90562.0,
+      "disclosed_market_value": 132460.85,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #FA1591 2.00% 10/1/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 996321.0,
+      "disclosed_market_value": 1118102.13,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Fannie Mae Pool #FM7083 2.00% 4/1/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 72633.0,
+      "disclosed_market_value": 81510.5,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #FM7751 2.00% 5/1/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 15199.0,
+      "disclosed_market_value": 17057.26,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #FS3056 2.00% 10/1/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 376553.0,
+      "disclosed_market_value": 424613.23,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Fannie Mae Pool #FS6031 2.00% 6/1/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 616207.0,
+      "disclosed_market_value": 691526.8,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Fannie Mae Pool #FS8131 5.50% 6/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 207899.0,
+      "disclosed_market_value": 294430.21,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #FS8153 6.00% 6/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 162352.0,
+      "disclosed_market_value": 233645.43,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #FS8219 6.00% 6/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 41374.0,
+      "disclosed_market_value": 58955.99,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #FS8223 6.00% 6/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 47956.0,
+      "disclosed_market_value": 68255.07,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #FS8318 6.00% 7/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 104929.0,
+      "disclosed_market_value": 150886.93,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #FS8467 5.50% 7/1/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 343610.0,
+      "disclosed_market_value": 485574.47,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Fannie Mae Pool #FS9792 4.50% 12/1/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 48810.0,
+      "disclosed_market_value": 66814.69,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #MA5072 5.50% 7/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 99450.0,
+      "disclosed_market_value": 139505.34,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #MA5615 6.00% 2/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 15086.0,
+      "disclosed_market_value": 21408.79,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #MA5631 6.50% 2/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 47025.0,
+      "disclosed_market_value": 67675.79,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #MA5647 6.00% 3/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 84968.0,
+      "disclosed_market_value": 120552.92,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #MA5649 7.00% 3/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 69095.0,
+      "disclosed_market_value": 101061.77,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #MA5674 6.00% 4/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 74056.0,
+      "disclosed_market_value": 105070.78,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Fannie Mae Pool #MA5675 6.50% 4/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 102748.0,
+      "disclosed_market_value": 147870.19,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #MA5699 5.00% 5/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 163082.0,
+      "disclosed_market_value": 223989.34,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #MA5734 5.00% 6/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 114349.0,
+      "disclosed_market_value": 157059.74,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #MA5738 7.00% 6/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3013146.0,
+      "disclosed_market_value": 4407194.23,
+      "pct_of_net": 0.21
+    },
+    {
+      "name": "Fannie Mae Pool #MA5762 6.50% 7/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 74147.0,
+      "disclosed_market_value": 106707.84,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Fannie Mae Pool #MA5791 5.00% 8/1/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1251639.0,
+      "disclosed_market_value": 1719359.4,
+      "pct_of_net": 0.08
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 2.00% 4/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 399058.0,
+      "disclosed_market_value": 447269.64,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 2.00% 5/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300942.0,
+      "disclosed_market_value": 337120.01,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 3.50% 4/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 5625575.0,
+      "disclosed_market_value": 7175249.65,
+      "pct_of_net": 0.34
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 4.00% 5/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3724731.0,
+      "disclosed_market_value": 4885806.51,
+      "pct_of_net": 0.23
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 4.00% 4/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2360314.0,
+      "disclosed_market_value": 3098766.05,
+      "pct_of_net": 0.15
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 4.50% 4/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 952000.0,
+      "disclosed_market_value": 1278293.64,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 5.50% 4/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3064000.0,
+      "disclosed_market_value": 4282628.3,
+      "pct_of_net": 0.2
+    },
+    {
+      "name": "Uniform Mortgage-Backed Security 7.00% 4/1/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2000000.0,
+      "disclosed_market_value": 2927575.32,
+      "pct_of_net": 0.14
+    },
+    {
+      "name": "Fontainebleau Miami Beach Trust, Series 2024-FBLU, Class A, (1-month USD CME Term SOFR + 1.45%) 5.12% 12/15/2039",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 52000.0,
+      "disclosed_market_value": 72403.17,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Ford Motor Credit Co., LLC 6.50% 2/7/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 680000.0,
+      "disclosed_market_value": 955062.07,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Ford Motor Credit Co., LLC 3.622% 7/27/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 450000.0,
+      "disclosed_market_value": 717407.13,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Ford Motor Credit Co., LLC 5.73% 9/5/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1990000.0,
+      "disclosed_market_value": 2766633.4,
+      "pct_of_net": 0.13
+    },
+    {
+      "name": "Ford Motor Credit Co., LLC 4.087% 2/17/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 305000.0,
+      "disclosed_market_value": 472742.88,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "FORD MOTOR CREDIT COMPANY LLC SR UNSEC 5.73592% 04-09-31",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 371000.0,
+      "disclosed_market_value": 506988.61,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "French Republic O.A.T. 0% 11/25/2025",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 5590000.0,
+      "disclosed_market_value": 7796638.69,
+      "pct_of_net": 0.37
+    },
+    {
+      "name": "French Republic O.A.T. 0.75% 2/25/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 735000.0,
+      "disclosed_market_value": 1137157.18,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "French Republic O.A.T. 2.00% 11/25/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2680000.0,
+      "disclosed_market_value": 3961968.45,
+      "pct_of_net": 0.19
+    },
+    {
+      "name": "French Republic O.A.T. 3.75% 5/25/2056",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 505000.0,
+      "disclosed_market_value": 714957.18,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Freddie Mac Structured Agency Credit Risk Debt Notes, Series 2025-DNA1, Class A1, (30-day Average USD-SOFR + 0.95%) 4.61% 1/25/2045",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 44945.0,
+      "disclosed_market_value": 62438.83,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Freddie Mac Structured Agency Credit Risk Debt Notes, Series 2026-DNA1, Class A1, (30-day Average USD-SOFR + 0.85%) 4.51% 2/25/2046",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 641025.0,
+      "disclosed_market_value": 890545.93,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Freddie Mac Structured Agency Credit Risk Debt Notes, Series 2026-DNA1, Class M1, (30-day Average USD-SOFR + 1.00%) 4.66% 2/25/2046",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 460501.0,
+      "disclosed_market_value": 638687.73,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "GCAT Trust, Series 2024-NQM2, Class A1, 6.085% 6/25/2059 (7.359% on 5/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 388783.0,
+      "disclosed_market_value": 544927.52,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "GE Capital International Funding Co. UnLtd. Co. 4.418% 11/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 266913.33,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "GE HealthCare Technologies, Inc. 4.80% 8/14/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 79000.0,
+      "disclosed_market_value": 110914.53,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "GE Vernova, Inc.",
+      "asset_type": "Equity",
+      "ticker": "GEV",
+      "shares": 13180.0,
+      "disclosed_market_value": 16004357.88,
+      "pct_of_net": 0.76,
+      "disclosed_price": 1214.2912
+    },
+    {
+      "name": "General Electric Co. aka GE Aerospace",
+      "asset_type": "Equity",
+      "ticker": "GE",
+      "shares": 51300.0,
+      "disclosed_market_value": 20250800.53,
+      "pct_of_net": 0.96,
+      "disclosed_price": 394.7524
+    },
+    {
+      "name": "General Motors Financial Co., Inc. 3.70% 7/14/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 370000.0,
+      "disclosed_market_value": 588485.95,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "General Motors Financial Co., Inc. 6.15% 7/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 370000.0,
+      "disclosed_market_value": 532507.27,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Gilead Sciences, Inc.",
+      "asset_type": "Equity",
+      "ticker": "GILD",
+      "shares": 78000.0,
+      "disclosed_market_value": 15122453.34,
+      "pct_of_net": 0.72,
+      "disclosed_price": 193.8776
+    },
+    {
+      "name": "Gilead Sciences, Inc. 5.25% 10/15/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 575677.62,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Goldman Sachs Group, Inc. 1.992% 1/27/2032 (USD-SOFR + 1.09% on 1/27/2031)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 230000.0,
+      "disclosed_market_value": 280893.29,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Goldman Sachs Group, Inc. 0.25% 1/26/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 610000.0,
+      "disclosed_market_value": 928735.41,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Goldman Sachs Group, Inc.",
+      "asset_type": "Equity",
+      "ticker": "GS",
+      "shares": 8500.0,
+      "disclosed_market_value": 10003281.86,
+      "pct_of_net": 0.48,
+      "disclosed_price": 1176.8567
+    },
+    {
+      "name": "Goldman Sachs Group, Inc. 5.727% 4/25/2030 (USD-SOFR + 1.265% on 4/25/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 260000.0,
+      "disclosed_market_value": 373214.37,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "The Goldman Sachs Group, Inc. 4.516% 1/21/2032 (USD-SOFR + 0.96% on 1/21/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 325000.0,
+      "disclosed_market_value": 445349.44,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "The Goldman Sachs Group, Inc. 5.065% 1/21/2037 (USD-SOFR + 1.19% on 1/21/2036)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 450000.0,
+      "disclosed_market_value": 612251.1,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Grand Parkway Transportation Corp., Grand Parkway System Toll Rev. Ref. Bonds, Series 2020-B, 3.236% 10/1/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 165000.0,
+      "disclosed_market_value": 159820.72,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "GreenSaif Pipelines Bidco SARL 5.852% 2/23/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 540000.0,
+      "disclosed_market_value": 754715.6,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Hawaii Hotel Trust, Series 2025-MAUI, Class A, (1-month USD CME Term SOFR + 1.393%) 5.07% 3/15/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 194000.0,
+      "disclosed_market_value": 270042.61,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Greece (Hellenic Republic of) 1.50% 6/18/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 165000.0,
+      "disclosed_market_value": 249039.5,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Greece (Hellenic Republic of) 4.25% 6/15/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 450000.0,
+      "disclosed_market_value": 759025.2,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Greece (Hellenic Republic of) 1.75% 6/18/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1400000.0,
+      "disclosed_market_value": 2053062.03,
+      "pct_of_net": 0.1
+    },
+    {
+      "name": "Greece (Hellenic Republic of) 3.375% 6/16/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 590000.0,
+      "disclosed_market_value": 910623.91,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Hertz Vehicle Financing, LLC, Series 2025-1A, Class A, 4.91% 9/25/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 216000.0,
+      "disclosed_market_value": 303039.48,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Holcim, Ltd.",
+      "asset_type": "Equity",
+      "ticker": "HCMLF",
+      "shares": 50000.0,
+      "disclosed_market_value": 5771885.28,
+      "pct_of_net": 0.27,
+      "disclosed_price": 115.4377
+    },
+    {
+      "name": "Multifamily Connecticut Avenue Securities, Series 2024-01, Class M7, (30-day Average USD-SOFR + 2.75%) 6.41% 7/25/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 117732.0,
+      "disclosed_market_value": 165875.7,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Home Depot, Inc.",
+      "asset_type": "Equity",
+      "ticker": "HD",
+      "shares": 62276.0,
+      "disclosed_market_value": 28492445.71,
+      "pct_of_net": 1.36,
+      "disclosed_price": 457.5189
+    },
+    {
+      "name": "Houston Galleria Mall Trust, Series 2025-HGLR, Class A, 5.64% 2/5/2045",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 348000.0,
+      "disclosed_market_value": 495613.22,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "HSBC Holdings PLC 7.39% 11/3/2028 (USD-SOFR + 7.39% on 11/3/2027)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 744000.0,
+      "disclosed_market_value": 1079115.67,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "HSBC Holdings PLC 7.399% 11/13/2034 (USD-SOFR + 3.02% on 11/13/2033)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 720000.0,
+      "disclosed_market_value": 1107102.65,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "HSBC Holdings PLC 4.619% 11/6/2031 (USD-SOFR + 1.19% on 11/6/2030)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 800000.0,
+      "disclosed_market_value": 1097754.1,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "HTL Commercial Mortgage Trust, Series 2024-T53, Class A, 6.07% 5/10/2039",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 150000.0,
+      "disclosed_market_value": 210358.78,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Hudson Yards Mortgage Trust, Series 2025-SPRL, Class A, 5.65% 1/13/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 290000.0,
+      "disclosed_market_value": 413152.37,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Humana, Inc. 5.55% 5/1/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 275238.89,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Hungary (Republic of) 3.00% 8/21/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1573810000.0,
+      "disclosed_market_value": 5581301.16,
+      "pct_of_net": 0.27
+    },
+    {
+      "name": "Hungary (Republic of) 3.00% 4/25/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 531840000.0,
+      "disclosed_market_value": 1400336.55,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "Hungary (Republic of) 4.50% 5/27/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 964500000.0,
+      "disclosed_market_value": 3514605.21,
+      "pct_of_net": 0.17
+    },
+    {
+      "name": "Hyundai Capital America 2.375% 10/15/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 298000.0,
+      "disclosed_market_value": 401300.41,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Hyundai Capital America 1.50% 6/15/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 276555.08,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Hyundai Capital America 2.00% 6/15/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 263221.73,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Hyundai Capital America 5.10% 6/24/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 169000.0,
+      "disclosed_market_value": 236964.3,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Hyundai Capital America 2.875% 6/26/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 225000.0,
+      "disclosed_market_value": 354081.65,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Hyundai Capital America 4.50% 9/18/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 547382.66,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Imperial Brands Finance PLC 3.875% 2/12/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 120000.0,
+      "disclosed_market_value": 186438.76,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Imprint Payments Credit Card Master Trust, Series 2025-A, Class A, 4.84% 9/15/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 203000.0,
+      "disclosed_market_value": 282519.7,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Indonesia (Republic of) 7.00% 2/15/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 20014000000.0,
+      "disclosed_market_value": 1652285.46,
+      "pct_of_net": 0.08
+    },
+    {
+      "name": "Indonesia (Republic of), Series FR100, 6.625% 2/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2184000000.0,
+      "disclosed_market_value": 176092.78,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Indonesia (Republic of), Series 103, 6.75% 7/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 5732000000.0,
+      "disclosed_market_value": 466852.0,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Industria de Diseno Textil SA",
+      "asset_type": "Equity",
+      "ticker": "IDEXY",
+      "shares": 120000.0,
+      "disclosed_market_value": 9597924.13,
+      "pct_of_net": 0.46,
+      "disclosed_price": 79.9827
+    },
+    {
+      "name": "ING Groep NV 5.25% 11/14/2033 (3-month EUR-EURIBOR + 2.15% on 11/14/2032)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 345872.4,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Interstate Power and Light Co. 2.30% 6/1/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 127296.83,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Intesa Sanpaolo SpA 6.50% 3/14/2029 (1-year GBP-ICE Swap SONIA + 2.594 on 3/14/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 150000.0,
+      "disclosed_market_value": 282836.43,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Intesa Sanpaolo SpA 4.271% 11/14/2036 (5-year EUR Mid-Swap + 1.95% on 11/14/2031)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 480010.97,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "International Bank for Reconstruction and Development 6.75% 7/13/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 96600000.0,
+      "disclosed_market_value": 1362951.92,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "International Bank for Reconstruction and Development 6.75% 9/8/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 30700000.0,
+      "disclosed_market_value": 441939.19,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "International Business Machines Corp.",
+      "asset_type": "Equity",
+      "ticker": "IBM",
+      "shares": 23000.0,
+      "disclosed_market_value": 7755340.77,
+      "pct_of_net": 0.37,
+      "disclosed_price": 337.1887
+    },
+    {
+      "name": "International Finance Corp. 0% 4/26/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 50900000.0,
+      "disclosed_market_value": 368197.93,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "INTOWN Mortgage Trust, Series 2025-STAY, Class A, (1-month USD CME Term SOFR + 1.35%) 5.02% 3/15/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 669000.0,
+      "disclosed_market_value": 929491.44,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Ireland (Republic of) 0.20% 5/15/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 430000.0,
+      "disclosed_market_value": 673888.39,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Ireland (Republic of) 3.00% 10/18/2043",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 150000.0,
+      "disclosed_market_value": 224220.5,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Ireland (Republic of) 2.60% 10/18/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 240000.0,
+      "disclosed_market_value": 371325.89,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Japan, Series 181, 1.30% 9/20/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1325000000.0,
+      "disclosed_market_value": 11398084.85,
+      "pct_of_net": 0.54
+    },
+    {
+      "name": "Japan, Series 346, 0.10% 3/20/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1250700000.0,
+      "disclosed_market_value": 10857980.63,
+      "pct_of_net": 0.52
+    },
+    {
+      "name": "Japan, Series 363, 0.10% 6/20/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 473300000.0,
+      "disclosed_market_value": 3795639.81,
+      "pct_of_net": 0.18
+    },
+    {
+      "name": "Japan 2.10% 12/20/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 628350000.0,
+      "disclosed_market_value": 5398470.92,
+      "pct_of_net": 0.26
+    },
+    {
+      "name": "Japan, Series 380, 1.70% 9/20/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1265000000.0,
+      "disclosed_market_value": 10521248.33,
+      "pct_of_net": 0.5
+    },
+    {
+      "name": "Japan, Series 173, 0.40% 6/20/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 115200000.0,
+      "disclosed_market_value": 722537.19,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Japan, Series 162, 0.60% 9/20/2037",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 437750000.0,
+      "disclosed_market_value": 3094862.4,
+      "pct_of_net": 0.15
+    },
+    {
+      "name": "Japan, Series 116, 2.20% 3/20/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 67000000.0,
+      "disclosed_market_value": 599482.93,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Japan, Series 152, 1.20% 3/20/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 341550000.0,
+      "disclosed_market_value": 2740699.39,
+      "pct_of_net": 0.13
+    },
+    {
+      "name": "Japan, Series 179, 0.50% 12/20/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 139950000.0,
+      "disclosed_market_value": 847464.01,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Japan, Series 176, 0.50% 3/20/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 199650000.0,
+      "disclosed_market_value": 1240143.41,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Japan, Series 192, 2.40% 3/20/2045",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 829500000.0,
+      "disclosed_market_value": 6429378.93,
+      "pct_of_net": 0.31
+    },
+    {
+      "name": "Japan, Series 37, 0.60% 6/20/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 461300000.0,
+      "disclosed_market_value": 2114275.28,
+      "pct_of_net": 0.1
+    },
+    {
+      "name": "Japan, Series 57, 0.80% 12/20/2047",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 40000000.0,
+      "disclosed_market_value": 211107.46,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Japan, Series 36, 2.00% 3/20/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 13000000.0,
+      "disclosed_market_value": 99576.74,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Japan, Series 42, 1.70% 3/20/2044",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 86300000.0,
+      "disclosed_market_value": 606610.02,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Japan, Series 77, 1.60% 12/20/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 43800000.0,
+      "disclosed_market_value": 249675.33,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Japan, Series 76, 1.40% 9/20/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 90000000.0,
+      "disclosed_market_value": 488205.5,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Japan, Series 70, 0.70% 3/20/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 68400000.0,
+      "disclosed_market_value": 314456.85,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Johnson Controls International PLC",
+      "asset_type": "Equity",
+      "ticker": "JCI",
+      "shares": 25500.0,
+      "disclosed_market_value": 4645195.9,
+      "pct_of_net": 0.22,
+      "disclosed_price": 182.1645
+    },
+    {
+      "name": "JPMorgan Chase & Co. 0.389% 2/24/2028 (3-month EUR-EURIBOR + 0.65% on 2/24/2027)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 410000.0,
+      "disclosed_market_value": 644104.8,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "JPMorgan Chase & Co.",
+      "asset_type": "Equity",
+      "ticker": "JPM",
+      "shares": 74050.0,
+      "disclosed_market_value": 30301702.52,
+      "pct_of_net": 1.44,
+      "disclosed_price": 409.206
+    },
+    {
+      "name": "JPMorgan Chase & Co. 5.299% 7/24/2029 (USD-SOFR + 1.45% on 7/24/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 390000.0,
+      "disclosed_market_value": 552725.36,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "JPMorgan Chase & Co. 5.294% 7/22/2035 (USD-SOFR + 1.46% on 7/22/2034)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 110000.0,
+      "disclosed_market_value": 154967.48,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "JPMorgan Chase & Co. 4.898% 1/22/2037 (USD-SOFR + 1.07% on 1/22/2036)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 75000.0,
+      "disclosed_market_value": 102129.58,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "JPMorgan Chase & Co. 4.347% 1/22/2032 (USD-SOFR + 0.84% on 1/22/2031)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 170000.0,
+      "disclosed_market_value": 233199.55,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "JPMorgan Chase & Co. 5.572% 4/22/2036 (USD-SOFR + 1.68% on 4/22/2035)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 630000.0,
+      "disclosed_market_value": 903451.23,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "JPMorgan Chase & Co. 4.81% 10/22/2036 (USD-SOFR + 1.19% on 10/22/2035)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 290000.0,
+      "disclosed_market_value": 391853.7,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Keurig Dr Pepper, Inc.",
+      "asset_type": "Equity",
+      "ticker": "KDP",
+      "shares": 285000.0,
+      "disclosed_market_value": 10438883.95,
+      "pct_of_net": 0.5,
+      "disclosed_price": 36.6277
+    },
+    {
+      "name": "KfW 2.375% 6/29/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 290000.0,
+      "disclosed_market_value": 460203.98,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "KLA Corp.",
+      "asset_type": "Equity",
+      "ticker": "KLAC",
+      "shares": 10668.0,
+      "disclosed_market_value": 21850939.57,
+      "pct_of_net": 1.04,
+      "disclosed_price": 2048.2696,
+      "price_scale": 10.0
+    },
+    {
+      "name": "Korea Development Bank 6.75% 7/1/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 18000000.0,
+      "disclosed_market_value": 250663.13,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Korea Electric Power Corp. 4.75% 2/13/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 561647.35,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "South Korea (Republic of), Series 3212, 4.25% 12/10/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 6539910000.0,
+      "disclosed_market_value": 6080690.98,
+      "pct_of_net": 0.29
+    },
+    {
+      "name": "South Korea (Republic of), Series 3512,  3.25% 12/10/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 10426400000.0,
+      "disclosed_market_value": 8998517.61,
+      "pct_of_net": 0.43
+    },
+    {
+      "name": "KSL Commercial Mortgage Trust, Series 2024-HT2, Class A, (1-month USD CME Term SOFR + 1.542%) 5.21% 12/15/2039",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 284296.0,
+      "disclosed_market_value": 395270.42,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Lloyds Banking Group PLC 3.875% 5/14/2032 (1-year EUR-ICE Swap EURIBOR + 1.18% on 5/14/2031)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 161623.91,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Magyar Export-Import Bank 6.00% 5/16/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 168737.13,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Malaysia (Federation of), Series 0124, 4.054% 4/18/2039",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2352000.0,
+      "disclosed_market_value": 820736.64,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Malaysia (Federation of), Series 0417, 4.895% 5/8/2047",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 218000.0,
+      "disclosed_market_value": 84016.37,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Malaysia (Federation of), Series 0221, 4.417% 9/30/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 423000.0,
+      "disclosed_market_value": 153223.94,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Mars, Inc. 5.20% 3/1/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1000000.0,
+      "disclosed_market_value": 1404849.74,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "Marsh & McLennan Cos., Inc. 5.00% 3/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 277182.95,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Mastercard, Inc. 4.85% 3/9/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 350000.0,
+      "disclosed_market_value": 493748.56,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "McDonald's Corp. 0.25% 10/4/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 640000.0,
+      "disclosed_market_value": 957130.08,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Medtronic PLC",
+      "asset_type": "Equity",
+      "ticker": "MDT",
+      "shares": 44000.0,
+      "disclosed_market_value": 5303707.86,
+      "pct_of_net": 0.25,
+      "disclosed_price": 120.5388
+    },
+    {
+      "name": "Metropolitan Life Global Funding I 0.55% 6/16/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 260000.0,
+      "disclosed_market_value": 404507.79,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Metropolitan Life Global Funding I 5.05% 1/6/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 550000.0,
+      "disclosed_market_value": 773752.44,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "United Mexican States, Series S, 4.00% 10/29/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1682387.0,
+      "disclosed_market_value": 114881.65,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "MFRA Trust, Series 2024-NQM3, Class A1, 5.722% 12/25/2069 (6.722% on 12/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 207261.0,
+      "disclosed_market_value": 289755.74,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "MFRA Trust, Series 2025-NQM3, Class A1, 5.261% 8/25/2070 (6.261% on 7/1/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 178351.0,
+      "disclosed_market_value": 248016.71,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Microsoft Corp.",
+      "asset_type": "Equity",
+      "ticker": "MSFT",
+      "shares": 19500.0,
+      "disclosed_market_value": 10041398.0,
+      "pct_of_net": 0.48,
+      "disclosed_price": 514.9435
+    },
+    {
+      "name": "Minerva Luxembourg SA 8.875% 9/13/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 365000.0,
+      "disclosed_market_value": 542936.15,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Mission Lane Credit Card Master Trust, Series 2025-B, Class A, 5.06% 9/15/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 219000.0,
+      "disclosed_market_value": 305976.56,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Mission Lane Credit Card Master Trust, Series 2024-A, Class A1, 6.20% 8/15/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 272000.0,
+      "disclosed_market_value": 379368.66,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Mission Lane Credit Card Master Trust, Series 2024-A, Class B, 6.58% 8/15/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 134000.0,
+      "disclosed_market_value": 186948.54,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Mission Lane Credit Card Master Trust, Series 2025-C, Class A, 4.78% 12/16/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 278123.43,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Mitsubishi Heavy Industries, Ltd.",
+      "asset_type": "Equity",
+      "ticker": "MHVYF",
+      "shares": 302700.0,
+      "disclosed_market_value": 11486950.71,
+      "pct_of_net": 0.55,
+      "disclosed_price": 37.9483
+    },
+    {
+      "name": "Mitsui & Co., Ltd.",
+      "asset_type": "Equity",
+      "ticker": "MITSY",
+      "shares": 443200.0,
+      "disclosed_market_value": 23736785.69,
+      "pct_of_net": 1.13,
+      "disclosed_price": 53.5577
+    },
+    {
+      "name": "Morgan Stanley 5.656% 4/18/2030 (USD-SOFR + 1.26% on 4/18/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 648000.0,
+      "disclosed_market_value": 927463.77,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Morgan Stanley 4.493% 1/16/2032 (USD-SOFR + 0.95% on 1/16/2031)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 75000.0,
+      "disclosed_market_value": 102608.41,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Morgan Stanley 4.356% 10/22/2031 (USD-SOFR + 1.074% on 10/22/2030)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 495000.0,
+      "disclosed_market_value": 674973.6,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "MS&AD Insurance Group Holdings, Inc.",
+      "asset_type": "Equity",
+      "ticker": "MSADY",
+      "shares": 275000.0,
+      "disclosed_market_value": 10011197.08,
+      "pct_of_net": 0.48,
+      "disclosed_price": 36.4044
+    },
+    {
+      "name": "National Grid PLC",
+      "asset_type": "Equity",
+      "ticker": "NGG",
+      "shares": 843359.0,
+      "disclosed_market_value": 19778857.42,
+      "pct_of_net": 0.94,
+      "disclosed_price": 23.4525,
+      "price_scale": 0.2
+    },
+    {
+      "name": "NatWest Group PLC 0.78% 2/26/2030 (3-month EUR-EURIBOR + 0.949% on 2/26/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 340000.0,
+      "disclosed_market_value": 504611.49,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Nestle SA",
+      "asset_type": "Equity",
+      "ticker": "NSRGY",
+      "shares": 166300.0,
+      "disclosed_market_value": 22946362.9,
+      "pct_of_net": 1.09,
+      "disclosed_price": 137.9817
+    },
+    {
+      "name": "New South Wales Treasury Corp. 4.25% 2/20/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 905000.0,
+      "disclosed_market_value": 782269.88,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "New York Life Global Funding 1.20% 8/7/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 242336.71,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "New York Life Insurance Co. 3.75% 5/15/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 138000.0,
+      "disclosed_market_value": 139346.79,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "New York Mortgage Trust, Series 2024-CP1, Class A1, 3.75% 2/25/2068",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 126173.0,
+      "disclosed_market_value": 162687.84,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "NextEra Energy Capital Holdings, Inc. 3.624% 2/20/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 157319.5,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "NGG Finance PLC, junior subordinated, 2.125% 9/5/2082 (5-year EUR Mid-Swap + 2.532% on 9/5/2027)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 155000.0,
+      "disclosed_market_value": 244712.73,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Nickel Industries, Ltd. 9.00% 9/30/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 280000.0,
+      "disclosed_market_value": 390410.68,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "NIKE, Inc., Class B",
+      "asset_type": "Equity",
+      "ticker": "NKE",
+      "shares": 80000.0,
+      "disclosed_market_value": 5878232.16,
+      "pct_of_net": 0.28,
+      "disclosed_price": 73.4779
+    },
+    {
+      "name": "Nippon Steel Corp.",
+      "asset_type": "Equity",
+      "ticker": "NPSCY",
+      "shares": 1632500.0,
+      "disclosed_market_value": 8342918.5,
+      "pct_of_net": 0.4,
+      "disclosed_price": 5.1105
+    },
+    {
+      "name": "NMEF Funding, LLC, Series 2025-A, Class A2, 4.72% 7/15/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 76545.0,
+      "disclosed_market_value": 106813.94,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Norfolk Southern Corp. 5.55% 3/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 288515.5,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Norfolk Southern Corp. 5.10% 5/1/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 279190.85,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Brazil (Federative Republic of) 10.00% 1/1/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3675000.0,
+      "disclosed_market_value": 910880.87,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Brazil (Federative Republic of) 10.00% 1/1/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 29800000.0,
+      "disclosed_market_value": 6995200.51,
+      "pct_of_net": 0.33
+    },
+    {
+      "name": "Brazil (Federative Republic of) 6.00% 8/15/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 6235233.0,
+      "disclosed_market_value": 1437206.19,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "Brazil (Federative Republic of) 6.00% 8/15/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 464969.0,
+      "disclosed_market_value": 109906.81,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Brazil (Federative Republic of) 6.00% 8/15/2060",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 464969.0,
+      "disclosed_market_value": 105392.89,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Brazil (Federative Republic of) 10.00% 1/1/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 15281000.0,
+      "disclosed_market_value": 3343055.91,
+      "pct_of_net": 0.16
+    },
+    {
+      "name": "Novo Nordisk AS, Class B",
+      "asset_type": "Equity",
+      "ticker": "NONOF",
+      "shares": 270326.0,
+      "disclosed_market_value": 13857151.96,
+      "pct_of_net": 0.66,
+      "disclosed_price": 51.2609
+    },
+    {
+      "name": "Novo Nordisk AS, Class B (ADR)",
+      "asset_type": "Equity",
+      "ticker": "NVO",
+      "shares": 65000.0,
+      "disclosed_market_value": 3322990.12,
+      "pct_of_net": 0.16,
+      "disclosed_price": 51.1229
+    },
+    {
+      "name": "NYC Commercial Mortgage Trust, Series 2025-28L, Class A, 4.82% 11/5/2038",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 365000.0,
+      "disclosed_market_value": 505947.16,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Nykredit Realkredit AS, Series 01E, 1.00% 10/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2350729.0,
+      "disclosed_market_value": 388462.61,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Nykredit Realkredit AS, Series 01E, 0.50% 10/1/2043",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 6973017.0,
+      "disclosed_market_value": 1222409.4,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Nykredit Realkredit AS, Series 01E, 1.50% 10/1/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4969900.0,
+      "disclosed_market_value": 962477.69,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Nykredit Realkredit AS, Series CCE, 1.00% 10/1/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1625759.0,
+      "disclosed_market_value": 271024.25,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Nykredit Realkredit AS, Series 01E, 0.50% 10/1/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2648466.0,
+      "disclosed_market_value": 412138.34,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Nykredit Realkredit AS, Series 01E, 1.50% 10/1/2037",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1034132.0,
+      "disclosed_market_value": 205192.05,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Obayashi Corp.",
+      "asset_type": "Equity",
+      "ticker": "OBYCF",
+      "shares": 470100.0,
+      "disclosed_market_value": 15748597.93,
+      "pct_of_net": 0.75,
+      "disclosed_price": 33.5005
+    },
+    {
+      "name": "Portugal (Republic of), Series 11Y, 2.875% 10/20/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 430000.0,
+      "disclosed_market_value": 670825.83,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Portugal (Republic of), Series 30Y, 3.625% 6/12/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 299930.23,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Portugal (Republic of), Series 15Y, 3.375% 6/15/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 35000.0,
+      "disclosed_market_value": 54015.93,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Portugal Republic, Series 10Y, 3.25% 6/13/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 480000.0,
+      "disclosed_market_value": 758480.12,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Turnpike and Infrastructure Commission, Turnpike Rev. Ref. Bonds (Infrastructure Projects), Series 2020-A, 3.216% 2/15/2048",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 215000.0,
+      "disclosed_market_value": 219972.06,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "OnDeck Asset Securitization Trust, LLC, Series 2024-1, Class B, 7.15% 6/17/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 123000.0,
+      "disclosed_market_value": 171888.21,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "OnDeck Asset Securitization Trust, LLC, Series 2024-1, Class A, 6.27% 6/17/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 481000.0,
+      "disclosed_market_value": 675576.7,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Onslow Bay Financial, LLC, Series 2024-NQM5, Class A1, 5.988% 1/25/2064 (6.988% on 3/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 143403.0,
+      "disclosed_market_value": 200686.21,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Onslow Bay Financial, LLC, Series 2024-NQM7, Class A1, 6.243% 3/25/2064 (7.243% on 4/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 287406.0,
+      "disclosed_market_value": 403231.03,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Onslow Bay Financial, LLC, Series 2025-NQM1, Class A1, 5.547% 12/25/2064 (6.547% on 12/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 395474.0,
+      "disclosed_market_value": 552707.23,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Onslow Bay Financial, LLC, Series 2025-NQM3, Class A1, 5.648% 12/1/2064 (6.648% on 2/1/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 359743.0,
+      "disclosed_market_value": 503542.38,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "OBX_26-R1 144A 4.84% 12-01-62",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 732000.0,
+      "disclosed_market_value": 1011646.8,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Oracle Corp. 5.50% 8/3/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 450000.0,
+      "disclosed_market_value": 597914.27,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Oracle Corp. 6.00% 8/3/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 466955.56,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Orange 5.625% 1/23/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 372639.33,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Orange 3.875% 9/11/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 641835.81,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Pacific Gas and Electric Co. 3.50% 8/1/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 368217.55,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Pacific Gas and Electric Co. 4.95% 7/1/2050",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 345966.12,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Pacific Gas and Electric Co. 6.15% 1/15/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 350000.0,
+      "disclosed_market_value": 509374.48,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Pacific Gas and Electric Co. 6.00% 8/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 550000.0,
+      "disclosed_market_value": 790879.95,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Pacific Gas and Electric Co. 5.20% 5/1/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 500000.0,
+      "disclosed_market_value": 678164.85,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "PacifiCorp 5.45% 2/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 138654.85,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Pagaya AI Debt Selection Trust, Series 2026-R1, Class A, 4.714% 12/15/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 701317.0,
+      "disclosed_market_value": 973334.56,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "PEAC Solutions Receivables, LLC, Series 2025-1A, Class A2, 4.94% 10/20/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 154404.0,
+      "disclosed_market_value": 215843.91,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Petroleos Mexicanos 6.95% 1/28/2060",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 185000.0,
+      "disclosed_market_value": 202990.15,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Petroleos Mexicanos 6.84% 1/23/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4950000.0,
+      "disclosed_market_value": 6905452.88,
+      "pct_of_net": 0.33
+    },
+    {
+      "name": "Petroleos Mexicanos 7.47% 11/12/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 6970600.0,
+      "disclosed_market_value": 537730.17,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Pfizer Investment Enterprises Pte., Ltd. 4.75% 5/19/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 809000.0,
+      "disclosed_market_value": 1121447.9,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Pfizer Investment Enterprises Pte., Ltd. 5.30% 5/19/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 42000.0,
+      "disclosed_market_value": 54338.61,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Philip Morris International, Inc.",
+      "asset_type": "Equity",
+      "ticker": "PM",
+      "shares": 274108.0,
+      "disclosed_market_value": 63046066.35,
+      "pct_of_net": 3.0,
+      "disclosed_price": 230.0045
+    },
+    {
+      "name": "Philip Morris International, Inc. 5.75% 11/7/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 350000.0,
+      "disclosed_market_value": 512774.44,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Philip Morris International, Inc. 5.25% 2/13/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 350000.0,
+      "disclosed_market_value": 496008.9,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "PK ALIFT Loan Funding, Series 2026-1, Class A, 4.614% 9/15/2043",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 310000.0,
+      "disclosed_market_value": 426526.33,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "PKO Bank Polski SA, Class C",
+      "asset_type": "Equity",
+      "ticker": "PKOBY",
+      "shares": 497419.0,
+      "disclosed_market_value": 16363442.86,
+      "pct_of_net": 0.78,
+      "disclosed_price": 32.8967
+    },
+    {
+      "name": "PNC Financial Services Group, Inc. 5.676% 1/22/2035 (USD-SOFR + 1.902% on 1/22/2034)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 75000.0,
+      "disclosed_market_value": 107361.66,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "PNC Financial Services Group, Inc. 6.875% 10/20/2034 (USD-SOFR + 2.284% on 10/20/2033)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 255000.0,
+      "disclosed_market_value": 392012.22,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Poland (Republic of), Series 1029, 2.75% 10/25/2029",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1180000.0,
+      "disclosed_market_value": 411214.22,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Progressive Corp.",
+      "asset_type": "Equity",
+      "ticker": "PGR",
+      "shares": 74878.0,
+      "disclosed_market_value": 20649230.65,
+      "pct_of_net": 0.98,
+      "disclosed_price": 275.7717
+    },
+    {
+      "name": "Public Service Co. of Colorado 2.70% 1/15/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 294000.0,
+      "disclosed_market_value": 243561.38,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Raizen Fuels Finance SA 6.45% 3/5/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 325000.0,
+      "disclosed_market_value": 248941.7,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Realkredit Danmark AS 1.00% 10/1/2053",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 609926.0,
+      "disclosed_market_value": 99920.2,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Austria (Republic of) 0% 2/20/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1780000.0,
+      "disclosed_market_value": 2486143.75,
+      "pct_of_net": 0.12
+    },
+    {
+      "name": "Colombia (Republic of) 7.375% 4/25/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 694000.0,
+      "disclosed_market_value": 1003200.42,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Panama (Republic of) 8.00% 3/1/2038",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 361000.0,
+      "disclosed_market_value": 576184.37,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Philippines (Republic of) 1.648% 6/10/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 387000.0,
+      "disclosed_market_value": 462005.36,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Poland (Republic of) 3.25% 4/6/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 500000.0,
+      "disclosed_market_value": 695840.73,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Restaurant Brands International, Inc.",
+      "asset_type": "Equity",
+      "ticker": "QSR",
+      "shares": 125000.0,
+      "disclosed_market_value": 12867500.0,
+      "pct_of_net": 0.61,
+      "disclosed_price": 102.94
+    },
+    {
+      "name": "Rio Tinto PLC",
+      "asset_type": "Equity",
+      "ticker": "RIO",
+      "shares": 50000.0,
+      "disclosed_market_value": 6465262.25,
+      "pct_of_net": 0.31,
+      "disclosed_price": 129.3052
+    },
+    {
+      "name": "Roche Holdings, Inc. 5.593% 11/13/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 250000.0,
+      "disclosed_market_value": 367387.98,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "RTX Corp. 4.125% 11/16/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 415674.26,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "RTX Corp. 4.50% 6/1/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 150000.0,
+      "disclosed_market_value": 185287.88,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "RTX Corp. 6.10% 3/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 350000.0,
+      "disclosed_market_value": 524492.32,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Saab AB, Class B",
+      "asset_type": "Equity",
+      "ticker": "SAABY",
+      "shares": 202287.0,
+      "disclosed_market_value": 18459370.88,
+      "pct_of_net": 0.88,
+      "disclosed_price": 91.2534
+    },
+    {
+      "name": "Samarco Mineracao SA 9.00% 6/30/2031 (5.50% PIK and 3.50% Cash on 12/30/2026)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 688786.0,
+      "disclosed_market_value": 943349.13,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Samarco Mineracao SA 9.00% 6/30/2031 (5.50% PIK and 3.50% Cash on 12/30/2026)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 142193.0,
+      "disclosed_market_value": 194745.01,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Sands China, Ltd. 5.40% 8/8/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 880000.0,
+      "disclosed_market_value": 1234105.8,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Sanofi",
+      "asset_type": "Equity",
+      "ticker": "SNY",
+      "shares": 75000.0,
+      "disclosed_market_value": 10063474.78,
+      "pct_of_net": 0.48,
+      "disclosed_price": 134.1797
+    },
+    {
+      "name": "Saudi Arabia (Kingdom of) 4.875% 1/12/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 440000.0,
+      "disclosed_market_value": 597312.34,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "SCF Equipment Trust, LLC, Series 2025-1A, Class A3, 5.11% 11/21/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 507000.0,
+      "disclosed_market_value": 717752.39,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Securitized Term Auto Receivables Trust, Series 2025-A, Class B, 5.038% 7/25/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 19118.0,
+      "disclosed_market_value": 26787.33,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "Shell PLC",
+      "asset_type": "Equity",
+      "ticker": "SHEL",
+      "shares": 178000.0,
+      "disclosed_market_value": 11562871.77,
+      "pct_of_net": 0.55,
+      "disclosed_price": 64.96
+    },
+    {
+      "name": "SMB Private Education Loan Trust, Series 2023-C, Class A1B, (30-day Average USD-SOFR + 1.55%) 5.22% 11/15/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 96061.0,
+      "disclosed_market_value": 135098.96,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "SMC Corp.",
+      "asset_type": "Equity",
+      "ticker": "SMCEF",
+      "shares": 10600.0,
+      "disclosed_market_value": 5767615.28,
+      "pct_of_net": 0.27,
+      "disclosed_price": 544.1146
+    },
+    {
+      "name": "Snam SpA",
+      "asset_type": "Equity",
+      "ticker": "SNMRF",
+      "shares": 1084470.0,
+      "disclosed_market_value": 11473694.47,
+      "pct_of_net": 0.55,
+      "disclosed_price": 10.58
+    },
+    {
+      "name": "Southern California Edison Co. 3.45% 2/1/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 364574.31,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Southern California Edison Co. 5.95% 11/1/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 380000.0,
+      "disclosed_market_value": 556111.99,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Southern California Edison Co. 5.45% 3/1/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 605000.0,
+      "disclosed_market_value": 845135.86,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Southern California Edison Co. 6.20% 9/15/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 290000.0,
+      "disclosed_market_value": 400480.59,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Southern California Edison Co. 4.80% 3/15/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 420000.0,
+      "disclosed_market_value": 574090.62,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "SP Transmission PLC 2.00% 11/13/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 130000.0,
+      "disclosed_market_value": 202838.13,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "SSE PLC",
+      "asset_type": "Equity",
+      "ticker": "SSEZF",
+      "shares": 295462.0,
+      "disclosed_market_value": 14189975.98,
+      "pct_of_net": 0.68,
+      "disclosed_price": 48.0264
+    },
+    {
+      "name": "Standard Chartered PLC 5.905% 5/14/2035 (1-year UST Yield Curve Rate T Note Constant Maturity + 1.45% on 5/14/2034)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 800000.0,
+      "disclosed_market_value": 1139402.0,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Standard Chartered PLC 5.244% 5/13/2031 (1-year UST Yield Curve Rate T Note Constant Maturity + 1.35% on 5/13/2030)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 950000.0,
+      "disclosed_market_value": 1340632.13,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "Starwood Mortgage Residential Trust, Series 2025-SFR5, Class A, (1-month USD CME Term SOFR + 1.45%) 5.12% 2/17/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 99868.0,
+      "disclosed_market_value": 138960.75,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Starbucks Corp.",
+      "asset_type": "Equity",
+      "ticker": "SBUX",
+      "shares": 234814.0,
+      "disclosed_market_value": 29264551.58,
+      "pct_of_net": 1.39,
+      "disclosed_price": 124.6286
+    },
+    {
+      "name": "Israel (State of) 1.50% 1/18/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 158569.46,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Steele Creek CLO, Ltd., Series 2019-2A, Class ARR, (3-month USD CME Term SOFR + 1.00%) 4.67% 7/15/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 196020.0,
+      "disclosed_market_value": 272425.22,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Stryker Corp. 5.20% 2/10/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 450000.0,
+      "disclosed_market_value": 634097.82,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "SWCH Commercial Mortgage Trust, Series 2025-DATA, Class A, (1-month USD CME Term SOFR + 1.443%) 5.12% 2/15/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1234000.0,
+      "disclosed_market_value": 1697815.97,
+      "pct_of_net": 0.08
+    },
+    {
+      "name": "Synopsys, Inc. 4.85% 4/1/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 350000.0,
+      "disclosed_market_value": 490595.08,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "T-Mobile USA, Inc. 5.15% 4/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 253000.0,
+      "disclosed_market_value": 354722.35,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "T-Mobile USA, Inc. 2.05% 2/15/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 475000.0,
+      "disclosed_market_value": 634051.42,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "T-Mobile USA, Inc. 3.15% 2/11/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 305000.0,
+      "disclosed_market_value": 475825.07,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "T-Mobile USA, Inc. 5.75% 1/15/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 120000.0,
+      "disclosed_market_value": 160268.92,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Taiwan Semiconductor Manufacturing Co., Ltd.",
+      "asset_type": "Equity",
+      "ticker": "TSM",
+      "shares": 1199000.0,
+      "disclosed_market_value": 94030220.58,
+      "pct_of_net": 4.47,
+      "disclosed_price": 78.4239,
+      "price_scale": 0.2
+    },
+    {
+      "name": "TAKEOFF MERGER SUB INC 144A SR UNSEC 4.91108% 03-24-29",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 295000.0,
+      "disclosed_market_value": 407811.57,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "TAKEOFF MERGER SUB INC 144A SR UNSEC 5.23592% 03-24-31",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 140000.0,
+      "disclosed_market_value": 192393.75,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Targa Resources Corp. 5.50% 2/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 13000.0,
+      "disclosed_market_value": 18252.34,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "TE Connectivity PLC",
+      "asset_type": "Equity",
+      "ticker": "TEL",
+      "shares": 28000.0,
+      "disclosed_market_value": 8141496.22,
+      "pct_of_net": 0.39,
+      "disclosed_price": 290.7677
+    },
+    {
+      "name": "TenneT Netherlands BV 3.25% 4/1/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 639013.23,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Cigna Group (The)",
+      "asset_type": "Equity",
+      "ticker": "CI",
+      "shares": 27250.0,
+      "disclosed_market_value": 10111818.96,
+      "pct_of_net": 0.48,
+      "disclosed_price": 371.0759
+    },
+    {
+      "name": "The Huntington National Bank, Series 2026-1, Class B1, 4.503% 2/20/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 523000.0,
+      "disclosed_market_value": 726905.83,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Thermo Fisher Scientific, Inc. 0.50% 3/1/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 700000.0,
+      "disclosed_market_value": 1072383.8,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Toronto-Dominion Bank (The) 4.808% 6/3/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 280625.42,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "TotalEnergies Capital SA 5.488% 4/5/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 475000.0,
+      "disclosed_market_value": 634742.43,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "TotalEnergies SE",
+      "asset_type": "Equity",
+      "ticker": "TTE",
+      "shares": 75000.0,
+      "disclosed_market_value": 9633359.91,
+      "pct_of_net": 0.46,
+      "disclosed_price": 128.4448
+    },
+    {
+      "name": "Tourmaline Oil Corp.",
+      "asset_type": "Equity",
+      "ticker": "TOU.TO",
+      "shares": 169000.0,
+      "disclosed_market_value": 11252020.0,
+      "pct_of_net": 0.54,
+      "disclosed_price": 66.58
+    },
+    {
+      "name": "Toyota Motor Corp.",
+      "asset_type": "Equity",
+      "ticker": "TM",
+      "shares": 351700.0,
+      "disclosed_market_value": 10141805.07,
+      "pct_of_net": 0.48,
+      "disclosed_price": 28.8365,
+      "price_scale": 0.2
+    },
+    {
+      "name": "U.S. Treasury 0% 5/12/2026",
+      "asset_type": "Cash Equivalent",
+      "ticker": null,
+      "shares": 8000000.0,
+      "disclosed_market_value": 11082912.09,
+      "pct_of_net": 0.53
+    },
+    {
+      "name": "U.S. Treasury 0% 5/28/2026",
+      "asset_type": "Cash Equivalent",
+      "ticker": null,
+      "shares": 9200000.0,
+      "disclosed_market_value": 12725494.94,
+      "pct_of_net": 0.61
+    },
+    {
+      "name": "U.S. Treasury 0% 4/7/2026",
+      "asset_type": "Cash Equivalent",
+      "ticker": null,
+      "shares": 30000000.0,
+      "disclosed_market_value": 41707736.46,
+      "pct_of_net": 1.98
+    },
+    {
+      "name": "U.S. Treasury 0% 4/14/2026",
+      "asset_type": "Cash Equivalent",
+      "ticker": null,
+      "shares": 11050000.0,
+      "disclosed_market_value": 15351688.5,
+      "pct_of_net": 0.73
+    },
+    {
+      "name": "U.S. Treasury 0% 4/21/2026",
+      "asset_type": "Cash Equivalent",
+      "ticker": null,
+      "shares": 44800000.0,
+      "disclosed_market_value": 62195944.97,
+      "pct_of_net": 2.96
+    },
+    {
+      "name": "Treasury Corporation of Victoria 5.50% 9/15/2039",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1613000.0,
+      "disclosed_market_value": 1481137.26,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "Treasury Corp. of Victoria 3.625% 9/29/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 430000.0,
+      "disclosed_market_value": 676435.05,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Tricon Residential Trust, Series 2023-SFR1, Class B, 5.10% 7/17/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 138275.24,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Tricon Residential Trust, Series 2023-SFR1, Class C, 5.10% 7/17/2040",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 100000.0,
+      "disclosed_market_value": 138160.92,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "U.S. Treasury Inflation-Protected Security 1.00% 2/15/2049",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 852984.0,
+      "disclosed_market_value": 838953.41,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "U.S. Treasury Inflation-Protected Security 2.375% 10/15/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2874742.0,
+      "disclosed_market_value": 4140739.27,
+      "pct_of_net": 0.2
+    },
+    {
+      "name": "U.S. Treasury Inflation-Protected Security 2.375% 2/15/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2143710.0,
+      "disclosed_market_value": 2768474.99,
+      "pct_of_net": 0.13
+    },
+    {
+      "name": "Tyco Electronics Group SA 4.875% 2/9/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 560000.0,
+      "disclosed_market_value": 769206.98,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "U.S. Bank National Association, Series 2025-SUP1, Class B, 5.582% 2/25/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 134208.0,
+      "disclosed_market_value": 188068.12,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "UBS Group AG 0.875% 11/3/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 310000.0,
+      "disclosed_market_value": 428097.07,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Union Pacific Corp.",
+      "asset_type": "Equity",
+      "ticker": "UNP",
+      "shares": 77422.0,
+      "disclosed_market_value": 26130597.17,
+      "pct_of_net": 1.24,
+      "disclosed_price": 337.5087
+    },
+    {
+      "name": "Union Pacific Corp. 2.891% 4/6/2036",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 500000.0,
+      "disclosed_market_value": 584019.84,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "United Kingdom 2.50% 7/22/2065",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1980000.0,
+      "disclosed_market_value": 1911956.72,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "United Kingdom 4.25% 12/7/2046",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 200000.0,
+      "disclosed_market_value": 312379.6,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "United Kingdom 3.25% 1/22/2044",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 585000.0,
+      "disclosed_market_value": 809289.49,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "United Kingdom 3.50% 1/22/2045",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3650000.0,
+      "disclosed_market_value": 5184943.81,
+      "pct_of_net": 0.25
+    },
+    {
+      "name": "United Kingdom 4.25% 6/7/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 400000.0,
+      "disclosed_market_value": 725926.93,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "United Kingdom 1.00% 1/31/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1640000.0,
+      "disclosed_market_value": 2475944.6,
+      "pct_of_net": 0.12
+    },
+    {
+      "name": "United Kingdom 3.25% 1/31/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 3960000.0,
+      "disclosed_market_value": 6696827.5,
+      "pct_of_net": 0.32
+    },
+    {
+      "name": "United Kingdom 0.125% 7/31/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 990000.0,
+      "disclosed_market_value": 763657.71,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "United Kingdom 4.50% 3/7/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1630000.0,
+      "disclosed_market_value": 2923708.83,
+      "pct_of_net": 0.14
+    },
+    {
+      "name": "United Mexican States 4.15% 3/28/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 550000.0,
+      "disclosed_market_value": 765870.1,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "United Mexican States 6.125% 2/9/2038",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 333000.0,
+      "disclosed_market_value": 452002.82,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "United Mexican States 5.375% 3/22/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1440000.0,
+      "disclosed_market_value": 1963120.32,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "UnitedHealth Group, Inc.",
+      "asset_type": "Equity",
+      "ticker": "UNH",
+      "shares": 59938.0,
+      "disclosed_market_value": 22561727.04,
+      "pct_of_net": 1.07,
+      "disclosed_price": 376.4177
+    },
+    {
+      "name": "UnitedHealth Group, Inc. 5.30% 6/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 600000.0,
+      "disclosed_market_value": 851875.0,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "U.S. Treasury 2.25% 8/15/2046",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 570000.0,
+      "disclosed_market_value": 516951.26,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "U.S. Treasury 3.00% 5/15/2047",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 5336200.0,
+      "disclosed_market_value": 5519836.44,
+      "pct_of_net": 0.26
+    },
+    {
+      "name": "U.S. Treasury 2.75% 2/15/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1685000.0,
+      "disclosed_market_value": 2299549.83,
+      "pct_of_net": 0.11
+    },
+    {
+      "name": "U.S. Treasury 4.00% 2/29/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1100000.0,
+      "disclosed_market_value": 1535589.61,
+      "pct_of_net": 0.07
+    },
+    {
+      "name": "U.S. Treasury 2.00% 8/15/2051",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 5770000.0,
+      "disclosed_market_value": 4568917.57,
+      "pct_of_net": 0.22
+    },
+    {
+      "name": "U.S. Treasury 2.00% 11/15/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 5075000.0,
+      "disclosed_market_value": 4880660.94,
+      "pct_of_net": 0.23
+    },
+    {
+      "name": "U.S. Treasury 2.25% 2/15/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 2500000.0,
+      "disclosed_market_value": 2095344.37,
+      "pct_of_net": 0.1
+    },
+    {
+      "name": "U.S. Treasury 3.25% 5/15/2042",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 86900.0,
+      "disclosed_market_value": 99608.66,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "U.S. Treasury 3.00% 8/15/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1858500.0,
+      "disclosed_market_value": 1837220.98,
+      "pct_of_net": 0.09
+    },
+    {
+      "name": "U.S. Treasury 4.00% 11/15/2052",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 253000.0,
+      "disclosed_market_value": 302345.58,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "U.S. Treasury 4.00% 1/15/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 15000.0,
+      "disclosed_market_value": 20909.69,
+      "pct_of_net": 0.0
+    },
+    {
+      "name": "U.S. Treasury 4.25% 2/15/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 420000.0,
+      "disclosed_market_value": 523234.0,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "U.S. Treasury 4.625% 5/15/2054",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 290500.0,
+      "disclosed_market_value": 385234.85,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "U.S. Treasury 4.375% 5/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 119700.0,
+      "disclosed_market_value": 168277.39,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "U.S. Treasury 1.875% 2/15/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 187700.0,
+      "disclosed_market_value": 180879.5,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "U.S. Treasury 2.25% 5/15/2041",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 1345000.0,
+      "disclosed_market_value": 1363512.75,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "U.S. Treasury 4.625% 2/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4690000.0,
+      "disclosed_market_value": 6694501.39,
+      "pct_of_net": 0.32
+    },
+    {
+      "name": "U.S. Treasury 3.75% 4/15/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 756000.0,
+      "disclosed_market_value": 1051753.79,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "U.S. Treasury 3.75% 5/15/2043",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 445000.0,
+      "disclosed_market_value": 548527.01,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "U.S. Treasury 4.375% 8/31/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 401000.0,
+      "disclosed_market_value": 564934.74,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "U.S. Treasury 3.875% 8/15/2034",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 301700.0,
+      "disclosed_market_value": 409054.96,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "U.S. Treasury 3.75% 8/31/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 8700000.0,
+      "disclosed_market_value": 12103042.61,
+      "pct_of_net": 0.58
+    },
+    {
+      "name": "U.S. Treasury 3.75% 6/30/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 6040000.0,
+      "disclosed_market_value": 8396500.23,
+      "pct_of_net": 0.4
+    },
+    {
+      "name": "U.S. Treasury 3.875% 6/30/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4794000.0,
+      "disclosed_market_value": 6660076.06,
+      "pct_of_net": 0.32
+    },
+    {
+      "name": "U.S. Treasury 4.875% 5/31/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 540000.0,
+      "disclosed_market_value": 752529.14,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "U.S. Treasury 4.00% 5/31/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 228000.0,
+      "disclosed_market_value": 318323.02,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "U.S. Treasury 3.50% 10/31/2027",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 10322000.0,
+      "disclosed_market_value": 14286243.53,
+      "pct_of_net": 0.68
+    },
+    {
+      "name": "U.S. Treasury 3.625% 10/31/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 14089000.0,
+      "disclosed_market_value": 19349624.72,
+      "pct_of_net": 0.92
+    },
+    {
+      "name": "U.S. Treasury 3.75% 10/31/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 640000.0,
+      "disclosed_market_value": 871837.13,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "U.S. Treasury 4.625% 11/15/2055",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 4579000.0,
+      "disclosed_market_value": 6083203.79,
+      "pct_of_net": 0.29
+    },
+    {
+      "name": "U.S. Treasury 4.00% 11/15/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 32580000.0,
+      "disclosed_market_value": 44217313.32,
+      "pct_of_net": 2.1
+    },
+    {
+      "name": "U.S. Treasury 3.50% 12/15/2028",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 950000.0,
+      "disclosed_market_value": 1310807.45,
+      "pct_of_net": 0.06
+    },
+    {
+      "name": "U.S. Treasury 3.625% 12/31/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 800000.0,
+      "disclosed_market_value": 1097969.19,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "U.S. Treasury 3.75% 8/31/2026",
+      "asset_type": "Cash Equivalent",
+      "ticker": null,
+      "shares": 13080000.0,
+      "disclosed_market_value": 18201208.39,
+      "pct_of_net": 0.87
+    },
+    {
+      "name": "Vale Overseas, Ltd. 3.75% 7/8/2030",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 212000.0,
+      "disclosed_market_value": 281042.25,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Vale SA, ordinary nominative shares",
+      "asset_type": "Equity",
+      "ticker": "VALE",
+      "shares": 830170.0,
+      "disclosed_market_value": 18388946.72,
+      "pct_of_net": 0.87,
+      "disclosed_price": 22.1508
+    },
+    {
+      "name": "Verallia SAS 3.875% 11/4/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 300000.0,
+      "disclosed_market_value": 459987.9,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Veralto Corp. 4.15% 9/19/2031",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 120000.0,
+      "disclosed_market_value": 196059.59,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Veralto Corp. 5.45% 9/18/2033",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 130000.0,
+      "disclosed_market_value": 184764.75,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Verizon Communications, Inc. 0.75% 3/22/2032",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 210000.0,
+      "disclosed_market_value": 284413.1,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Verizon Communications, Inc. 5.25% 4/2/2035",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 700000.0,
+      "disclosed_market_value": 975317.15,
+      "pct_of_net": 0.05
+    },
+    {
+      "name": "Verus Securitization Trust, Series 2024-4, Class A1, 6.218% 6/25/2069 (7.218% on 5/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 416269.0,
+      "disclosed_market_value": 584172.83,
+      "pct_of_net": 0.03
+    },
+    {
+      "name": "Verus Securitization Trust, Series 2024-4, Class A2, 6.572% 6/25/2069 (7.572% on 5/1/2028)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 195626.0,
+      "disclosed_market_value": 274703.86,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Verus Securitization Trust, Series 2024-9, Class A1, 5.44% 11/25/2069",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 76055.0,
+      "disclosed_market_value": 106147.77,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Verus Securitization Trust, Series 2025-7, Class A1, 5.129% 8/25/2070 (6.129% on 8/1/2029)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 250946.0,
+      "disclosed_market_value": 348930.82,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Verus Securitization Trust, Series 2026-R1, Class A1, 4.832% 10/25/2067 (5.832% on 1/1/2030)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 133267.0,
+      "disclosed_market_value": 183896.58,
+      "pct_of_net": 0.01
+    },
+    {
+      "name": "Verus Securitization Trust, Series 2026-2, Class A1, 4.59% 2/25/2071",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 680375.0,
+      "disclosed_market_value": 937867.8,
+      "pct_of_net": 0.04
+    },
+    {
+      "name": "Visa, Inc., Class A",
+      "asset_type": "Equity",
+      "ticker": "V",
+      "shares": 57398.0,
+      "disclosed_market_value": 24132763.18,
+      "pct_of_net": 1.15,
+      "disclosed_price": 420.4461
+    },
+    {
+      "name": "Wells Fargo & Co. 3.90% 7/22/2032 (3-month EUR-EURIBOR + 1.22% on 7/22/2031)",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 210000.0,
+      "disclosed_market_value": 339886.84,
+      "pct_of_net": 0.02
+    },
+    {
+      "name": "Xcel Energy, Inc. 3.35% 12/1/2026",
+      "asset_type": "Fixed Income",
+      "ticker": null,
+      "shares": 683000.0,
+      "disclosed_market_value": 944611.08,
+      "pct_of_net": 0.04
+    }
+  ],
+  "benchmark_blend": [
+    {
+      "ticker": "XBAL.TO",
+      "weight": 1.0,
+      "base_price": 32.4859
+    }
+  ]
+}
