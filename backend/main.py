@@ -171,6 +171,26 @@ async def trigger_digest(request: Request, background_tasks: BackgroundTasks, _:
     return {"status": "sending"}
 
 
+class FundNavRequest(BaseModel):
+    fund_codes: list[str]
+
+@app.post("/portfolio/fund-nav")
+@limiter.limit("30/minute")
+async def get_fund_nav(request: Request, body: FundNavRequest, _: None = Depends(verify_token)):
+    """
+    Estimate current NAV per unit for one or more mutual funds using live
+    equity prices weighted by their disclosed holdings.
+    Returns { fund_code: estimated_nav_per_unit | null }.
+    """
+    from fund_nav import estimate_nav_batch
+    loop = asyncio.get_running_loop()
+    results = await loop.run_in_executor(None, lambda: estimate_nav_batch(body.fund_codes))
+    return {
+        code: (r["estimated_nav_per_unit"] if r else None)
+        for code, r in results.items()
+    }
+
+
 @app.get("/sectors")
 @limiter.limit("30/minute")
 async def get_sectors(request: Request, tickers: str = Query(...), _: None = Depends(verify_token)):
